@@ -1,0 +1,1300 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#B3261E">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="China">
+<meta name="format-detection" content="telephone=no">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" href="icon-180.png">
+<title>Viaje a China</title>
+<style>
+:root{
+  --bg:#F3F4F2; --surface:#FFFFFF; --ink:#15181D; --muted:#636973; --line:#DFE2DD;
+  --c:#B3261E; --ctext:var(--c); --ok:#1B7447; --warn:#96560A; --rojo:#B3261E;
+  --f:"Avenir Next","Avenir",-apple-system,system-ui,"Segoe UI",sans-serif;
+  --fd:"Avenir Next Condensed","Avenir Next","Arial Narrow",-apple-system,system-ui,sans-serif;
+  --fn:"DIN Alternate","Avenir Next Condensed","Arial Narrow",system-ui,sans-serif;
+  --fz:"Songti SC","STSong","Noto Serif CJK SC","PingFang SC",serif;
+  --st:env(safe-area-inset-top,0px); --sb:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){
+  :root{--bg:#0F1113; --surface:#1B1E22; --ink:#ECEEF0; --muted:#9AA1AA; --line:#2C3036;
+    --ctext:color-mix(in srgb,var(--c) 48%,white); --ok:#63C897; --warn:#E5AE58; --rojo:#F08A80}
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 var(--f);padding-bottom:calc(66px + var(--sb));overscroll-behavior-y:none}
+main{max-width:560px;margin:0 auto}
+main>section{display:none}
+main>section.on{display:block}
+h1,h2,h3,p{margin:0}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:2px solid var(--ctext);outline-offset:2px}
+.pad{padding:16px 16px 28px}
+.n{display:block;color:var(--muted);font-size:13.5px;line-height:1.4;margin-top:3px}
+p.n{margin-top:10px}
+.zh{font-family:var(--fz);color:var(--ctext)}
+h2{font:600 22px/1.15 var(--fd);margin:28px 0 10px}
+h2 small{font:400 14px var(--f);color:var(--muted);margin-left:6px}
+
+/* Cabecera del día: el color y los caracteres de la ciudad */
+.hero{position:relative;overflow:hidden;background:var(--c);color:#fff;padding:calc(var(--st) + 20px) 20px 18px;min-height:calc(var(--st) + 196px)}
+.hz{position:absolute;right:14px;top:calc(var(--st) + 14px);writing-mode:vertical-rl;white-space:nowrap;font:900 84px/1 var(--fz);opacity:.26;pointer-events:none;user-select:none}
+.hz.l3{font-size:57px}
+.hd{font-size:14px;font-weight:600;opacity:.95}
+.hd span{margin-left:8px;background:rgba(255,255,255,.22);padding:2px 9px;border-radius:20px;font-weight:500}
+.hero h1{font:600 54px/1 var(--fd);letter-spacing:-.01em;margin:8px 0 6px}
+.hf::first-letter{text-transform:uppercase}
+.hm{display:flex;flex-wrap:wrap;gap:6px 16px;font:15px var(--fn);margin-top:16px;position:relative}
+
+.cab{padding:calc(var(--st) + 20px) 20px 4px}
+.cab h1{font:600 36px/1.05 var(--fd)}
+.cab p{color:var(--muted);margin-top:6px;font-size:15px}
+.cab .seg{margin-top:14px}
+
+/* Tira de días */
+.tira{display:flex;gap:2px;overflow-x:auto;padding:8px 12px;background:var(--surface);border-bottom:1px solid var(--line);scrollbar-width:none}
+.tira::-webkit-scrollbar{display:none}
+.tira button{flex:0 0 44px;height:58px;border:0;background:none;border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;padding:0}
+.tira span{font-size:11px;color:var(--muted)}
+.tira b{font:400 18px/1.1 var(--fn)}
+.tira i{width:5px;height:5px;border-radius:50%;background:var(--dc)}
+.tira .hoy b{text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:3px}
+.tira .on{background:var(--ink);color:var(--bg)}
+.tira .on span{color:inherit;opacity:.7}
+
+/* Ahora y después */
+.ahora{background:var(--surface);border-left:4px solid var(--c);border-radius:4px 12px 12px 4px;padding:12px 14px;display:grid;gap:10px;margin-bottom:18px}
+.ahora small{display:block;color:var(--muted);font-size:13px}
+.ahora b{display:block;font-size:17px;line-height:1.25}
+.ahora em{font-style:normal;color:var(--muted);font-size:14px}
+.ahora .tr{border-top:1px solid var(--line);padding-top:10px}
+
+/* Línea de tiempo */
+.it{display:grid;grid-template-columns:50px 30px 1fr;width:100%;text-align:left;background:none;border:0;padding:0;min-height:56px}
+.it .h{font:18px/1.2 var(--fn);padding-top:3px}
+.it .h small{display:block;font-size:12.5px;color:var(--muted)}
+.it .r{position:relative;display:flex;justify-content:center}
+.it .r::before{content:"";position:absolute;top:0;bottom:0;width:2px;background:var(--line)}
+.it:first-child .r::before{top:10px}
+.it:last-of-type .r::before{bottom:auto;height:14px}
+.it .r i{position:relative;width:26px;height:26px;border-radius:50%;background:var(--surface);border:1.5px solid var(--line);font-size:13px;font-style:normal;display:grid;place-items:center}
+.it .b{padding:2px 0 18px 10px;min-width:0}
+.it .b b{display:block;font-size:16px;line-height:1.3;font-weight:600}
+.it .b .zh{display:block;font-size:15px;margin-top:1px}
+.it.cur .r i{border-color:var(--c);box-shadow:0 0 0 4px color-mix(in srgb,var(--c) 22%,transparent)}
+.it.cur .b b{color:var(--ctext)}
+.it.pas{opacity:.5}
+.it.t-vuelo .r i,.it.t-tren .r i{background:var(--c);border-color:var(--c)}
+.it.t-vuelo .b b,.it.t-tren .b b{font-weight:700}
+.now{display:grid;grid-template-columns:50px 1fr;align-items:center;margin:-6px 0 8px}
+.now span{font:700 13px var(--fn);color:var(--ctext)}
+.now i{height:2px;background:var(--c);border-radius:2px}
+.vacio{color:var(--muted);padding:6px 0 14px}
+.it .km{color:var(--ctext)}
+.pad>.enl{display:block;margin:8px auto 0}
+.alerta .enl{display:block;padding:4px 0 0}
+
+.fila{background:var(--surface);border-radius:12px;padding:12px 14px;display:flex;gap:12px;justify-content:space-between;align-items:center}
+.fila.col{display:block}
+.fila.col p+p{margin-top:6px}
+.fila .zh{display:block;font-size:15px}
+.acc{display:flex;flex-wrap:wrap;gap:8px}
+.fila .acc{flex:none;flex-direction:column}
+.diario{display:grid;gap:8px;justify-items:start}
+
+.btn{font:600 15px var(--f);min-height:44px;padding:9px 14px;border-radius:10px;border:1px solid var(--line);background:var(--surface);color:var(--ink);
+  display:inline-flex;align-items:center;justify-content:center;text-decoration:none;text-align:center}
+.btn.pri{background:var(--c);border-color:transparent;color:#fff}
+.btn.sm{min-height:36px;padding:5px 12px;font-size:14px}
+label.btn{margin:0;color:var(--ink);cursor:pointer}
+.btn.linea{width:100%;background:none;border-style:dashed;color:var(--muted)}
+.btn.peligro{color:var(--rojo)}
+.btn.ancho{width:100%}
+.btns{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
+.enl{background:none;border:0;padding:6px 0;color:var(--ctext);font-size:14px;text-decoration:underline;text-underline-offset:2px}
+
+input[type=text],input[type=time],textarea,select{font:16px var(--f);width:100%;padding:11px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink);appearance:none;-webkit-appearance:none}
+textarea{resize:vertical;line-height:1.4}
+label{display:block;font-size:13.5px;color:var(--muted);margin:12px 0 4px}
+.dos{display:grid;grid-template-columns:1fr 1fr;gap:0 10px;align-items:end}
+.dos>.btn{grid-column:1/-1;margin-top:10px;justify-self:start}
+form>.btn{margin-top:10px}
+
+/* Hoja inferior */
+dialog{margin:auto auto 0;width:100%;max-width:560px;max-height:88dvh;border:0;border-radius:18px 18px 0 0;padding:0;background:var(--surface);color:var(--ink)}
+dialog::backdrop{background:rgba(0,0,0,.5)}
+#dlgB{padding:22px 18px calc(22px + var(--sb));overflow-y:auto;max-height:88dvh}
+#dlgB h3{font:600 26px/1.1 var(--fd)}
+.dk{color:var(--muted);font-size:14px;margin-bottom:4px}
+.dk::first-letter{text-transform:uppercase}
+.dh{font:20px var(--fn);margin:6px 0 10px}
+.lugar{margin-top:14px;padding:14px;background:var(--bg);border-radius:12px}
+.zhG{font:700 34px/1.15 var(--fz);color:var(--ctext);margin-bottom:6px}
+.lugar dl{display:grid;grid-template-columns:auto 1fr;gap:6px 12px;margin:10px 0 0;font-size:15px}
+.lugar dt{color:var(--muted);font-size:13.5px;padding-top:1px}
+.lugar dd{margin:0}
+
+/* Pantalla grande para enseñar a alguien */
+#grande{position:fixed;inset:0;z-index:50;background:#fff;color:#000;display:none;flex-direction:column;align-items:center;justify-content:center;padding:calc(var(--st) + 64px) 22px calc(var(--sb) + 30px);text-align:center;overflow:auto}
+#grande.on{display:flex}
+#grande .x{position:absolute;top:calc(var(--st) + 12px);right:14px;border:1px solid #bbb;background:#fff;color:#000;border-radius:10px;padding:9px 14px;font-weight:600}
+.gz{font:700 clamp(42px,14vw,88px)/1.25 var(--fz);white-space:pre-line}
+.gz.lg{font-size:clamp(30px,9.5vw,58px)}
+.gp{font-size:20px;color:#444;margin-top:14px}
+.gs{font-size:16px;color:#555;margin-top:22px;max-width:30em}
+#grande img{max-width:100%;max-height:100%;object-fit:contain}
+
+/* Viaje */
+.mapa{background:var(--surface);border-radius:14px;padding:8px 8px 12px}
+.mapa svg{display:block;width:100%;height:auto;max-height:400px}
+.mapa path{fill:none;stroke:var(--muted);stroke-width:1.8;stroke-linecap:round}
+.mapa .vu{stroke-dasharray:2 6}
+.mapa .cn{font:600 13px var(--f);fill:var(--ink)}
+.mapa .cz{font:12px var(--fz);fill:var(--muted)}
+.mapa .nn{font:700 9px var(--f);fill:#fff;text-anchor:middle}
+.ley{display:flex;gap:18px;justify-content:center;font-size:13px;color:var(--muted)}
+.ley span{display:flex;align-items:center;gap:6px}
+.ley i{width:22px;border-top:2px solid var(--muted)}
+.ley .l2{border-top-style:dotted;border-top-width:3px}
+.lista{margin:0;padding-left:20px}
+.lista li{margin:5px 0}
+.prog{margin-top:16px}
+.prog>div:first-child{display:flex;justify-content:space-between;font-size:15px;margin-bottom:6px}
+.bar{height:6px;background:var(--line);border-radius:6px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--c);border-radius:6px}
+.cd{font:600 21px var(--fd);margin:24px 0 4px}
+.cd span{font:700 19px var(--fz);color:color-mix(in srgb,var(--dc) 70%,var(--ink));margin-right:8px}
+.dia{display:grid;grid-template-columns:46px 1fr;gap:12px;padding:10px 0;border-top:1px solid var(--line);font-size:15px}
+.dd{background:none;border:0;padding:0;text-align:center;align-self:start}
+.dd b{display:block;font:400 24px/1 var(--fn);color:color-mix(in srgb,var(--dc) 70%,var(--ink))}
+.dd span{font-size:12px;color:var(--muted)}
+.dia.hoy .dd b{text-decoration:underline;text-underline-offset:4px}
+.dia.pas{opacity:.55}
+
+/* Reservas */
+.res{background:var(--surface);border-radius:14px;border-top:4px solid var(--dc);padding:14px 16px;margin-bottom:12px}
+.res header{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+.res h3{font:600 22px/1.15 var(--fd)}
+.res h3 .zh{font-size:17px;font-weight:400;color:var(--muted);margin-left:4px}
+.res header p{color:var(--muted);font-size:14.5px;margin-top:2px}
+.res header p::first-letter{text-transform:uppercase}
+.est{flex:none;font-size:12.5px;font-weight:600;padding:3px 10px;border-radius:20px}
+.est.ok{color:var(--ok);background:color-mix(in srgb,var(--ok) 14%,transparent)}
+.est.pend{color:var(--warn);background:color-mix(in srgb,var(--warn) 16%,transparent)}
+.rf{margin-top:10px;font-size:15px}
+.rp{font:19px var(--fn);margin-top:4px}
+.rp span{font:13.5px var(--f);color:var(--muted);margin-left:6px}
+.res p.zh{font-size:17px;margin-top:8px}
+.res .acc{margin-top:12px}
+.seg{display:flex;background:var(--line);border-radius:10px;padding:3px}
+.seg button{flex:1;border:0;background:none;border-radius:8px;padding:8px 10px;font-weight:600;font-size:14px;color:var(--muted);min-height:36px}
+.seg .on{background:var(--surface);color:var(--ink)}
+.seg.mini{flex:none}
+
+/* Gastos */
+.gf{background:var(--surface);border-radius:14px;padding:14px;display:grid;gap:12px}
+.imp{display:flex;gap:10px;align-items:center}
+#gI{font:42px/1.1 var(--fn);border:0;background:none;padding:0;min-width:0;flex:1}
+#gI:focus{outline:0}
+.conv{color:var(--muted);font-size:13.5px;margin-top:-6px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chips button{border:1px solid var(--line);background:none;border-radius:20px;padding:6px 12px;font-size:14px;min-height:36px}
+.chips .on{background:var(--ink);border-color:var(--ink);color:var(--bg)}
+.bl{display:grid;grid-template-columns:96px 1fr auto;gap:10px;align-items:center;font-size:14.5px;margin:7px 0}
+.bl b{font:15px var(--fn)}
+.gd{display:flex;justify-content:space-between;font:600 14px var(--f);color:var(--muted);margin:18px 0 2px}
+.gd span:first-child::first-letter{text-transform:uppercase}
+.g{display:grid;grid-template-columns:1fr auto auto;gap:12px;align-items:center;padding:10px 0;border-top:1px solid var(--line)}
+.g b{font-weight:600;font-size:15px}
+.gi{text-align:right}
+.gi b{font:16px var(--fn)}
+
+/* Kit */
+.chk label{display:flex;gap:12px;align-items:flex-start;margin:0;padding:11px 0;border-bottom:1px solid var(--line);font-size:15.5px;color:var(--ink)}
+.chk input{flex:none;width:22px;height:22px;margin:0;accent-color:var(--c)}
+.chk input:checked+span{color:var(--muted);text-decoration:line-through}
+.add{display:flex;gap:8px;margin-top:12px}
+.add .btn{margin:0;flex:none}
+.cv{background:var(--surface);border-radius:12px;padding:12px 14px}
+.cv input{font:22px var(--fn)}
+.cv .n{font-size:15px;margin-top:10px;line-height:1.6}
+.cv .n b{color:var(--ink);font-weight:600}
+.fg{font:600 14px var(--f);color:var(--muted);margin:16px 0 6px}
+.fr{display:grid;gap:6px}
+.fr button{display:grid;grid-template-columns:1fr auto;gap:2px 12px;text-align:left;background:var(--surface);border:0;border-radius:10px;padding:10px 12px;align-items:baseline}
+.fr span{font-size:15px}
+.fr b{font:600 19px var(--fz);color:var(--ctext);text-align:right}
+.fr i{grid-column:1/-1;font-style:normal;font-size:13px;color:var(--muted)}
+.em{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:6px}
+.em a{background:var(--surface);border-radius:12px;padding:12px;text-decoration:none;color:var(--muted);font-size:13.5px}
+.em b{display:block;font:26px/1.1 var(--fn);color:var(--ctext)}
+.alerta{background:color-mix(in srgb,var(--warn) 13%,transparent);border-left:3px solid var(--warn);border-radius:4px 10px 10px 4px;padding:10px 12px;font-size:14.5px;margin-bottom:14px}
+
+nav{position:fixed;left:0;right:0;bottom:0;z-index:10;background:var(--surface);border-top:1px solid var(--line);display:flex;justify-content:center;padding-bottom:var(--sb)}
+nav button{flex:1;max-width:112px;background:none;border:0;padding:8px 2px 7px;font-size:11.5px;color:var(--muted);display:flex;flex-direction:column;align-items:center;gap:2px}
+nav svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+nav .on{color:var(--ctext);font-weight:600}
+#pend{position:fixed;top:calc(var(--st) + 8px);right:10px;z-index:9;background:rgba(0,0,0,.6);color:#fff;font-size:12px;padding:3px 10px;border-radius:20px;display:none}
+#pend.on{display:block}
+#aviso{position:fixed;left:50%;bottom:calc(80px + var(--sb));transform:translateX(-50%);z-index:60;max-width:88vw;background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:12px;font-size:14.5px;text-align:center;opacity:0;pointer-events:none;transition:opacity .2s}
+#aviso.on{opacity:1}
+@media (prefers-reduced-motion:reduce){#aviso{transition:none}}
+</style>
+</head>
+<body>
+<main>
+  <section id="hoy" class="on"></section>
+  <section id="viaje"></section>
+  <section id="reservas"></section>
+  <section id="gastos"></section>
+  <section id="kit"></section>
+</main>
+
+<div id="pend" role="status"></div>
+<div id="aviso" role="status" aria-live="polite"></div>
+<dialog id="dlg"><div id="dlgB"></div></dialog>
+<div id="grande"></div>
+
+<nav aria-label="Secciones">
+  <button data-t="hoy" class="on"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg>Hoy</button>
+  <button data-t="viaje"><svg viewBox="0 0 24 24"><circle cx="6" cy="6" r="2.2"/><circle cx="18" cy="18" r="2.2"/><path d="M8.2 6H15a3 3 0 0 1 0 6H9a3 3 0 0 0 0 6h6.8"/></svg>Viaje</button>
+  <button data-t="reservas"><svg viewBox="0 0 24 24"><path d="M4 8a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v2a2 2 0 0 0 0 4v2a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-2a2 2 0 0 0 0-4z"/><path d="M14 6v12" stroke-dasharray="2 2.5"/></svg>Reservas</button>
+  <button data-t="gastos"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M9 7.5l3 4.5 3-4.5M12 12v5M9.2 12.5h5.6M9.2 15h5.6"/></svg>Gastos</button>
+  <button data-t="kit"><svg viewBox="0 0 24 24"><rect x="4" y="8" width="16" height="11" rx="2"/><path d="M9 8V6.5A1.5 1.5 0 0 1 10.5 5h3A1.5 1.5 0 0 1 15 6.5V8M4 13h16"/></svg>Kit</button>
+</nav>
+
+<script>
+/* ============================================================
+   DATOS FIJOS DE LA APP
+   La agenda y los lugares de aquí son solo el punto de partida:
+   en cuanto la hoja tiene sus pestañas "Agenda" y "Lugares",
+   manda la hoja.
+   ============================================================ */
+const API_FIJA="https://script.google.com/macros/s/AKfycbwp28-qm4kX92ACiFU8-xxIkq6nfujIqkPympOn6FFhL_pSzanDeY1TindIGPtSlFG6/exec";
+
+// Última copia conocida de la hoja (3 oct 2026); se usa hasta la primera sincronización
+const INICIAL={"itinerario":[{"_row":2,"_k":"1","Día":1,"Fecha":"2026-10-27","Ciudad":"Pekín","Actividades Principales":"Llegada (08:45), Templo del Cielo, cena de pato laqueado","Transporte del día":"Vuelo España → Pekín (llegada 8:45)","Noche en":"Zhong An Hotel Beijing"},{"_row":3,"_k":"2","Día":2,"Fecha":"2026-10-28","Ciudad":"Pekín","Actividades Principales":"Ciudad Prohibida, Plaza de Tiananmen, Parque Jingshan","Transporte del día":"-","Noche en":"Zhong An Hotel Beijing"},{"_row":4,"_k":"3","Día":3,"Fecha":"2026-10-29","Ciudad":"Pekín","Actividades Principales":"Gran Muralla (Mutianyu), Hutongs","Transporte del día":"-","Noche en":"Zhong An Hotel Beijing"},{"_row":5,"_k":"4","Día":4,"Fecha":"2026-10-30","Ciudad":"Xi'an","Actividades Principales":"Paseo en bici por la Muralla antigua, Barrio Musulmán","Transporte del día":"Tren bala Pekín → Xi'an (salida mañana)","Noche en":"Chang Gexing Hotel (Bell Tower Hui Fang)"},{"_row":6,"_k":"5","Día":5,"Fecha":"2026-10-31","Ciudad":"Xi'an","Actividades Principales":"Guerreros de Terracota (mañana)","Transporte del día":"Vuelo Xi'an → Shanghái (salida 21:00)","Noche en":"HOMEINN"},{"_row":7,"_k":"6","Día":6,"Fecha":"2026-11-01","Ciudad":"Shanghái","Actividades Principales":"El Bund, rascacielos de Pudong (Torre de Shanghái)","Transporte del día":"-","Noche en":"HOMEINN"},{"_row":8,"_k":"7","Día":7,"Fecha":"2026-11-02","Ciudad":"Shanghái","Actividades Principales":"Jardín Yuyuan, Templo del Buda de Jade","Transporte del día":"-","Noche en":"HOMEINN"},{"_row":9,"_k":"8","Día":8,"Fecha":"2026-11-03","Ciudad":"Shanghái","Actividades Principales":"Concesión Francesa","Transporte del día":"Vuelo Shanghái → Zhangjiajie (salida 13:15)","Noche en":"Por reservar"},{"_row":10,"_k":"9","Día":9,"Fecha":"2026-11-04","Ciudad":"Zhangjiajie","Actividades Principales":"Montaña Tianmen (Teleférico, puerta al cielo, pasarelas de cristal)","Transporte del día":"-","Noche en":"Por reservar"},{"_row":11,"_k":"10","Día":10,"Fecha":"2026-11-05","Ciudad":"Zhangjiajie","Actividades Principales":"Parque Nacional Forestal (Yuanjiajie, Montaña Tianzi)","Transporte del día":"-","Noche en":"Por reservar"},{"_row":12,"_k":"11","Día":11,"Fecha":"2026-11-06","Ciudad":"Zhangjiajie","Actividades Principales":"Parque Nacional Forestal (elevador Bailong)","Transporte del día":"-","Noche en":"Por reservar"},{"_row":13,"_k":"12","Día":12,"Fecha":"2026-11-07","Ciudad":"Yangshuo","Actividades Principales":"Llegada Guillin, Crucero/balsas por el río Li hasta yangshuo","Transporte del día":"Tren Zhangjiajie → Guilin","Noche en":"Por reservar"},{"_row":14,"_k":"13","Día":13,"Fecha":"2026-11-08","Ciudad":"Yangshuo","Actividades Principales":"Bicicletas entre colinas kársticas, arrozales","Transporte del día":"-","Noche en":"Por reservar"},{"_row":15,"_k":"14","Día":14,"Fecha":"2026-11-09","Ciudad":"Yangshuo","Actividades Principales":"Cueva de la Flauta de Caña, Colina de la Luna","Transporte del día":"-","Noche en":"Por reservar"},{"_row":16,"_k":"15","Día":15,"Fecha":"2026-11-10","Ciudad":"Yangshuo","Actividades Principales":"Terrazas de arroz de Longji (Longsheng) y miradores panorámicos","Transporte del día":"Tren bala Guilin/Yangshuo → Shenzhen","Noche en":"Por reservar"},{"_row":17,"_k":"16","Día":16,"Fecha":"2026-11-11","Ciudad":"ShenZen","Actividades Principales":"","Transporte del día":"Tren bala Shenzhen → Hong Kong","Noche en":"Por reservar"},{"_row":18,"_k":"17","Día":17,"Fecha":"2026-11-12","Ciudad":"Hong Kong","Actividades Principales":"Monasterio de los 10.000 Budas, Mong Kok, tranvía al pico victoria","Transporte del día":"-","Noche en":"Por reservar"},{"_row":19,"_k":"18","Día":18,"Fecha":"2026-11-13","Ciudad":"Hong Kong","Actividades Principales":"Mercados nocturnos, Symphony of Lights","Transporte del día":"-","Noche en":"Por reservar"},{"_row":20,"_k":"19","Día":19,"Fecha":"2026-11-14","Ciudad":"Hong Kong","Actividades Principales":"Últimas compras, Avenida de las Estrellas","Transporte del día":"Vuelo Hong Kong → España (salida 19:35)","Noche en":"-"}],"alojamiento":[{"_row":2,"_k":"Pekín","Ciudad":"Pekín","Hotel":"Zhong An Hotel Beijing","Check-in":"2026-10-27","Check-out":"2026-10-30","Noches":3,"Precio total":115.68,"Precio por noche":38.56,"Estado":"Reservado","Recibo":"HotelPekin.pdf","Notas":""},{"_row":3,"_k":"Xi'an","Ciudad":"Xi'an","Hotel":"Chang Gexing Hotel (Bell Tower Hui Fang)","Check-in":"2026-10-30","Check-out":"2026-10-31","Noches":1,"Precio total":9,"Precio por noche":9,"Estado":"Reservado","Recibo":"HotelXian.pdf","Notas":""},{"_row":4,"_k":"Shanghái","Ciudad":"Shanghái","Hotel":"HOMEINN","Check-in":"2026-10-31","Check-out":"2026-11-03","Noches":3,"Precio total":172,"Precio por noche":57.333333333333336,"Estado":"Reservado","Recibo":"HotelShangai.pdf","Notas":"Llegada de noche (vuelo de las 21:00)"},{"_row":5,"_k":"Zhangjiajie","Ciudad":"Zhangjiajie","Hotel":"Por reservar","Check-in":"2026-11-03","Check-out":"2026-11-07","Noches":4,"Precio total":"","Precio por noche":"","Estado":"Pendiente","Recibo":"","Notas":""},{"_row":6,"_k":"Yangshuo","Ciudad":"Yangshuo","Hotel":"Por reservar","Check-in":"2026-11-07","Check-out":"2026-11-10","Noches":3,"Precio total":"","Precio por noche":"","Estado":"Pendiente","Recibo":"","Notas":""},{"_row":7,"_k":"Shenzhen","Ciudad":"Shenzhen","Hotel":"Por reservar","Check-in":"2026-11-10","Check-out":"2026-11-11","Noches":1,"Precio total":"","Precio por noche":"","Estado":"Pendiente","Recibo":"","Notas":""},{"_row":8,"_k":"Hong Kong","Ciudad":"Hong Kong","Hotel":"Por reservar","Check-in":"2026-11-11","Check-out":"2026-11-14","Noches":3,"Precio total":"","Precio por noche":"","Estado":"Pendiente","Recibo":"","Notas":""}],"transporte":[{"_row":2,"_k":"27/10/2026","Fecha":"2026-10-27","Tipo":"Vuelo","Origen":"España","Destino":"Pekín","Salida":"","Llegada":"8:45","Nº vuelo/tren":"","Precio":"","Estado":"","Recibo":"","Notas":""},{"_row":3,"_k":"30/10/2026","Fecha":"2026-10-30","Tipo":"Tren bala","Origen":"Pekín","Destino":"Xi'an","Salida":"mañana","Llegada":"","Nº vuelo/tren":"","Precio":165.81,"Estado":"Reservado","Recibo":"","Notas":""},{"_row":4,"_k":"31/10/2026","Fecha":"2026-10-31","Tipo":"Vuelo","Origen":"Xi'an","Destino":"Shanghái","Salida":"21:00","Llegada":"","Nº vuelo/tren":"","Precio":146,"Estado":"Reservado","Recibo":"Vuelo Xian - Shangai","Notas":""},{"_row":5,"_k":"03/11/2026","Fecha":"2026-11-03","Tipo":"Vuelo","Origen":"Shanghái","Destino":"Zhangjiajie","Salida":"13:15","Llegada":"","Nº vuelo/tren":"","Precio":182.32,"Estado":"Reservado","Recibo":"VueloShangaiZhangiaye.pdf","Notas":""},{"_row":6,"_k":"07/11/2026","Fecha":"2026-11-07","Tipo":"Tren","Origen":"Zhangjiajie","Destino":"Guilin","Salida":"","Llegada":"","Nº vuelo/tren":"","Precio":"","Estado":"Pendiente","Recibo":"","Notas":"Después, crucero por el río Li hasta Yangshuo"},{"_row":7,"_k":"10/11/2026","Fecha":"2026-11-10","Tipo":"Tren bala","Origen":"Guilin/Yangshuo","Destino":"Shenzhen","Salida":"","Llegada":"","Nº vuelo/tren":"","Precio":"","Estado":"Pendiente","Recibo":"","Notas":""},{"_row":8,"_k":"11/11/2026","Fecha":"2026-11-11","Tipo":"Tren bala","Origen":"Shenzhen","Destino":"Hong Kong","Salida":"","Llegada":"","Nº vuelo/tren":"","Precio":"","Estado":"Pendiente","Recibo":"","Notas":""},{"_row":9,"_k":"14/11/2026","Fecha":"2026-11-14","Tipo":"Vuelo","Origen":"Hong Kong","Destino":"España","Salida":"19:35","Llegada":"","Nº vuelo/tren":"","Precio":"","Estado":"","Recibo":"","Notas":""}],"checklist":[{"_row":2,"_k":"Pasaportes con validez suficiente (mínimo 6 meses)","Tarea":"Pasaportes con validez suficiente (mínimo 6 meses)","Hecho":false},{"_row":3,"_k":"Comprobar requisitos de entrada / visado para China y Hong Kong","Tarea":"Comprobar requisitos de entrada / visado para China y Hong Kong","Hecho":false},{"_row":4,"_k":"Seguro de viaje","Tarea":"Seguro de viaje","Hecho":false},{"_row":5,"_k":"Alipay y/o WeChat Pay con tarjeta vinculada","Tarea":"Alipay y/o WeChat Pay con tarjeta vinculada","Hecho":false},{"_row":6,"_k":"eSIM o roaming con datos","Tarea":"eSIM o roaming con datos","Hecho":false},{"_row":7,"_k":"Mapas y traductor descargados sin conexión","Tarea":"Mapas y traductor descargados sin conexión","Hecho":false},{"_row":8,"_k":"Entradas Ciudad Prohibida","Tarea":"Entradas Ciudad Prohibida","Hecho":false},{"_row":9,"_k":"Entradas Guerreros de Terracota","Tarea":"Entradas Guerreros de Terracota","Hecho":false},{"_row":10,"_k":"Entradas Tianmen y Parque Forestal de Zhangjiajie","Tarea":"Entradas Tianmen y Parque Forestal de Zhangjiajie","Hecho":false},{"_row":11,"_k":"Crucero / balsas del río Li","Tarea":"Crucero / balsas del río Li","Hecho":false},{"_row":12,"_k":"Adaptador de enchufe y batería externa","Tarea":"Adaptador de enchufe y batería externa","Hecho":false},{"_row":13,"_k":"Copias de pasaportes y reservas","Tarea":"Copias de pasaportes y reservas","Hecho":false}]};
+
+const CIUDADES={
+  pekin:      {n:"Pekín",       zh:"北京",   c:"#B3261E", lat:39.905, lon:116.397, mon:"CNY"},
+  xian:       {n:"Xi'an",       zh:"西安",   c:"#8F5527", lat:34.265, lon:108.947, mon:"CNY"},
+  shanghai:   {n:"Shanghái",    zh:"上海",   c:"#2B3A8C", lat:31.230, lon:121.474, mon:"CNY"},
+  zhangjiajie:{n:"Zhangjiajie", zh:"张家界", c:"#2C6A4B", lat:29.117, lon:110.479, mon:"CNY"},
+  yangshuo:   {n:"Yangshuo",    zh:"阳朔",   c:"#0B6E6E", lat:24.778, lon:110.497, mon:"CNY"},
+  shenzhen:   {n:"Shenzhen",    zh:"深圳",   c:"#5B3A9E", lat:22.543, lon:114.058, mon:"CNY"},
+  hongkong:   {n:"Hong Kong",   zh:"香港",   c:"#B81D5B", lat:22.302, lon:114.172, mon:"HKD"}
+};
+const ALIAS_CIUDAD={shenzen:"shenzhen",beijing:"pekin",guilin:"yangshuo"};
+
+const mk=(h,rows)=>rows.map(r=>Object.fromEntries(h.map((k,i)=>[k,r[i]??""])));
+
+/* ---------- Lugares: nombre en chino para taxis y Mapas ----------
+   Horarios y precios son orientativos. */
+const SEED_LUGARES=mk(["Ciudad","Nombre","Chino","Horario","Precio","Reserva","Notas","Lat","Lon"],[
+ ["Pekín","Templo del Cielo","天坛公园","Parque 6:00–22:00; edificios 8:00–17:00","Unos 34 CNY (entrada combinada)","","","39.882","116.407"],
+ ["Pekín","Plaza de Tiananmen","天安门广场","","Gratis","Reserva previa con pasaporte","Control de seguridad en los accesos","39.9055","116.3976"],
+ ["Pekín","Ciudad Prohibida","故宫博物院","8:30–16:30, cierra los lunes","Unos 60 CNY","Entrada con pasaporte; se agotan, comprad en cuanto abran la venta","Entrada por el sur (Puerta Meridiana), salida por el norte","39.9163","116.3972"],
+ ["Pekín","Parque Jingshan","景山公园","6:30–21:00","Unos 2 CNY","","Frente a la salida norte de la Ciudad Prohibida","39.9251","116.3966"],
+ ["Pekín","Gran Muralla (Mutianyu)","慕田峪长城","7:30–17:30","Unos 40 CNY, teleférico aparte","","","40.4319","116.5704"],
+ ["Pekín","Hutongs (Nanluoguxiang)","南锣鼓巷","","Gratis","","","39.937","116.403"],
+ ["Xi'an","Muralla de Xi'an (Puerta Sur)","西安城墙永宁门","8:00–22:00","Unos 54 CNY; bici aparte","","El alquiler de bicis cierra antes que la muralla","34.2516","108.947"],
+ ["Xi'an","Barrio Musulmán","回民街","","Gratis","","","34.2642","108.9437"],
+ ["Xi'an","Guerreros de Terracota","秦始皇兵马俑博物馆","8:30–17:00","Unos 120 CNY","Entrada con pasaporte","","34.3841","109.2785"],
+ ["Xi'an","Torre de la Campana","西安钟楼","","","","","34.261","108.9423"],
+ ["Shanghái","El Bund","外滩","","Gratis","","","31.24","121.49"],
+ ["Shanghái","Torre de Shanghái","上海中心大厦","Mirador 8:30–21:30","Unos 180 CNY","","","31.2335","121.5055"],
+ ["Shanghái","Jardín Yuyuan","豫园","9:00–16:30 (última entrada 16:00), cierra los lunes","40 CNY","","","31.2272","121.4921"],
+ ["Shanghái","Templo del Buda de Jade","玉佛禅寺","8:00–16:30","Unos 20 CNY","","","31.2414","121.4452"],
+ ["Shanghái","Concesión Francesa (Wukang Road)","武康路","","Gratis","","","31.206","121.438"],
+ ["Zhangjiajie","Montaña Tianmen","天门山国家森林公园","8:00–16:00","Unos 275 CNY con teleférico","Entrada con franja horaria y pasaporte","El teleférico sale del centro de la ciudad","29.117","110.479"],
+ ["Zhangjiajie","Parque Forestal de Zhangjiajie","张家界国家森林公园","7:00–18:00","Unos 225 CNY, válida varios días","Entrada con pasaporte","Entrada de Wulingyuan: 武陵源","29.345","110.55"],
+ ["Zhangjiajie","Yuanjiajie","袁家界","","Incluido en la entrada del parque","","","29.345","110.55"],
+ ["Zhangjiajie","Montaña Tianzi","天子山","","Incluido; teleférico aparte","","","29.345","110.55"],
+ ["Zhangjiajie","Ascensor Bailong","百龙天梯","","Unos 65 CNY por trayecto","","","29.345","110.55"],
+ ["Zhangjiajie","Arroyo del Látigo Dorado","金鞭溪","","Incluido en la entrada del parque","","","29.345","110.55"],
+ ["Zhangjiajie","Estación Zhangjiajie Oeste","张家界西站","","","","Estación de alta velocidad","29.117","110.479"],
+ ["Yangshuo","Calle Oeste de Yangshuo","阳朔西街","","Gratis","","","24.7755","110.4925"],
+ ["Yangshuo","Xingping","兴坪古镇","","Balsa aparte","","Embarcadero de las balsas del río Li","24.92","110.52"],
+ ["Yangshuo","Valle del río Yulong","遇龙河","","","","","24.77","110.43"],
+ ["Yangshuo","Colina de la Luna","月亮山","","Unos 15 CNY","","","24.716","110.477"],
+ ["Yangshuo","Cueva de la Flauta de Caña","芦笛岩","8:00–17:30","Unos 90 CNY","","Está en la ciudad de Guilin","25.3045","110.2745"],
+ ["Yangshuo","Terrazas de Longji","龙脊梯田","","Unos 80 CNY","","En Longsheng, al norte de Guilin","25.75","110.12"],
+ ["Yangshuo","Estación de Guilin","桂林站","","","","","25.264","110.287"],
+ ["Shenzhen","Estación Shenzhen Norte","深圳北站","","","","","22.609","114.029"],
+ ["Hong Kong","Estación de West Kowloon","香港西九龍站","","","","Aquí se pasa el control de frontera","22.3042","114.165"],
+ ["Hong Kong","Monasterio de los 10.000 Budas","萬佛寺","9:00–17:00","Gratis","","En Sha Tin","22.3876","114.1848"],
+ ["Hong Kong","Mong Kok","旺角","","","","","22.3193","114.1694"],
+ ["Hong Kong","Peak Tram","山頂纜車","","","","Estación inferior en Garden Road, Central","22.2779","114.1596"],
+ ["Hong Kong","Paseo de Tsim Sha Tsui","尖沙咀海濱花園","","Gratis","","Symphony of Lights todos los días a las 20:00","22.2935","114.172"],
+ ["Hong Kong","Mercado nocturno de Temple Street","廟街夜市","Desde el atardecer","Gratis","","","22.3069","114.1699"],
+ ["Hong Kong","Avenida de las Estrellas","星光大道","","Gratis","","","22.293","114.174"]
+]).map((l,i)=>({ID:"l"+String(i+1).padStart(2,"0"),Ciudad:l.Ciudad,Nombre:l.Nombre,Chino:l.Chino,"Dirección":"",Horario:l.Horario,Precio:l.Precio,Reserva:l.Reserva,Notas:l.Notas,Lat:l.Lat,Lon:l.Lon}));
+
+/* ---------- Agenda propuesta: [hora, fin, qué, lugar, tipo, notas] ----------
+   Los vuelos y trenes NO van aquí: salen de la pestaña Transporte.
+   Lugar "Hotel" = el hotel de esa noche; "Hotel (salida)" = el que se deja ese día. */
+const AGENDA_BASE={
+ "2026-10-27":[
+  ["09:00","10:30","Inmigración, maletas y datos móviles","","traslado","Activad la eSIM y comprobad que Alipay funciona antes de salir del aeropuerto."],
+  ["10:30","12:00","Traslado al hotel y dejar maletas","Hotel","traslado","El check-in suele ser a partir de las 14:00; pedid que os guarden el equipaje."],
+  ["12:30","13:30","Comida cerca del hotel","","comida",""],
+  ["14:30","17:00","Templo del Cielo","Templo del Cielo","visita","Los edificios cierran antes que el parque: entrad primero al Salón de la Oración."],
+  ["18:30","20:00","Cena de pato laqueado","","comida","Conviene reservar mesa. Noche tranquila para el jet lag."]],
+ "2026-10-28":[
+  ["08:00","08:45","Plaza de Tiananmen","Plaza de Tiananmen","visita","Control de seguridad con pasaporte."],
+  ["08:45","12:30","Ciudad Prohibida","Ciudad Prohibida","visita","Se entra por el sur y se sale por el norte, frente al Parque Jingshan."],
+  ["12:30","13:30","Parque Jingshan","Parque Jingshan","visita","Desde el pabellón de arriba se ve toda la Ciudad Prohibida."],
+  ["13:30","14:30","Comida","","comida",""],
+  ["15:30","18:00","Tarde libre: lago Houhai y alrededores","","libre",""],
+  ["19:30","21:00","Cena","","comida",""]],
+ "2026-10-29":[
+  ["07:30","09:30","Traslado a Mutianyu","","traslado","Unos 70 km: entre 1 h 30 y 2 h según el tráfico."],
+  ["09:30","13:30","Gran Muralla en Mutianyu","Gran Muralla (Mutianyu)","visita","Se sube en teleférico o telesilla y se puede bajar en tobogán."],
+  ["13:30","14:30","Comida en Mutianyu","","comida",""],
+  ["14:30","16:30","Vuelta a Pekín","","traslado",""],
+  ["17:30","19:30","Hutongs","Hutongs (Nanluoguxiang)","visita",""],
+  ["19:30","21:00","Cena y maletas","","comida","Mañana sale el tren a Xi'an."]],
+ "2026-10-30":[
+  ["07:00","08:00","Checkout y traslado a la estación","Hotel (salida)","traslado","Hora orientativa: ajustadla al billete. Llegad 45 min antes; el pasaporte hace de billete."],
+  ["15:00","16:00","Llegada a Xi'an y check-in","Hotel","hotel","Hora orientativa: el tren bala tarda entre 4 h 30 y 6 h."],
+  ["16:30","18:30","Bici por la muralla","Muralla de Xi'an (Puerta Sur)","visita","La vuelta completa son unos 14 km, cerca de 2 h."],
+  ["19:00","21:00","Cena en el Barrio Musulmán","Barrio Musulmán","comida",""]],
+ "2026-10-31":[
+  ["07:30","08:00","Checkout y dejar maletas en el hotel","Hotel (salida)","hotel",""],
+  ["08:00","09:00","Traslado a los Guerreros de Terracota","","traslado","Unos 40 km al este, en Lintong."],
+  ["09:00","12:30","Guerreros de Terracota","Guerreros de Terracota","visita","Empezad por la Fosa 1, la más grande."],
+  ["12:30","13:30","Comida","","comida",""],
+  ["13:30","14:30","Vuelta a Xi'an","","traslado",""],
+  ["15:00","17:00","Torre de la Campana y alrededores","Torre de la Campana","libre",""],
+  ["17:30","18:00","Recoger maletas","Hotel (salida)","hotel",""],
+  ["18:00","19:00","Traslado al aeropuerto de Xi'an","","traslado","Cerca de 1 h. Conviene estar 2 h antes del vuelo."],
+  ["23:45","","Traslado al hotel de Shanghái","Hotel","traslado","Hora orientativa: depende de la llegada del vuelo."]],
+ "2026-11-01":[
+  ["09:30","11:30","Jardín Yuyuan y bazar","Jardín Yuyuan","visita","Adelantado desde el lunes, que es el día que cierra el jardín."],
+  ["11:30","13:00","Comida en el bazar de Yuyuan","","comida",""],
+  ["15:00","16:30","Paseo por el Bund","El Bund","visita",""],
+  ["16:30","18:30","Torre de Shanghái al atardecer","Torre de Shanghái","visita","Anochece sobre las 17:00."],
+  ["19:30","21:00","Cena y Bund iluminado","El Bund","comida",""]],
+ "2026-11-02":[
+  ["09:30","11:00","Templo del Buda de Jade","Templo del Buda de Jade","visita",""],
+  ["12:30","13:30","Comida","","comida",""],
+  ["15:00","18:00","Tarde libre: Nanjing Road y Plaza del Pueblo","","libre","El Jardín Yuyuan cierra los lunes; está pasado al domingo."],
+  ["19:30","21:00","Cena y maletas","","comida",""]],
+ "2026-11-03":[
+  ["08:00","10:00","Paseo por la Concesión Francesa","Concesión Francesa (Wukang Road)","visita","Mañana justa: el vuelo sale a las 13:15."],
+  ["10:15","10:30","Checkout","Hotel (salida)","hotel",""],
+  ["10:30","11:15","Traslado al aeropuerto","","traslado","Mirad en el billete si sale de Pudong o de Hongqiao."],
+  ["16:00","17:00","Traslado al hotel en Zhangjiajie","Hotel","traslado","Hora orientativa: depende de la llegada del vuelo."],
+  ["19:00","20:30","Cena","","comida",""]],
+ "2026-11-04":[
+  ["08:30","09:00","Teleférico de Tianmen","Montaña Tianmen","visita","La entrada va con franja horaria."],
+  ["09:00","13:30","Montaña Tianmen","Montaña Tianmen","visita","Pasarelas de cristal, templo y bajada a la Puerta del Cielo (999 escalones)."],
+  ["14:00","15:00","Comida","","comida",""],
+  ["16:00","19:00","Tarde libre","","libre",""]],
+ "2026-11-05":[
+  ["07:30","08:30","Traslado a la entrada del parque","Parque Forestal de Zhangjiajie","traslado","Del centro de Zhangjiajie a Wulingyuan hay unos 45 min."],
+  ["08:30","12:30","Yuanjiajie","Yuanjiajie","visita","La zona de los pilares de piedra. Llevad comida y agua."],
+  ["12:30","13:30","Comida en el parque","","comida",""],
+  ["13:30","17:00","Montaña Tianzi","Montaña Tianzi","visita","Se puede bajar en teleférico."],
+  ["19:00","20:30","Cena","","comida",""]],
+ "2026-11-06":[
+  ["08:00","08:45","Traslado al parque","Parque Forestal de Zhangjiajie","traslado",""],
+  ["08:45","11:30","Arroyo del Látigo Dorado","Arroyo del Látigo Dorado","visita","Paseo llano de unos 7 km por el fondo del valle."],
+  ["11:30","12:30","Ascensor Bailong","Ascensor Bailong","visita",""],
+  ["12:30","13:30","Comida","","comida",""],
+  ["13:30","16:30","Miradores de la zona alta","Yuanjiajie","visita",""],
+  ["19:00","20:30","Cena y maletas","","comida","Mañana toca madrugar: el tren directo a Guilin sale sobre las 7:12."]],
+ "2026-11-07":[
+  ["06:00","06:30","Checkout y traslado a la estación","Estación Zhangjiajie Oeste","traslado","Tren por reservar. El directo (D3967) sale sobre las 7:12 y tarda unas 7 h."],
+  ["14:30","16:30","Traslado de Guilin a Yangshuo","","traslado","Unos 65 km: alrededor de 1 h 30 en bus o DiDi."],
+  ["16:30","17:00","Check-in","Hotel","hotel",""],
+  ["18:30","20:30","Cena en la Calle Oeste","Calle Oeste de Yangshuo","comida","Los cruceros del río Li solo salen por la mañana desde Guilin; las balsas están pasadas a mañana."]],
+ "2026-11-08":[
+  ["08:30","09:15","Traslado a Xingping","Xingping","traslado",""],
+  ["09:30","11:30","Balsa por el río Li","Xingping","visita","El tramo de Xingping es el paisaje del billete de 20 yuanes."],
+  ["12:00","13:00","Comida en Xingping","","comida",""],
+  ["14:30","17:30","Bici por el valle del Yulong","Valle del río Yulong","visita","Colinas kársticas y arrozales."],
+  ["19:00","20:30","Cena","","comida",""]],
+ "2026-11-09":[
+  ["09:00","11:30","Colina de la Luna","Colina de la Luna","visita","Unos 800 escalones hasta el arco."],
+  ["11:30","12:30","Comida","","comida",""],
+  ["13:00","14:30","Traslado a Guilin","","traslado","La Cueva de la Flauta de Caña está en Guilin, a 1 h 30 de Yangshuo."],
+  ["15:00","16:30","Cueva de la Flauta de Caña","Cueva de la Flauta de Caña","visita",""],
+  ["16:30","18:00","Vuelta a Yangshuo","","traslado",""],
+  ["19:30","21:00","Cena","","comida",""]],
+ "2026-11-10":[
+  ["06:30","09:30","Checkout y traslado a Longji","Hotel (salida)","traslado","Unas 3 h desde Yangshuo. Llevad las maletas: desde allí se va directo a Guilin."],
+  ["09:30","13:00","Terrazas de arroz de Longji","Terrazas de Longji","visita","En noviembre el arroz ya está cosechado."],
+  ["13:00","14:00","Comida","","comida",""],
+  ["14:00","16:30","Traslado a la estación de Guilin","Estación de Guilin","traslado","Día muy justo: dejad margen antes del tren."],
+  ["21:00","22:00","Traslado al hotel en Shenzhen","Hotel","traslado","Hora orientativa: el tren bala tarda unas 3 h."]],
+ "2026-11-11":[
+  ["10:00","13:00","Mañana libre en Shenzhen","","libre",""],
+  ["13:00","14:00","Comida","","comida",""],
+  ["14:30","15:00","Checkout y traslado a la estación","Hotel (salida)","traslado","Tren por reservar. El control de frontera se pasa al llegar a West Kowloon."],
+  ["16:30","17:30","Check-in en Hong Kong","Hotel","hotel","Aquí se paga en dólares de Hong Kong."],
+  ["19:00","21:00","Paseo de Tsim Sha Tsui y cena","Paseo de Tsim Sha Tsui","comida",""]],
+ "2026-11-12":[
+  ["09:30","11:30","Monasterio de los 10.000 Budas","Monasterio de los 10.000 Budas","visita","Unos 400 escalones de subida."],
+  ["12:30","15:30","Mong Kok","Mong Kok","visita","Comida y mercados."],
+  ["16:30","19:00","Peak Tram y Pico Victoria","Peak Tram","visita","Subid antes del atardecer, sobre las 17:40."],
+  ["20:00","21:30","Cena","","comida",""]],
+ "2026-11-13":[
+  ["10:00","13:00","Mañana libre: Star Ferry y Central","","libre",""],
+  ["13:00","14:00","Comida","","comida",""],
+  ["15:00","18:00","Tarde libre","","libre",""],
+  ["20:00","20:15","Symphony of Lights","Paseo de Tsim Sha Tsui","visita","Todos los días a las 20:00."],
+  ["20:45","22:30","Mercado nocturno de Temple Street","Mercado nocturno de Temple Street","visita",""]],
+ "2026-11-14":[
+  ["09:30","10:30","Avenida de las Estrellas","Avenida de las Estrellas","visita",""],
+  ["10:30","13:00","Últimas compras","","libre",""],
+  ["13:00","14:00","Comida","","comida",""],
+  ["14:30","15:00","Checkout y recoger maletas","Hotel (salida)","hotel",""],
+  ["15:15","16:15","Traslado al aeropuerto","","traslado","El Airport Express tarda unos 25 min desde Kowloon. Conviene estar 3 h antes del vuelo."]]
+};
+const SEED_AGENDA=Object.entries(AGENDA_BASE).flatMap(([f,items])=>items.map((a,i)=>(
+  {ID:"a"+f.slice(5).replace("-","")+"-"+(i+1),Fecha:f,Hora:a[0],Fin:a[1],"Qué":a[2],Lugar:a[3],Tipo:a[4],Notas:a[5]})));
+
+/* ---------- Frases ---------- */
+const FRASES=[
+ ["Básico",[
+  ["Hola","你好","nǐ hǎo"],["Gracias","谢谢","xièxie"],["Perdone","不好意思","bù hǎoyìsi"],
+  ["No entiendo","我听不懂","wǒ tīng bù dǒng"],["Somos de España","我们是西班牙人","wǒmen shì Xībānyá rén"],
+  ["¿Dónde está el baño?","厕所在哪里？","cèsuǒ zài nǎlǐ?"]]],
+ ["Comer",[
+  ["Mesa para dos","两个人","liǎng ge rén"],["Quiero esto","我要这个","wǒ yào zhège"],
+  ["Sin picante","不要辣","bú yào là"],["Un poco picante","微辣","wēi là"],
+  ["No como carne","我不吃肉","wǒ bù chī ròu"],["Agua embotellada","矿泉水","kuàngquánshuǐ"],
+  ["Una cerveza","一瓶啤酒","yì píng píjiǔ"],["La cuenta, por favor","买单","mǎidān"]]],
+ ["Comprar y pagar",[
+  ["¿Cuánto cuesta?","多少钱？","duōshao qián?"],["Es muy caro","太贵了","tài guì le"],
+  ["¿Puedo pagar con Alipay?","可以用支付宝吗？","kěyǐ yòng Zhīfùbǎo ma?"],
+  ["¿Puedo pagar con tarjeta?","可以刷卡吗？","kěyǐ shuākǎ ma?"]]],
+ ["Moverse",[
+  ["Lléveme a esta dirección","请带我去这个地址","qǐng dài wǒ qù zhège dìzhǐ"],
+  ["Estación de tren","火车站","huǒchēzhàn"],["Aeropuerto","机场","jīchǎng"],["Metro","地铁站","dìtiě zhàn"],
+  ["Pare aquí, por favor","请在这里停","qǐng zài zhèlǐ tíng"]]],
+ ["Urgencias",[
+  ["Necesito ayuda","我需要帮助","wǒ xūyào bāngzhù"],["Necesito un médico","我需要看医生","wǒ xūyào kàn yīshēng"],
+  ["Hospital","医院","yīyuàn"],["Farmacia","药店","yàodiàn"],["Llame a la policía","请报警","qǐng bàojǐng"]]]
+];
+
+const CATEGORIAS=["Comida","Transporte","Entradas","Compras","Alojamiento","Otros"];
+const TIPOS={visita:"Visita",comida:"Comida",traslado:"Traslado",hotel:"Hotel",libre:"Libre",vuelo:"Vuelo",tren:"Tren"};
+const FX_INICIAL={CNY:7.5259,HKD:8.8084,date:"2026-10-02"};   // unidades por 1 EUR (BCE)
+
+/* ============================================================
+   APP
+   ============================================================ */
+const LS={
+  get(k){try{return localStorage.getItem(k)}catch(e){return null}},
+  set(k,v){try{localStorage.setItem(k,typeof v==="string"?v:JSON.stringify(v))}catch(e){}},
+  json(k){try{return JSON.parse(localStorage.getItem(k))}catch(e){return null}}
+};
+const API=API_FIJA;
+const PARAMS=new URLSearchParams(location.search);
+const FAKE=PARAMS.get("ahora");              // ?ahora=2026-10-28T10:30 para previsualizar un momento del viaje
+
+let SERVER=LS.json("china-server")||LS.json("china-data")||null;
+let QUEUE=LS.json("china-queue")||[];
+let FX=LS.json("china-fx")||FX_INICIAL;
+let WX=LS.json("china-wx")||{};
+let DATA,DIAS;
+let tab="hoy",resTab="hoteles",sel=null,selManual=false,dirty=false,flushing=false,syncEstado="";
+let gMon=null,gPag=null,gCat="Comida";
+let DOCS=new Set();
+let POS=null,geoVigia=null;                  // última posición conocida del móvil
+
+/* ---------- Ubicación ---------- */
+function distKm(a,b,c,d){
+  const r=Math.PI/180,x=Math.sin((c-a)*r/2)**2+Math.cos(a*r)*Math.cos(c*r)*Math.sin((d-b)*r/2)**2;
+  return 12742*Math.asin(Math.sqrt(x));
+}
+const kmTxt=k=>k<0.975?`${Math.max(50,Math.round(k*20)*50)} m`:k<10?`${k.toFixed(1).replace(".",",")} km`:`${Math.round(k)} km`;
+function ciudadGPS(){                         // la ciudad del viaje más cercana, si estáis a menos de 120 km
+  if(!POS) return null;
+  let m=null;
+  for(const k in CIUDADES){const c=CIUDADES[k],d=distKm(POS.lat,POS.lon,c.lat,c.lon);if(d<120&&(!m||d<m.d)) m={k,d}}
+  return m&&m.k;
+}
+function nuevaPos(lat,lon){
+  const mov=POS?distKm(POS.lat,POS.lon,lat,lon):9;
+  POS={lat,lon};
+  if(mov>0.05) repintarHoy();                 // solo si os habéis movido más de 50 m
+}
+function ubicar(pedida){
+  const f=PARAMS.get("pos");                  // ?pos=39.9163,116.3972 para previsualizar
+  if(f){const [a,b]=f.split(",").map(Number);return nuevaPos(a,b)}
+  if(!navigator.geolocation){if(pedida) aviso("Este navegador no da acceso a la ubicación.");return}
+  if(geoVigia!=null) return;
+  geoVigia=navigator.geolocation.watchPosition(p=>{LS.set("china-geo","1");nuevaPos(p.coords.latitude,p.coords.longitude)},
+    e=>{
+      navigator.geolocation.clearWatch(geoVigia);geoVigia=null;
+      if(e.code===1){LS.set("china-geo","");if(pedida) aviso("Permiso de ubicación denegado. Se cambia en Ajustes del iPhone.")}
+      else if(pedida) aviso("No se ha podido obtener la ubicación.");
+      renderAll();
+    },{enableHighAccuracy:true,maximumAge:60000,timeout:20000});
+}
+const geoActiva=()=>!!POS||geoVigia!=null;
+function repintarHoy(){
+  const a=document.activeElement;
+  if($("dlg").open||(a&&a.id==="diarioT")) return;
+  const v=$("diarioT")&&$("diarioT").value,s0=sel;
+  rHoy();
+  if(v!=null&&sel===s0) $("diarioT").value=v;
+  if(tab==="gastos"||tab==="kit") renderAll();
+}
+
+/* ---------- Utilidades ---------- */
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const limpio=v=>{v=String(v??"").trim();return v==="-"?"":v};
+const clon=o=>JSON.parse(JSON.stringify(o));
+const norm=s=>String(s??"").normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase().replace(/[^a-z0-9]/g,"");
+function num(v){
+  if(typeof v==="number") return v;
+  let s=String(v??"").replace(/[^\d,.-]/g,"");
+  if(s.includes(",")) s=s.replace(/\./g,"").replace(",",".");
+  const n=parseFloat(s); return isNaN(n)?null:n;
+}
+const eur=n=>n==null?"—":n.toLocaleString("es-ES",{style:"currency",currency:"EUR"});
+const dinero=(n,m)=>n==null?"—":n.toLocaleString("es-ES",{maximumFractionDigits:2})+" "+m;
+function toISO(v){
+  const s=String(v??"");
+  let m=s.match(/^(\d{4})-(\d{2})-(\d{2})/); if(m) return m[0];
+  m=s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);
+  return m?`${m[3]}-${m[2].padStart(2,"0")}-${m[1].padStart(2,"0")}`:null;
+}
+const D=s=>new Date(s+"T12:00:00");
+const isoDe=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+const fecha=(iso,o={day:"numeric",month:"short"})=>iso?D(iso).toLocaleDateString("es-ES",o):"";
+const diasEntre=(a,b)=>Math.round((D(b)-D(a))/864e5);
+function horaMin(v){const m=String(v??"").match(/^\s*(\d{1,2})[:.h](\d{2})/);return m?+m[1]*60+ +m[2]:null}
+const fmtMin=m=>m==null?"":`${String(Math.floor(m/60)%24).padStart(2,"0")}:${String(m%60).padStart(2,"0")}`;
+function durTxt(min){
+  if(min<1) return "ahora";
+  if(min<60) return `${min} min`;
+  const h=Math.floor(min/60),m=min%60;
+  if(h<24) return m?`${h} h ${m} min`:`${h} h`;
+  const d=Math.floor(h/24); return d===1?"1 día":`${d} días`;
+}
+function claveCiudad(c){const k=norm(c);return ALIAS_CIUDAD[k]||k}
+function ciudad(c){return CIUDADES[claveCiudad(c)]||{n:limpio(c)||"Viaje",zh:"",c:"#3D4652",lat:null,lon:null,mon:"CNY"}}
+const v2=()=>((SERVER&&SERVER.version)||1)>=2;
+const partes=s=>limpio(s).split(/,\s*(?![^()]*\))/).map(x=>x.trim()).filter(Boolean);
+const sinHotel=h=>!limpio(h.Hotel)||/por reservar/i.test(h.Hotel);
+const noches=h=>{const a=toISO(h["Check-in"]),b=toISO(h["Check-out"]);return a&&b?diasEntre(a,b):(num(h.Noches)||0)};
+const ajuste=(k,def)=>{const a=DATA.ajustes.find(x=>x.ID===k);return a&&limpio(a.Valor)?a.Valor:def};
+const personas=()=>[ajuste("p1","Sergio"),ajuste("p2","Pareja")];
+
+/* Hora de China (Pekín y Hong Kong comparten huso, UTC+8, sin cambio de hora) */
+function ahoraCN(){
+  if(FAKE){const [d,t="12:00"]=FAKE.split("T");const [h,m]=t.split(":");return {iso:d,min:+h*60+ +m}}
+  const p=new Intl.DateTimeFormat("en-CA",{timeZone:"Asia/Shanghai",year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit",hourCycle:"h23"}).formatToParts(new Date());
+  const g=t=>p.find(x=>x.type===t).value;
+  return {iso:`${g("year")}-${g("month")}-${g("day")}`,min:+g("hour")*60+ +g("minute")};
+}
+function horaMadrid(now){
+  if(FAKE) return fmtMin((now.min+17*60)%1440);          // en noviembre, 7 h menos
+  return new Intl.DateTimeFormat("es-ES",{timeZone:"Europe/Madrid",hour:"2-digit",minute:"2-digit",hourCycle:"h23"}).format(new Date());
+}
+
+/* ---------- Estado: última copia de la hoja + cambios aún sin enviar ---------- */
+const TABLA={Agenda:"agenda",Lugares:"lugares",Gastos:"gastos",Diario:"diario",Ajustes:"ajustes"};
+const SOLO_V2=new Set(["upsert","remove","seed"]);
+
+function aplicar(d,op){
+  if(op.action==="update"){
+    const r=(d[op.sheet.toLowerCase()]||[]).find(x=>x._row===op.row);
+    if(r) Object.assign(r,op.values);
+  }else if(op.action==="check"){
+    const r=d.checklist.find(x=>x._row===op.row); if(r) r.Hecho=op.done;
+  }else if(op.action==="addTask"){
+    if(!d.checklist.some(c=>c.Tarea===op.text)) d.checklist.push({Tarea:op.text,Hecho:false});
+  }else if(op.action==="upsert"){
+    const L=d[TABLA[op.sheet]],r=L.find(x=>x.ID===op.id);
+    if(r) Object.assign(r,op.values); else L.push({ID:op.id,...op.values});
+  }else if(op.action==="remove"){
+    const k=TABLA[op.sheet]; d[k]=d[k].filter(x=>x.ID!==op.id);
+  }
+}
+function rebuild(){
+  const d=clon(SERVER||INICIAL),nuevo=(d.version||1)>=2;
+  for(const k of ["itinerario","alojamiento","transporte","checklist","gastos","diario","ajustes"]) d[k]=d[k]||[];
+  d.agenda=nuevo&&d.agenda&&d.agenda.length?d.agenda:clon(SEED_AGENDA);
+  d.lugares=nuevo&&d.lugares&&d.lugares.length?d.lugares:clon(SEED_LUGARES);
+  QUEUE.forEach(op=>aplicar(d,op));
+  DATA=d;
+  const ini=toISO(d.alojamiento[0]&&d.alojamiento[0]["Check-in"])||"2026-10-27";
+  DIAS=d.itinerario.map((x,i)=>{
+    let iso=toISO(x.Fecha);
+    if(!iso){const t=D(ini);t.setDate(t.getDate()+i);iso=isoDe(t)}
+    return {...x,iso,ck:claveCiudad(x.Ciudad)};
+  });
+}
+const guardaCola=()=>LS.set("china-queue",QUEUE);
+function recibe(j){
+  SERVER=j; LS.set("china-server",j); LS.set("china-ts",String(Date.now()));
+  if((j.version||1)>=2){          // primera vez con las pestañas nuevas vacías: se rellenan con la propuesta
+    for(const [hoja,rows] of [["Lugares",SEED_LUGARES],["Agenda",SEED_AGENDA]]){
+      if(!(j[TABLA[hoja]]||[]).length&&!QUEUE.some(o=>o.action==="seed"&&o.sheet===hoja))
+        QUEUE.unshift({action:"seed",sheet:hoja,rows});
+    }
+    guardaCola();
+  }
+}
+function mutar(op){
+  QUEUE.push(op); guardaCola(); rebuild(); renderAll(true); enviar();
+}
+async function enviar(){
+  if(flushing||!QUEUE.length) return;
+  flushing=true;
+  try{
+    let i=0;
+    while(i<QUEUE.length){
+      const op=QUEUE[i];
+      if(SOLO_V2.has(op.action)&&!v2()){i++;continue}       // espera a que se actualice el script
+      let j;
+      try{
+        const r=await fetch(API,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(op)});
+        j=await r.json();
+      }catch(e){syncEstado="sin";break}
+      QUEUE.splice(i,1); guardaCola();
+      if(j&&j.error) aviso("Un cambio no se ha guardado: "+j.error);
+      else if(j&&j.itinerario){recibe(j);syncEstado=""}
+    }
+  }finally{flushing=false; rebuild(); renderAll()}
+}
+async function sincronizar(manual){
+  syncEstado="…"; if(manual) rKit();
+  try{
+    const r=await fetch(API+"?t="+Date.now());
+    const j=await r.json();
+    if(!j||j.error||!j.itinerario) throw new Error(j&&j.error||"Respuesta no válida");
+    recibe(j); syncEstado=""; rebuild(); renderAll();
+    if(manual) aviso("Datos actualizados");
+  }catch(e){
+    syncEstado="sin"; renderAll();
+    if(manual) aviso("Sin conexión con la hoja. Se muestra la última copia.");
+  }
+  enviar();
+}
+const pendientes=()=>QUEUE.filter(o=>o.action!=="seed").length;
+
+/* ---------- Consultas sobre el viaje ---------- */
+const hotelNoche=iso=>DATA.alojamiento.find(h=>{const a=toISO(h["Check-in"]),b=toISO(h["Check-out"]);return a&&b&&a<=iso&&iso<b});
+const hotelSalida=iso=>DATA.alojamiento.find(h=>toISO(h["Check-out"])===iso);
+function lugarHotel(h){
+  const c=ciudad(h.Ciudad);
+  return {nombre:sinHotel(h)?"Hotel en "+h.Ciudad:h.Hotel,dir:limpio(h["Dirección (chino)"]),hotel:true,sin:sinHotel(h),
+    lat:c.lat,lon:c.lon,czh:c.zh,loc:limpio(h.Localizador)};
+}
+function lugarDe(nombre,iso){
+  const n=limpio(nombre); if(!n) return null;
+  if(/^hotel(\s*\(salida\))?$/i.test(n)){
+    const h=/salida/i.test(n)?hotelSalida(iso):hotelNoche(iso);
+    return h?lugarHotel(h):null;
+  }
+  const k=norm(n),l=DATA.lugares.find(x=>norm(x.Nombre)===k);
+  if(!l) return {nombre:n};
+  return {nombre:l.Nombre,zh:limpio(l.Chino),dir:limpio(l["Dirección"]),horario:limpio(l.Horario),precio:limpio(l.Precio),
+    reserva:limpio(l.Reserva),notas:limpio(l.Notas),lat:parseFloat(l.Lat)||null,lon:parseFloat(l.Lon)||null};
+}
+function urlMapas(p){
+  const q=p.zh||p.dir||(p.hotel?`${p.nombre} ${p.czh||""}`:p.nombre);
+  return "https://maps.apple.com/?q="+encodeURIComponent(q.trim())+(p.lat?`&sll=${p.lat},${p.lon}`:"");
+}
+function itemsDia(iso){
+  const out=[];
+  DATA.agenda.forEach(a=>{
+    if(toISO(a.Fecha)!==iso) return;
+    out.push({k:"ag:"+a.ID,t:horaMin(a.Hora),fin:horaMin(a.Fin),titulo:limpio(a["Qué"])||"Sin título",tipo:norm(a.Tipo)||"visita",
+      notas:limpio(a.Notas),lugar:lugarDe(a.Lugar,iso),a});
+  });
+  DATA.transporte.forEach((t,i)=>{
+    if(toISO(t.Fecha)!==iso) return;
+    const s=horaMin(t.Salida),l=horaMin(t.Llegada),soloLlegada=s==null&&l!=null;
+    const extra=[!soloLlegada&&s==null&&limpio(t.Salida)?"Salida: "+t.Salida:"",s==null&&l==null&&!limpio(t.Salida)?"Hora por confirmar":"",
+      limpio(t["Nº vuelo/tren"]),limpio(t.Localizador)?"Localizador "+t.Localizador:"",limpio(t.Estado)==="Pendiente"?"Por reservar":""].filter(Boolean).join(". ");
+    out.push({k:"tr:"+i,t:soloLlegada?l:s,fin:!soloLlegada&&l!=null&&l>s?l:null,
+      titulo:(soloLlegada?"Llegada: ":"")+`${t.Tipo} ${t.Origen} → ${t.Destino}`,tipo:/vuelo/i.test(t.Tipo)?"vuelo":"tren",notas:extra,tr:t});
+  });
+  return out.sort((a,b)=>(a.t??-1)-(b.t??-1));
+}
+function proximoTrayecto(now){
+  let mejor=null;
+  DATA.transporte.forEach(t=>{
+    const iso=toISO(t.Fecha),s=horaMin(t.Salida); if(!iso) return;
+    if(iso<now.iso||(iso===now.iso&&(s??1440)<=now.min)) return;
+    const falta=diasEntre(now.iso,iso)*1440+(s??720)-now.min;
+    if(!mejor||falta<mejor.falta) mejor={t,iso,s,falta};
+  });
+  return mejor;
+}
+function diaActual(now){return DIAS.findIndex(d=>d.iso===now.iso)}
+
+/* ---------- Clima (Open-Meteo, hasta 16 días vista) ---------- */
+const climaOcupado={};
+async function pedirClima(ck){
+  const c=CIUDADES[ck]; if(!c||climaOcupado[ck]) return;
+  const w=WX[ck]; if(w&&Date.now()-w.ts<3*3600e3) return;
+  climaOcupado[ck]=1;
+  try{
+    const r=await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${c.lat}&longitude=${c.lon}&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max&timezone=Asia%2FShanghai&forecast_days=16`);
+    const j=await r.json();
+    if(j.daily){WX[ck]={ts:Date.now(),d:j.daily};LS.set("china-wx",WX);renderAll()}
+  }catch(e){}finally{climaOcupado[ck]=0}
+}
+function climaDia(ck,iso){
+  const w=WX[ck]; if(!w||!w.d||!w.d.time) return null;
+  const i=w.d.time.indexOf(iso); if(i<0) return null;
+  const code=w.d.weather_code[i];
+  const [ico,txt]=code===0?["☀️","Despejado"]:code<3?["🌤️","Poco nuboso"]:code===3?["☁️","Nublado"]:code<50?["🌫️","Niebla"]:
+    code<58?["🌦️","Llovizna"]:code<68?["🌧️","Lluvia"]:code<78?["❄️","Nieve"]:code<83?["🌧️","Chubascos"]:code<87?["❄️","Nieve"]:["⛈️","Tormenta"];
+  return {ico,txt,max:Math.round(w.d.temperature_2m_max[i]),min:Math.round(w.d.temperature_2m_min[i]),pp:w.d.precipitation_probability_max[i]};
+}
+async function pedirCambio(){
+  if(FX.ts&&Date.now()-FX.ts<12*3600e3) return;
+  try{
+    const r=await fetch("https://api.frankfurter.dev/v1/latest?base=EUR&symbols=CNY,HKD");
+    const j=await r.json();
+    if(j.rates&&j.rates.CNY){FX={CNY:j.rates.CNY,HKD:j.rates.HKD,date:j.date,ts:Date.now()};LS.set("china-fx",FX);renderAll()}
+  }catch(e){}
+}
+const aEUR=(n,m)=>m==="EUR"?n:n/(FX[m]||1);
+
+/* ---------- Avisos, hoja inferior y pantalla grande ---------- */
+let avisoT;
+function aviso(t){const a=$("aviso");a.textContent=t;a.classList.add("on");clearTimeout(avisoT);avisoT=setTimeout(()=>a.classList.remove("on"),3500)}
+function hoja(html){$("dlgB").innerHTML=html;if(!$("dlg").open)$("dlg").showModal();$("dlgB").scrollTop=0}
+const cerrarHoja=()=>{if($("dlg").open)$("dlg").close()};
+function grande(zh,sub,pinyin){
+  $("grande").innerHTML=`<button class="x" data-act="cerrar-grande" aria-label="Cerrar">Cerrar</button>
+    <div class="gz ${[...zh].length>14?"lg":""}">${esc(zh)}</div>${pinyin?`<div class="gp">${esc(pinyin)}</div>`:""}<div class="gs">${esc(sub||"")}</div>`;
+  $("grande").classList.add("on");
+}
+function taxista(p){
+  cerrarHoja();
+  if(p.zh||p.dir) grande("请带我去这里\n"+[p.zh,p.dir].filter(Boolean).join("\n"),p.nombre+". «Lléveme aquí, por favor»");
+  else grande((p.czh?p.czh+"\n":"")+p.nombre,p.hotel?"Falta la dirección en chino: añádela en Reservas para enseñársela al taxista.":p.nombre);
+}
+
+/* ---------- HOY ---------- */
+const ICO={visita:"📍",comida:"🍜",traslado:"🚕",hotel:"🛏️",libre:"☕",vuelo:"✈️",tren:"🚄"};
+function rHoy(){
+  const now=ahoraCN(),hoyI=diaActual(now);
+  if(sel==null||(!selManual&&hoyI>=0)) sel=hoyI>=0?hoyI:(now.iso>DIAS[DIAS.length-1].iso?DIAS.length-1:0);
+  sel=Math.min(sel,DIAS.length-1);
+  const d=DIAS[sel],c=ciudad(d.Ciudad),esHoy=d.iso===now.iso,items=itemsDia(d.iso);
+  document.documentElement.style.setProperty("--c",c.c);
+  const meta=document.querySelector('meta[name="theme-color"]'); if(meta) meta.content=c.c;
+  const falta=diasEntre(now.iso,DIAS[0].iso);
+  if(Math.abs(diasEntre(now.iso,d.iso))<=15&&!FAKE) pedirClima(d.ck);
+  const w=climaDia(d.ck,d.iso);
+  const gk=ciudadGPS(),conSitio=p=>p&&p.lat&&!p.hotel;
+  const dist=p=>POS&&conSitio(p)?distKm(POS.lat,POS.lon,p.lat,p.lon):null;
+  let aqui=null;                              // plan de hoy en cuyo lugar estáis (a menos de 600 m)
+  if(esHoy&&POS){
+    aqui=items.filter(x=>dist(x.lugar)!=null&&dist(x.lugar)<=0.6)
+      .sort((a,b)=>Math.abs((a.t??0)-now.min)-Math.abs((b.t??0)-now.min))[0]||null;
+  }
+
+  const cuando=esHoy?"Hoy":falta>0&&sel===0?(falta===1?"Mañana empieza":`Faltan ${falta} días`):d.iso<now.iso?"Ya pasó":"";
+  let html=`<div class="hero">
+    <div class="hz ${[...c.zh].length>2?"l3":""}" aria-hidden="true">${esc(c.zh)}</div>
+    <p class="hd">Día ${sel+1} de ${DIAS.length}${cuando?`<span>${cuando}</span>`:""}</p>
+    <h1>${esc(c.n)}</h1>
+    <p class="hf">${fecha(d.iso,{weekday:"long",day:"numeric",month:"long"})}</p>
+    <div class="hm">
+      ${w?`<span>${w.ico} ${w.max}° / ${w.min}°${w.pp!=null?`, lluvia ${w.pp}%`:""}</span>`:""}
+      <span>China ${fmtMin(now.min)}</span><span>Madrid ${horaMadrid(now)}</span>
+    </div>
+  </div>
+  <div class="tira" id="tira">${DIAS.map((x,i)=>`<button data-dia="${i}" class="${i===sel?"on":""}${x.iso===now.iso?" hoy":""}" style="--dc:${ciudad(x.Ciudad).c}" aria-label="Día ${i+1}, ${esc(x.Ciudad)}">
+      <span>${fecha(x.iso,{weekday:"short"}).slice(0,2)}</span><b>${D(x.iso).getDate()}</b><i></i></button>`).join("")}</div>
+  <div class="pad">`;
+
+  /* La ubicación manda sobre el plan */
+  if(esHoy&&gk&&gk!==d.ck){
+    const otro=DIAS.findIndex(x=>x.ck===gk&&x.iso>=now.iso),ir=otro>=0?otro:DIAS.findIndex(x=>x.ck===gk);
+    html+=`<p class="alerta">Estáis en ${esc(CIUDADES[gk].n)}, pero el plan de hoy es ${esc(c.n)}.
+      ${ir>=0?`<button class="enl" data-ir="${ir}">Ver el plan de ${esc(CIUDADES[gk].n)}</button>`:""}</p>`;
+  }
+
+  /* Ahora y después */
+  if(esHoy){
+    const conHora=items.filter(x=>x.t!=null);
+    const porReloj=[...conHora].reverse().find(x=>x.t<=now.min&&now.min<(x.fin??(conHora[conHora.indexOf(x)+1]||{}).t??x.t+60));
+    const actual=aqui||porReloj;
+    const sig=aqui?conHora[conHora.indexOf(aqui)+1]:conHora.find(x=>x.t>now.min),tr=proximoTrayecto(now);   // estando en un sitio, lo siguiente es lo que va detrás en el plan
+    const dSig=sig?dist(sig.lugar):null;
+    html+=`<div class="ahora">
+      ${actual?`<div><small>${aqui?"Estáis aquí":"Ahora"}</small><b>${esc(actual.titulo)}</b>${actual.fin&&actual.fin>now.min?`<em>hasta las ${fmtMin(actual.fin)}</em>`:""}</div>`
+              :`<div><small>Ahora</small><b>${sig?"Tiempo libre":"Fin del plan de hoy"}</b></div>`}
+      ${sig?`<div><small>${sig.t>now.min?`Después, en ${durTxt(sig.t-now.min)}`:`Después. Vais ${durTxt(now.min-sig.t)} por detrás del plan`}</small><b>${esc(sig.titulo)}</b><em>a las ${fmtMin(sig.t)}${dSig!=null&&dSig<150?`, a ${kmTxt(dSig)} de aquí`:""}</em></div>`:""}
+      ${tr?`<div class="tr"><small>Próximo trayecto, en ${durTxt(tr.falta)}</small><b>${esc(tr.t.Origen)} → ${esc(tr.t.Destino)}</b>
+        <em>${fecha(tr.iso,{weekday:"short",day:"numeric",month:"short"})}${tr.s!=null?" a las "+fmtMin(tr.s):""}</em></div>`:""}
+    </div>`;
+  }
+
+  /* Línea de tiempo */
+  html+=`<div class="tl">`;
+  let marcado=false;
+  items.forEach((x,i)=>{
+    const fin=x.fin??(items[i+1]&&items[i+1].t)??(x.t!=null?x.t+60:null);
+    const est=!esHoy||x.t==null?"":aqui?(x===aqui?"cur":x.t<(aqui.t??0)?"pas":""):now.min>=fin?"pas":now.min>=x.t?"cur":"";
+    const dx=esHoy&&est!=="pas"&&x!==aqui?dist(x.lugar):null;
+    if(esHoy&&!marcado&&x.t!=null&&x.t>now.min){marcado=true;html+=`<div class="now"><span>${fmtMin(now.min)}</span><i></i></div>`}
+    const p=x.lugar;
+    html+=`<button class="it ${est} t-${x.tipo}" data-item="${esc(x.k)}">
+      <span class="h">${x.t!=null?fmtMin(x.t):"--:--"}${x.fin!=null?`<small>${fmtMin(x.fin)}</small>`:""}</span>
+      <span class="r"><i>${ICO[x.tipo]||"•"}</i></span>
+      <span class="b"><b>${esc(x.titulo)}</b>${p&&p.zh?`<span class="zh">${esc(p.zh)}</span>`:""}
+        ${p&&p.hotel?`<span class="n">${esc(p.nombre)}</span>`:""}${x.notas?`<span class="n">${esc(x.notas)}</span>`:""}
+        ${dx!=null&&dx<150?`<span class="n km">A ${kmTxt(dx)} de aquí</span>`:""}</span>
+    </button>`;
+  });
+  if(!items.length) html+=`<p class="vacio">Este día aún no tiene plan. Añade lo primero que vayáis a hacer.</p>`;
+  html+=`</div><button class="btn linea" data-act="nuevo-agenda">Añadir a la agenda</button>
+    ${geoActiva()?"":`<button class="enl" data-act="geo">Usar mi ubicación para ajustar el plan</button>`}`;
+
+  /* Dónde se duerme */
+  const h=hotelNoche(d.iso);
+  if(h){
+    const p=lugarHotel(h);
+    html+=`<h2>Esta noche</h2><div class="fila">
+      <div><b>${esc(p.nombre)}</b>${p.dir?`<span class="zh">${esc(p.dir)}</span>`:""}
+        <span class="n">${p.sin?"Hotel por reservar":`Salida el ${fecha(toISO(h["Check-out"]),{weekday:"long",day:"numeric"})}`}${p.loc?". Localizador "+esc(p.loc):""}</span></div>
+      ${p.sin?"":`<div class="acc"><button class="btn sm" data-taxi-hotel="${h._row||""}" data-hk="${esc(h.Ciudad)}">Taxista</button>
+        <a class="btn sm" href="${esc(urlMapas(p))}" target="_blank" rel="noopener">Mapas</a></div>`}
+    </div>`;
+  }
+
+  /* Diario */
+  const nota=DATA.diario.find(x=>toISO(x.Fecha)===d.iso);
+  html+=`<h2>Diario del día</h2>
+    <form data-form="diario" class="diario"><textarea id="diarioT" rows="3" placeholder="Lo mejor de hoy, lo que no queréis olvidar…">${esc(nota?nota.Nota:"")}</textarea>
+    <button class="btn">Guardar nota</button></form></div>`;
+
+  $("hoy").innerHTML=html;
+  const b=$("tira").querySelector(".on"); if(b) $("tira").scrollLeft=b.offsetLeft-$("tira").clientWidth/2+b.offsetWidth/2;
+}
+
+function detalleItem(k){
+  const d=DIAS[sel],x=itemsDia(d.iso).find(i=>i.k===k); if(!x) return;
+  const p=x.lugar;
+  let html=`<p class="dk">${TIPOS[x.tipo]||"Plan"}, ${fecha(d.iso,{weekday:"long",day:"numeric",month:"long"})}</p>
+    <h3>${esc(x.titulo)}</h3>
+    <p class="dh">${x.t!=null?fmtMin(x.t):"Hora por confirmar"}${x.fin!=null?" a "+fmtMin(x.fin):""}</p>
+    ${x.notas?`<p>${esc(x.notas)}</p>`:""}`;
+  if(p&&(p.zh||p.dir||p.horario||p.precio||p.reserva||p.notas||p.hotel)){
+    html+=`<div class="lugar">${p.zh?`<div class="zhG">${esc(p.zh)}</div>`:""}
+      <b>${esc(p.nombre)}</b>${p.dir?`<div class="zh">${esc(p.dir)}</div>`:""}
+      <dl>${p.horario?`<dt>Horario</dt><dd>${esc(p.horario)}</dd>`:""}${p.precio?`<dt>Precio</dt><dd>${esc(p.precio)}</dd>`:""}
+        ${p.reserva?`<dt>Reserva</dt><dd>${esc(p.reserva)}</dd>`:""}${p.notas?`<dt>Nota</dt><dd>${esc(p.notas)}</dd>`:""}
+        ${p.loc?`<dt>Localizador</dt><dd>${esc(p.loc)}</dd>`:""}</dl>
+      ${p.horario||p.precio?`<p class="n">Horarios y precios orientativos: confirmadlos antes de ir.</p>`:""}</div>`;
+  }
+  html+=`<div class="btns">`;
+  if(p&&!p.sin&&(p.zh||p.dir||p.hotel)){
+    html+=`<a class="btn pri" href="${esc(urlMapas(p))}" target="_blank" rel="noopener">Abrir en Mapas</a>
+      <button class="btn" data-taxi-item="${esc(k)}">Enseñar al taxista</button>`;
+  }
+  if(x.a) html+=`<button class="btn" data-editar-agenda="${esc(x.a.ID)}">Editar</button><button class="btn peligro" data-borrar-agenda="${esc(x.a.ID)}">Borrar</button>`;
+  if(x.tr&&x.tr._row) html+=`<button class="btn" data-edit="Transporte" data-row="${x.tr._row}">Editar trayecto</button>`;
+  html+=`<button class="btn" data-act="cerrar">Cerrar</button></div>`;
+  hoja(html);
+}
+function formAgenda(id){
+  const a=id?DATA.agenda.find(x=>x.ID===id):null,d=DIAS[sel];
+  hoja(`<form data-form="agenda" data-id="${esc(id||"")}">
+    <h3>${a?"Editar plan":"Añadir a la agenda"}</h3><p class="dk">${fecha(d.iso,{weekday:"long",day:"numeric",month:"long"})}, ${esc(d.Ciudad)}</p>
+    <div class="dos"><div><label for="aH">Empieza</label><input id="aH" type="time" value="${esc(a?fmtMin(horaMin(a.Hora)):"")}" required></div>
+      <div><label for="aF">Termina</label><input id="aF" type="time" value="${esc(a?fmtMin(horaMin(a.Fin)):"")}"></div></div>
+    <label for="aQ">Qué</label><input id="aQ" type="text" value="${esc(a?a["Qué"]:"")}" required>
+    <label for="aL">Lugar</label><input id="aL" type="text" list="lugaresL" value="${esc(a?a.Lugar:"")}" placeholder="Opcional">
+    <datalist id="lugaresL"><option value="Hotel"><option value="Hotel (salida)">${DATA.lugares.filter(l=>claveCiudad(l.Ciudad)===d.ck).map(l=>`<option value="${esc(l.Nombre)}">`).join("")}</datalist>
+    <label for="aT">Tipo</label><select id="aT">${["visita","comida","traslado","hotel","libre"].map(t=>`<option value="${t}" ${a&&norm(a.Tipo)===t?"selected":""}>${TIPOS[t]}</option>`).join("")}</select>
+    <label for="aN">Notas</label><textarea id="aN" rows="3">${esc(a?a.Notas:"")}</textarea>
+    <div class="btns"><button type="button" class="btn" data-act="cerrar">Cancelar</button><button class="btn pri">Guardar</button></div></form>`);
+}
+
+/* ---------- VIAJE ---------- */
+function mapaRuta(now){
+  const ks=[...new Set(DIAS.map(d=>d.ck))].filter(k=>CIUDADES[k]);
+  const X=lon=>(lon-101)/22.5*290+20+(lon>114.1&&lon<114.3?9:0),Y=lat=>(41.2-lat)/20.4*330+20+(lat>22.2&&lat<22.4?9:0);   // Hong Kong se separa un poco de Shenzhen
+  const pos={pekin:[12,5,"start"],xian:[-12,5,"end"],shanghai:[12,5,"start"],zhangjiajie:[-12,5,"end"],yangshuo:[-12,5,"end"],shenzhen:[-12,0,"end"],hongkong:[13,8,"start"]};
+  const hoyK=(DIAS[diaActual(now)]||{}).ck;
+  let s=`<svg viewBox="0 0 400 372" role="img" aria-label="Mapa esquemático de la ruta">`;
+  ks.forEach((k,i)=>{
+    if(!i) return;
+    const a=CIUDADES[ks[i-1]],b=CIUDADES[k],t=DATA.transporte.find(t=>claveCiudad(t.Destino)===k);
+    const vuelo=t&&/vuelo/i.test(t.Tipo),x1=X(a.lon),y1=Y(a.lat),x2=X(b.lon),y2=Y(b.lat);
+    const mx=(x1+x2)/2+(vuelo?(y2-y1)*.18:0),my=(y1+y2)/2-(vuelo?(x2-x1)*.18:0);
+    s+=`<path d="M${x1},${y1} Q${mx},${my} ${x2},${y2}" class="${vuelo?"vu":"tr"}"/>`;
+  });
+  ks.forEach((k,i)=>{
+    const c=CIUDADES[k],x=X(c.lon),y=Y(c.lat),[dx,dy,an]=pos[k]||[12,5,"start"];
+    s+=`${k===hoyK?`<circle cx="${x}" cy="${y}" r="13" fill="${c.c}" opacity=".2"/>`:""}
+      <circle cx="${x}" cy="${y}" r="7" fill="${c.c}"/><text x="${x}" y="${y+3.5}" class="nn">${i+1}</text>
+      <text x="${x+dx}" y="${y+dy}" text-anchor="${an}" class="cn">${esc(c.n)} <tspan class="cz">${c.zh}</tspan></text>`;
+  });
+  return s+`</svg><p class="ley"><span><i class="l1"></i>Tren</span><span><i class="l2"></i>Vuelo</span></p>`;
+}
+function rViaje(){
+  const now=ahoraCN(),H=DATA.alojamiento,T=DATA.transporte,hoyI=diaActual(now);
+  const falta=diasEntre(now.iso,DIAS[0].iso);
+  const tH=H.reduce((s,h)=>s+(num(h["Precio total"])||0),0),tT=T.reduce((s,t)=>s+(num(t.Precio)||0),0);
+  const nTot=H.reduce((s,h)=>s+noches(h),0)||1,nOk=H.filter(h=>h.Estado==="Reservado").reduce((s,h)=>s+noches(h),0);
+  const pend=[...H.filter(h=>h.Estado==="Pendiente").map(h=>`Hotel en ${h.Ciudad}, ${noches(h)} ${noches(h)===1?"noche":"noches"} desde el ${fecha(toISO(h["Check-in"]))}`),
+    ...T.filter(t=>t.Estado==="Pendiente").map(t=>`${t.Tipo} ${t.Origen} → ${t.Destino}, ${fecha(toISO(t.Fecha))}`)];
+  let html=`<div class="cab"><h1>El viaje</h1>
+    <p>${falta>0?`Faltan ${falta} ${falta===1?"día":"días"} para salir`:hoyI>=0?`Día ${hoyI+1} de ${DIAS.length}`:"Viaje terminado"}.
+      ${fecha(DIAS[0].iso,{day:"numeric",month:"long"})} a ${fecha(DIAS[DIAS.length-1].iso,{day:"numeric",month:"long"})}.</p></div><div class="pad">
+    <div class="mapa">${mapaRuta(now)}</div>
+    <h2>Por reservar</h2>
+    ${pend.length?`<ul class="lista">${pend.map(p=>`<li>${esc(p)}</li>`).join("")}</ul>`:`<p class="n">Todo reservado.</p>`}
+    <div class="prog"><div><span>Noches con hotel</span><b>${nOk} de ${nTot}</b></div><div class="bar"><i style="width:${nOk/nTot*100}%"></i></div></div>
+    <p class="n">Reservado hasta ahora: ${eur(tH+tT)} (${eur(tH)} en hoteles y ${eur(tT)} en trayectos).</p>
+    <h2>Día a día</h2>`;
+  let prev=null;
+  DIAS.forEach((d,i)=>{
+    const c=ciudad(d.Ciudad);
+    if(d.ck!==prev){prev=d.ck;html+=`<h3 class="cd" style="--dc:${c.c}"><span>${esc(c.zh)}</span>${esc(c.n)}</h3>`}
+    const a=partes(d["Actividades Principales"]);
+    html+=`<div class="dia ${d.iso===now.iso?"hoy":d.iso<now.iso?"pas":""}" style="--dc:${c.c}">
+      <button class="dd" data-ir="${i}"><b>${D(d.iso).getDate()}</b><span>${fecha(d.iso,{weekday:"short"})}</span></button>
+      <div>${a.length?esc(a.join(", ")):`<span class="n">Sin actividades</span>`}
+        ${limpio(d["Transporte del día"])?`<span class="n">${esc(d["Transporte del día"])}</span>`:""}
+        ${d._row?`<button class="enl" data-edit="Itinerario" data-row="${d._row}">Editar</button>`:""}</div></div>`;
+  });
+  $("viaje").innerHTML=html+`</div>`;
+}
+
+/* ---------- RESERVAS ---------- */
+const claveDoc=(hoja,r)=>`${hoja}:${r._k||""}:${r.Ciudad||r.Origen||""}`;
+function botonesDoc(k){
+  return DOCS.has(k)?`<button class="btn sm" data-ver-doc="${esc(k)}">Ver billete</button><button class="btn sm" data-quitar-doc="${esc(k)}">Quitar</button>`
+    :`<label class="btn sm">Adjuntar billete<input type="file" accept="image/*,application/pdf" data-doc="${esc(k)}" hidden></label>`;
+}
+function rReservas(){
+  let html=`<div class="cab"><h1>Reservas</h1>
+    <div class="seg"><button data-res="hoteles" class="${resTab==="hoteles"?"on":""}">Hoteles</button><button data-res="transporte" class="${resTab==="transporte"?"on":""}">Transporte</button></div></div><div class="pad">`;
+  if(resTab==="hoteles"){
+    html+=DATA.alojamiento.map(h=>{
+      const n=noches(h),p=num(h["Precio total"]),c=ciudad(h.Ciudad),lg=lugarHotel(h),sin=sinHotel(h);
+      return `<article class="res" style="--dc:${c.c}">
+        <header><div><h3>${esc(h.Ciudad)} <span class="zh">${esc(c.zh)}</span></h3><p>${sin?"Hotel por reservar":esc(h.Hotel)}</p></div>
+          <span class="est ${h.Estado==="Reservado"?"ok":"pend"}">${esc(h.Estado||"")}</span></header>
+        <p class="rf">${fecha(toISO(h["Check-in"]),{weekday:"short",day:"numeric",month:"short"})} a ${fecha(toISO(h["Check-out"]),{weekday:"short",day:"numeric",month:"short"})}, ${n} ${n===1?"noche":"noches"}</p>
+        ${p!=null?`<p class="rp">${eur(p)}${n?` <span>${eur(p/n)} por noche</span>`:""}</p>`:""}
+        ${lg.dir?`<p class="zh">${esc(lg.dir)}</p>`:""}
+        ${limpio(h.Localizador)?`<p class="n">Localizador ${esc(h.Localizador)}</p>`:""}
+        ${limpio(h.Notas)?`<p class="n">${esc(h.Notas)}</p>`:""}
+        <div class="acc">${sin?"":`<button class="btn sm" data-taxi-hotel="${h._row||""}" data-hk="${esc(h.Ciudad)}">Taxista</button>
+          <a class="btn sm" href="${esc(urlMapas(lg))}" target="_blank" rel="noopener">Mapas</a>${botonesDoc(claveDoc("Alojamiento",h))}`}
+          ${h._row?`<button class="btn sm" data-edit="Alojamiento" data-row="${h._row}">Editar</button>`:""}</div>
+      </article>`}).join("");
+  }else{
+    html+=DATA.transporte.map(t=>{
+      const horas=[limpio(t.Salida)&&"Salida "+t.Salida,limpio(t.Llegada)&&"Llegada "+t.Llegada].filter(Boolean).join(", ");
+      const c=ciudad(t.Destino),est=limpio(t.Estado);
+      return `<article class="res" style="--dc:${c.c}">
+        <header><div><h3>${esc(t.Origen)} → ${esc(t.Destino)}</h3><p>${esc(t.Tipo)}, ${fecha(toISO(t.Fecha),{weekday:"long",day:"numeric",month:"long"})}</p></div>
+          ${est?`<span class="est ${est==="Reservado"?"ok":"pend"}">${esc(est)}</span>`:""}</header>
+        <p class="rf">${esc(horas)||"Horario por definir"}${limpio(t["Nº vuelo/tren"])?", "+esc(t["Nº vuelo/tren"]):""}</p>
+        ${num(t.Precio)!=null?`<p class="rp">${eur(num(t.Precio))}</p>`:""}
+        ${limpio(t.Localizador)?`<p class="n">Localizador ${esc(t.Localizador)}</p>`:""}
+        ${limpio(t.Notas)?`<p class="n">${esc(t.Notas)}</p>`:""}
+        <div class="acc">${botonesDoc(claveDoc("Transporte",t))}${t._row?`<button class="btn sm" data-edit="Transporte" data-row="${t._row}">Editar</button>`:""}</div>
+      </article>`}).join("");
+  }
+  $("reservas").innerHTML=html+`<p class="n">Los billetes adjuntos se guardan solo en este móvil.</p></div>`;
+}
+const CAMPOS={
+  Itinerario:[["Actividades Principales","Actividades, separadas por comas","area"]],
+  Alojamiento:[["Hotel","Hotel","text"],["Dirección (chino)","Dirección en chino, para taxis","text",2],["Localizador","Localizador de la reserva","text",2],
+    ["Precio total","Precio total en euros","num"],["Estado","Estado","sel"],["Notas","Notas","text"]],
+  Transporte:[["Salida","Hora de salida","text"],["Llegada","Hora de llegada","text"],["Nº vuelo/tren","Número de vuelo o tren","text"],
+    ["Localizador","Localizador","text",2],["Precio","Precio en euros","num"],["Estado","Estado","sel"],["Notas","Notas","text"]]
+};
+const camposDe=h=>CAMPOS[h].filter(c=>!c[3]||v2());
+function formFila(sheet,row){
+  const r=DATA[sheet.toLowerCase()].find(x=>x._row===row); if(!r) return;
+  const tit=sheet==="Itinerario"?`Día ${r["Día"]}, ${r.Ciudad}`:sheet==="Alojamiento"?`Hotel en ${r.Ciudad}`:`${r.Origen} → ${r.Destino}`;
+  hoja(`<form data-form="fila" data-sheet="${sheet}" data-row="${row}"><h3>${esc(tit)}</h3>
+    ${camposDe(sheet).map(([k,lab,tipo],i)=>{
+      const v=tipo==="num"?(num(r[k])??""):(r[k]??"");
+      const campo=tipo==="area"?`<textarea id="f${i}" rows="4">${esc(v)}</textarea>`
+        :tipo==="sel"?`<select id="f${i}">${["","Pendiente","Reservado"].map(o=>`<option ${o===String(v)?"selected":""} value="${o}">${o||"Sin estado"}</option>`).join("")}</select>`
+        :`<input type="text" id="f${i}" value="${esc(tipo==="num"?String(v).replace(".",","):v)}" ${tipo==="num"?'inputmode="decimal"':""}>`;
+      return `<label for="f${i}">${lab}</label>${campo}`}).join("")}
+    ${v2()?"":`<p class="n">La dirección en chino y el localizador se podrán guardar cuando actualices el script de la hoja.</p>`}
+    <div class="btns"><button type="button" class="btn" data-act="cerrar">Cancelar</button><button class="btn pri">Guardar</button></div></form>`);
+}
+
+/* ---------- GASTOS ---------- */
+function rGastos(){
+  const now=ahoraCN(),[p1,p2]=personas(),G=[...DATA.gastos].sort((a,b)=>String(b.Fecha).localeCompare(String(a.Fecha))||String(b.ID).localeCompare(String(a.ID)));
+  const dHoy=DIAS[diaActual(now)];
+  if(!gMon) gMon=ciudadGPS()?CIUDADES[ciudadGPS()].mon:dHoy?ciudad(dHoy.Ciudad).mon:"CNY";
+  if(!gPag||![p1,p2].includes(gPag)) gPag=LS.get("china-yo")&&[p1,p2].includes(LS.get("china-yo"))?LS.get("china-yo"):p1;
+  const tot=G.reduce((s,g)=>s+(num(g.EUR)||0),0);
+  const por=(f)=>{const m={};G.forEach(g=>{const k=f(g)||"Otros";m[k]=(m[k]||0)+(num(g.EUR)||0)});return Object.entries(m).sort((a,b)=>b[1]-a[1])};
+  const barras=l=>{const mx=Math.max(...l.map(x=>x[1]),1);return l.map(([k,v])=>`<div class="bl"><span>${esc(k)}</span><div class="bar"><i style="width:${v/mx*100}%"></i></div><b>${eur(v)}</b></div>`).join("")};
+  const pag1=G.filter(g=>g["Pagó"]===p1).reduce((s,g)=>s+(num(g.EUR)||0),0),pag2=G.filter(g=>g["Pagó"]===p2).reduce((s,g)=>s+(num(g.EUR)||0),0);
+  const dif=(pag1-pag2)/2;
+  let html=`<div class="cab"><h1>Gastos</h1><p>${G.length?`${eur(tot)} en ${G.length} ${G.length===1?"gasto":"gastos"}`:"Apunta cada gasto en el momento, también sin conexión."}</p></div><div class="pad">
+    ${v2()?"":`<p class="alerta">Hasta que actualices el script de la hoja, los gastos se guardan solo en este móvil.</p>`}
+    <form data-form="gasto" class="gf">
+      <div class="imp"><input id="gI" type="text" inputmode="decimal" placeholder="0" aria-label="Importe" required autocomplete="off">
+        <div class="seg mini" id="gM">${["CNY","HKD","EUR"].map(m=>`<button type="button" data-mon="${m}" class="${m===gMon?"on":""}">${m}</button>`).join("")}</div></div>
+      <p class="conv" id="gE">1 EUR = ${FX.CNY.toFixed(2)} CNY = ${FX.HKD.toFixed(2)} HKD</p>
+      <input id="gC" type="text" placeholder="Concepto" aria-label="Concepto" autocomplete="off">
+      <div class="chips" id="gK">${CATEGORIAS.map(c=>`<button type="button" data-cat="${c}" class="${c===gCat?"on":""}">${c}</button>`).join("")}</div>
+      <div class="seg mini" id="gP">${[p1,p2].map(p=>`<button type="button" data-pag="${esc(p)}" class="${p===gPag?"on":""}">Paga ${esc(p)}</button>`).join("")}</div>
+      <button class="btn pri ancho">Añadir gasto</button>
+    </form>`;
+  if(G.length){
+    html+=`<h2>Cuentas</h2><div class="fila col"><p>${esc(p1)} ha pagado ${eur(pag1)} y ${esc(p2)} ${eur(pag2)}.</p>
+      <p><b>${Math.abs(dif)<0.005?"Estáis en paz.":`${esc(dif>0?p2:p1)} debe ${eur(Math.abs(dif))} a ${esc(dif>0?p1:p2)}.`}</b></p></div>
+      <h2>Por categoría</h2>${barras(por(g=>g["Categoría"]))}
+      <h2>Por ciudad</h2>${barras(por(g=>g.Ciudad))}
+      <h2>Todos los gastos</h2>`;
+    let f=null;
+    G.forEach(g=>{
+      const iso=toISO(g.Fecha);
+      if(iso!==f){f=iso;const t=G.filter(x=>toISO(x.Fecha)===iso).reduce((s,x)=>s+(num(x.EUR)||0),0);
+        html+=`<h3 class="gd"><span>${fecha(iso,{weekday:"long",day:"numeric",month:"long"})}</span><span>${eur(t)}</span></h3>`}
+      html+=`<div class="g"><div><b>${esc(limpio(g.Concepto)||g["Categoría"])}</b><span class="n">${esc(g["Categoría"])}, paga ${esc(g["Pagó"])}</span></div>
+        <div class="gi"><b>${dinero(num(g.Importe),g.Moneda)}</b>${g.Moneda!=="EUR"?`<span class="n">${eur(num(g.EUR))}</span>`:""}</div>
+        <button class="enl" data-borrar-gasto="${esc(g.ID)}" aria-label="Borrar gasto">Borrar</button></div>`;
+    });
+  }
+  $("gastos").innerHTML=html+`<p class="n">Cambio del ${fecha(FX.date,{day:"numeric",month:"long"})} (Banco Central Europeo). Cada gasto guarda su valor en euros del día que se apuntó.</p></div>`;
+}
+
+/* ---------- KIT ---------- */
+function rKit(){
+  const L=DATA.checklist,hechas=L.filter(c=>c.Hecho===true).length,[p1,p2]=personas(),ts=+LS.get("china-ts"),n=pendientes();
+  const enCasa=window.navigator.standalone||matchMedia("(display-mode: standalone)").matches;
+  const est=syncEstado==="…"?"Sincronizando…":syncEstado==="sin"?"Sin conexión con la hoja: se usa la última copia guardada.":
+    ts?"Última sincronización: "+new Date(ts).toLocaleString("es-ES",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"})+".":"Aún sin sincronizar.";
+  $("kit").innerHTML=`<div class="cab"><h1>Kit de viaje</h1><p>Preparativos, frases, emergencias y ajustes.</p></div><div class="pad">
+    ${enCasa?"":`<p class="alerta">Instala la app: en Safari, pulsa Compartir y luego «Añadir a pantalla de inicio». Así funciona sin conexión y no pierde datos.</p>`}
+    <h2>Preparativos <small>${hechas} de ${L.length}</small></h2>
+    <div class="chk">${L.map(c=>`<label><input type="checkbox" data-row="${c._row||""}" ${c._row?"":"disabled"} ${c.Hecho===true?"checked":""}><span>${esc(c.Tarea)}</span></label>`).join("")}</div>
+    <form data-form="tarea" class="add"><input type="text" id="addT" placeholder="Nueva tarea" aria-label="Nueva tarea" required><button class="btn">Añadir</button></form>
+
+    <h2>Conversor</h2>
+    <div class="cv"><input id="cvI" type="text" inputmode="decimal" placeholder="Importe" aria-label="Importe a convertir">
+      <div id="cvO" class="n">Escribe un importe en yuanes o dólares de Hong Kong.</div></div>
+
+    <h2>Frases</h2><p class="n">Toca una frase para enseñarla a pantalla completa.</p>
+    ${FRASES.map(([g,fs])=>`<h3 class="fg">${g}</h3><div class="fr">${fs.map(([es,zh,py])=>`<button data-frase="${esc(zh)}" data-es="${esc(es)}" data-py="${esc(py)}"><span>${esc(es)}</span><b>${esc(zh)}</b><i>${esc(py)}</i></button>`).join("")}</div>`).join("")}
+
+    <h2>Emergencias</h2>
+    <div class="em"><a href="tel:110"><b>110</b>Policía (China)</a><a href="tel:120"><b>120</b>Ambulancia (China)</a><a href="tel:119"><b>119</b>Bomberos (China)</a><a href="tel:999"><b>999</b>Emergencias (Hong Kong)</a></div>
+    <form data-form="seguro"><label for="segT">Seguro, embajada y otros teléfonos</label>
+      <textarea id="segT" rows="3" placeholder="Compañía, número de póliza, teléfono de asistencia…">${esc(ajuste("seguro",""))}</textarea><button class="btn">Guardar</button></form>
+
+    <h2>Avisos en el calendario</h2>
+    <p class="n">Pasa la agenda y los trayectos al Calendario del iPhone, con alarma antes de cada vuelo y tren. Si cambias la agenda, vuelve a exportarla.</p>
+    <button class="btn" data-act="ics">Exportar al Calendario</button>
+
+    <h2>Ubicación</h2>
+    <p class="n">${POS?(ciudadGPS()?`Ubicación activa: estáis en ${esc(CIUDADES[ciudadGPS()].n)}.`:"Ubicación activa: estáis lejos de las ciudades del viaje.")
+      :"Con la ubicación, la app detecta en qué ciudad y en qué sitio del plan estáis, y muestra la distancia a lo siguiente. La posición no sale del móvil."}</p>
+    ${geoActiva()?"":`<button class="btn" data-act="geo">Usar mi ubicación</button>`}
+
+    <h2>Quién paga</h2>
+    <form data-form="personas" class="dos"><div><label for="pe1">Persona 1</label><input id="pe1" type="text" value="${esc(p1)}" required></div>
+      <div><label for="pe2">Persona 2</label><input id="pe2" type="text" value="${esc(p2)}" required></div><button class="btn">Guardar nombres</button></form>
+
+    <h2>Sincronización</h2>
+    <p class="n">${est}${n?` ${n} ${n===1?"cambio pendiente":"cambios pendientes"} de enviar.`:""}</p>
+    ${SERVER&&!v2()?`<p class="alerta">Falta actualizar el script de la hoja. Hasta entonces, agenda, gastos y diario se guardan solo en este móvil.</p>`:""}
+    <button class="btn" data-act="sync">Sincronizar ahora</button></div>`;
+}
+
+const CONSERVAR=["gI","gC","cvI","addT","diarioT"];
+function renderAll(forzar){
+  const a=document.activeElement;
+  if(!forzar&&a&&/INPUT|TEXTAREA|SELECT/.test(a.tagName)&&document.querySelector("main").contains(a)){dirty=true;return}
+  dirty=false;
+  const y=scrollY,selAntes=sel,vals={};
+  CONSERVAR.forEach(id=>{if($(id)) vals[id]=$(id).value});      // lo escrito y aún sin guardar no se pierde
+  rHoy();rViaje();rReservas();rGastos();rKit();
+  CONSERVAR.forEach(id=>{if($(id)&&vals[id]!=null&&(id!=="diarioT"||sel===selAntes)) $(id).value=vals[id]});
+  previaGasto();conversor();
+  const n=pendientes(); $("pend").textContent=n?`${n} sin enviar`:""; $("pend").classList.toggle("on",!!n);
+  scrollTo(0,y);
+}
+
+/* ---------- Calendario (.ics) ---------- */
+function exportarICS(){
+  const z=n=>String(n).padStart(2,"0");
+  const utc=(iso,min)=>{const d=new Date(Date.UTC(+iso.slice(0,4),+iso.slice(5,7)-1,+iso.slice(8,10),0,min-480));
+    return `${d.getUTCFullYear()}${z(d.getUTCMonth()+1)}${z(d.getUTCDate())}T${z(d.getUTCHours())}${z(d.getUTCMinutes())}00Z`};
+  const t=s=>String(s||"").replace(/\\/g,"\\\\").replace(/[,;]/g,m=>"\\"+m).replace(/\n/g,"\\n");
+  let out=["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//Viaje a China//ES","CALSCALE:GREGORIAN","X-WR-CALNAME:Viaje a China"];
+  DIAS.forEach(d=>itemsDia(d.iso).forEach(x=>{
+    if(x.t==null) return;
+    const fin=x.fin!=null&&x.fin>x.t?x.fin:x.t+60,p=x.lugar;
+    out.push("BEGIN:VEVENT",`UID:${x.k.replace(/[^a-z0-9]/gi,"")}-${d.iso}@viaje-china`,`DTSTAMP:${utc(d.iso,0)}`,`DTSTART:${utc(d.iso,x.t)}`,`DTEND:${utc(d.iso,fin)}`,
+      `SUMMARY:${t(x.titulo)}`);
+    if(p) out.push(`LOCATION:${t([p.nombre,p.zh,p.dir].filter(Boolean).join(" "))}`);
+    const desc=[x.notas,p&&p.reserva].filter(Boolean).join(" ");
+    if(desc) out.push(`DESCRIPTION:${t(desc)}`);
+    const al=x.tipo==="vuelo"?180:x.tipo==="tren"?90:(p&&p.reserva?30:0);
+    if(al) out.push("BEGIN:VALARM","ACTION:DISPLAY",`DESCRIPTION:${t(x.titulo)}`,`TRIGGER:-PT${al}M`,"END:VALARM");
+    out.push("END:VEVENT");
+  }));
+  out.push("END:VCALENDAR");
+  return out.join("\r\n");
+}
+async function compartirArchivo(file){
+  try{
+    if(navigator.canShare&&navigator.canShare({files:[file]})){await navigator.share({files:[file]});return}
+  }catch(e){if(e&&e.name==="AbortError") return}
+  const a=document.createElement("a");a.href=URL.createObjectURL(file);a.download=file.name;document.body.appendChild(a);a.click();a.remove();
+}
+
+/* ---------- Billetes guardados en el móvil (IndexedDB) ---------- */
+function bd(){return new Promise((ok,ko)=>{const r=indexedDB.open("china-docs",1);r.onupgradeneeded=()=>r.result.createObjectStore("docs");r.onsuccess=()=>ok(r.result);r.onerror=()=>ko(r.error)})}
+async function bdOp(modo,fn){const db=await bd();return new Promise((ok,ko)=>{const tx=db.transaction("docs",modo),q=fn(tx.objectStore("docs"));tx.oncomplete=()=>ok(q&&q.result);tx.onerror=()=>ko(tx.error)})}
+async function cargarDocs(){try{DOCS=new Set(await bdOp("readonly",s=>s.getAllKeys()));rReservas()}catch(e){}}
+async function verDoc(k){
+  try{
+    const d=await bdOp("readonly",s=>s.get(k)); if(!d) return;
+    const file=new File([d.blob],d.name||"billete",{type:d.type});
+    if(/^image\//.test(d.type)){
+      $("grande").innerHTML=`<button class="x" data-act="cerrar-grande">Cerrar</button><img src="${URL.createObjectURL(file)}" alt="Billete guardado">`;
+      $("grande").classList.add("on");
+    }else await compartirArchivo(file);
+  }catch(e){aviso("No se ha podido abrir el billete.")}
+}
+
+/* ---------- Eventos ---------- */
+function irA(t){
+  tab=t;
+  document.querySelectorAll("nav button").forEach(x=>x.classList.toggle("on",x.dataset.t===t));
+  document.querySelectorAll("main>section").forEach(s=>s.classList.toggle("on",s.id===t));
+  scrollTo(0,0);
+}
+document.querySelector("nav").addEventListener("click",e=>{const b=e.target.closest("button");if(b) irA(b.dataset.t)});
+
+document.addEventListener("click",async e=>{
+  const q=s=>e.target.closest(s);
+  let b;
+  if(b=q("[data-dia]")){sel=+b.dataset.dia;selManual=sel!==diaActual(ahoraCN());rHoy();return}
+  if(b=q("[data-ir]")){sel=+b.dataset.ir;selManual=true;rHoy();irA("hoy");return}
+  if(b=q("[data-item]")) return detalleItem(b.dataset.item);
+  if(b=q("[data-taxi-item]")){const x=itemsDia(DIAS[sel].iso).find(i=>i.k===b.dataset.taxiItem);if(x&&x.lugar) taxista(x.lugar);return}
+  if(b=q("[data-taxi-hotel]")){const h=DATA.alojamiento.find(h=>h.Ciudad===b.dataset.hk);if(h) taxista(lugarHotel(h));return}
+  if(b=q("[data-editar-agenda]")) return formAgenda(b.dataset.editarAgenda);
+  if(b=q("[data-borrar-agenda]")){cerrarHoja();mutar({action:"remove",sheet:"Agenda",id:b.dataset.borrarAgenda});aviso("Plan borrado");return}
+  if(b=q("[data-borrar-gasto]")){mutar({action:"remove",sheet:"Gastos",id:b.dataset.borrarGasto});aviso("Gasto borrado");return}
+  if(b=q("[data-edit]")) return formFila(b.dataset.edit,+b.dataset.row);
+  if(b=q("[data-res]")){resTab=b.dataset.res;rReservas();return}
+  if(b=q("[data-mon]")){gMon=b.dataset.mon;$("gM").querySelectorAll("button").forEach(x=>x.classList.toggle("on",x===b));previaGasto();return}
+  if(b=q("[data-cat]")){gCat=b.dataset.cat;$("gK").querySelectorAll("button").forEach(x=>x.classList.toggle("on",x===b));return}
+  if(b=q("[data-pag]")){gPag=b.dataset.pag;LS.set("china-yo",gPag);$("gP").querySelectorAll("button").forEach(x=>x.classList.toggle("on",x===b));return}
+  if(b=q("[data-frase]")) return grande(b.dataset.frase,b.dataset.es,b.dataset.py);
+  if(b=q("[data-ver-doc]")) return verDoc(b.dataset.verDoc);
+  if(b=q("[data-quitar-doc]")){await bdOp("readwrite",s=>s.delete(b.dataset.quitarDoc)).catch(()=>{});return cargarDocs()}
+  if(b=q("[data-act]")){
+    const a=b.dataset.act;
+    if(a==="cerrar") cerrarHoja();
+    if(a==="cerrar-grande") $("grande").classList.remove("on");
+    if(a==="nuevo-agenda") formAgenda(null);
+    if(a==="sync") sincronizar(true);
+    if(a==="geo"){ubicar(true);renderAll()}
+    if(a==="ics") compartirArchivo(new File([exportarICS()],"viaje-china.ics",{type:"text/calendar"}));
+  }
+});
+$("dlg").addEventListener("click",e=>{if(e.target===$("dlg")) cerrarHoja()});
+
+function previaGasto(){
+  const n=num($("gI").value);
+  $("gE").textContent=n&&gMon!=="EUR"?`${dinero(n,gMon)} son ${eur(aEUR(n,gMon))}`:`1 EUR = ${FX.CNY.toFixed(2)} CNY = ${FX.HKD.toFixed(2)} HKD`;
+}
+document.addEventListener("input",e=>{
+  if(e.target.id==="gI") previaGasto();
+  if(e.target.id==="cvI") conversor();
+});
+function conversor(){
+  const n=num($("cvI").value);
+  $("cvO").innerHTML=n?`<b>${dinero(n,"CNY")}</b> son ${eur(aEUR(n,"CNY"))}<br><b>${dinero(n,"HKD")}</b> son ${eur(aEUR(n,"HKD"))}<br><b>${eur(n)}</b> son ${dinero(n*FX.CNY,"CNY")} o ${dinero(n*FX.HKD,"HKD")}`
+    :"Escribe un importe en yuanes o dólares de Hong Kong.";
+}
+document.addEventListener("change",async e=>{
+  const t=e.target;
+  if(t.matches(".chk input")){
+    const c=DATA.checklist.find(x=>x._row===+t.dataset.row); if(!c) return;
+    mutar({action:"check",row:c._row,key:c._k,done:t.checked});
+  }
+  if(t.matches("[data-doc]")&&t.files[0]){
+    const f=t.files[0];
+    try{await bdOp("readwrite",s=>s.put({name:f.name,type:f.type,blob:f},t.dataset.doc));aviso("Billete guardado en este móvil");cargarDocs()}
+    catch(err){aviso("No se ha podido guardar el billete.")}
+  }
+});
+document.addEventListener("submit",e=>{
+  const f=e.target.closest("[data-form]"); if(!f) return;
+  e.preventDefault();
+  const tipo=f.dataset.form,d=DIAS[sel];
+  if(tipo==="diario"){
+    mutar({action:"upsert",sheet:"Diario",id:"d"+d.iso.replace(/-/g,""),values:{Fecha:d.iso,Nota:$("diarioT").value.trim()}});aviso("Nota guardada");
+  }else if(tipo==="agenda"){
+    const id=f.dataset.id||"a"+Date.now().toString(36);
+    mutar({action:"upsert",sheet:"Agenda",id,values:{Fecha:d.iso,Hora:$("aH").value,Fin:$("aF").value,"Qué":$("aQ").value.trim(),Lugar:$("aL").value.trim(),Tipo:$("aT").value,Notas:$("aN").value.trim()}});
+    cerrarHoja();aviso("Agenda actualizada");
+  }else if(tipo==="fila"){
+    const sheet=f.dataset.sheet,r=DATA[sheet.toLowerCase()].find(x=>x._row===+f.dataset.row),values={};
+    camposDe(sheet).forEach(([k,,t],i)=>{const v=$("f"+i).value.trim();values[k]=t==="num"?(v===""?"":num(v)??""):v});
+    mutar({action:"update",sheet,row:r._row,key:r._k,values});cerrarHoja();aviso("Cambios guardados");
+  }else if(tipo==="gasto"){
+    const n=num($("gI").value); if(!n||n<=0){aviso("Escribe un importe");return}
+    const now=ahoraCN(),dia=DIAS.find(x=>x.iso===now.iso),concepto=$("gC").value.trim();
+    $("gI").value="";$("gC").value="";
+    mutar({action:"upsert",sheet:"Gastos",id:"g"+Date.now().toString(36)+Math.random().toString(36).slice(2,5),
+      values:{Fecha:now.iso,Ciudad:ciudadGPS()?CIUDADES[ciudadGPS()].n:dia?ciudad(dia.Ciudad).n:"Antes del viaje",Concepto:concepto,"Categoría":gCat,Importe:n,Moneda:gMon,EUR:Math.round(aEUR(n,gMon)*100)/100,"Pagó":gPag}});
+    aviso("Gasto añadido");
+  }else if(tipo==="tarea"){
+    const t=$("addT").value.trim(); $("addT").value=""; if(t){mutar({action:"addTask",text:t});aviso("Tarea añadida")}
+  }else if(tipo==="seguro"){
+    mutar({action:"upsert",sheet:"Ajustes",id:"seguro",values:{Valor:$("segT").value.trim()}});aviso("Datos guardados");
+  }else if(tipo==="personas"){
+    mutar({action:"upsert",sheet:"Ajustes",id:"p1",values:{Valor:$("pe1").value.trim()}});
+    mutar({action:"upsert",sheet:"Ajustes",id:"p2",values:{Valor:$("pe2").value.trim()}});aviso("Nombres guardados");
+  }
+});
+document.addEventListener("focusout",()=>{if(dirty) setTimeout(()=>renderAll(),80)});
+addEventListener("online",()=>sincronizar());
+document.addEventListener("visibilitychange",()=>{if(!document.hidden){sincronizar();pedirCambio()}});
+setInterval(()=>{                       // el reloj avanza: se repinta solo la pantalla del día
+  if(tab==="hoy"){const t0=tab;tab="";repintarHoy();tab=t0}
+  if(QUEUE.length) enviar();
+},30000);
+
+/* ---------- Arranque ---------- */
+rebuild();
+renderAll(true);
+sincronizar();
+pedirCambio();
+cargarDocs();
+if(LS.get("china-geo")==="1"||PARAMS.get("pos")) ubicar(false);
+if(navigator.storage&&navigator.storage.persist) navigator.storage.persist().catch(()=>{});
+if("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(()=>{});
+
+</script>
+</body>
+</html>
