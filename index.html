@@ -246,6 +246,75 @@ nav .on{color:var(--ctext);font-weight:600}
 #aviso{position:fixed;left:50%;bottom:calc(80px + var(--sb));transform:translateX(-50%);z-index:60;max-width:88vw;background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:12px;font-size:14.5px;text-align:center;opacity:0;pointer-events:none;transition:opacity .2s}
 #aviso.on{opacity:1}
 @media (prefers-reduced-motion:reduce){#aviso{transition:none}}
+
+/* Guía de cada ciudad */
+.cw{--ctext:var(--c)}
+@media (prefers-color-scheme:dark){.cw{--ctext:color-mix(in srgb,var(--c) 48%,white)}}
+.volver{position:relative;background:rgba(255,255,255,.2);border:0;color:#fff;border-radius:20px;padding:5px 12px 5px 9px;font-size:14px;font-weight:600;margin-bottom:12px}
+.hero .hm button{background:none;border:0;color:#fff;padding:0;font:inherit;text-decoration:underline;text-decoration-color:rgba(255,255,255,.55);text-underline-offset:3px}
+.cds{display:grid;gap:8px}
+.cc{display:grid;grid-template-columns:auto 1fr auto;gap:2px 14px;align-items:center;width:100%;text-align:left;background:var(--surface);border:0;border-left:4px solid var(--dc);border-radius:4px 14px 14px 4px;padding:12px 14px}
+.cc .z{grid-column:1;grid-row:1/3;font:700 24px/1 var(--fz);color:color-mix(in srgb,var(--dc) 75%,var(--ink));min-width:2.2em}
+.cc b{grid-column:2;font:600 19px/1.15 var(--fd)}
+.cc small{grid-column:2;color:var(--muted);font-size:13.5px}
+.cc .w{grid-column:3;grid-row:1/3;font:15px var(--fn);color:var(--muted);text-align:right}
+.cc.hoy{box-shadow:inset 0 0 0 2px var(--dc)}
+.pv{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding:0;border:0;background:none;width:100%;text-align:center}
+.pv::-webkit-scrollbar{display:none}
+.pv>span{flex:0 0 62px;background:var(--surface);border-radius:12px;padding:8px 4px;font-size:12.5px;color:var(--muted)}
+.pv i{display:block;font-style:normal;font-size:20px;margin:2px 0}
+.pv b{display:block;font:17px var(--fn);color:var(--ink)}
+.pv .vi{box-shadow:inset 0 0 0 2px var(--c)}
+.fila.clb{width:100%;border:0;text-align:left;font-size:15px}
+.pr{display:grid;grid-template-columns:1fr auto 74px 44px;gap:10px;align-items:center;padding:8px 0;border-top:1px solid var(--line);font-size:15px}
+.pr.vi>b{color:var(--ctext)}
+.pr b::first-letter{text-transform:uppercase}
+.pr .t{font:16px var(--fn);text-align:right}
+.pr .ll{color:var(--muted);font-size:13px;text-align:right}
+.pr.cab{color:var(--muted);font-size:12.5px;border-top:0;padding-bottom:2px}
+.ahw{display:flex;align-items:center;gap:14px;margin:12px 0 16px}
+.ahw>span{font-size:40px}
+.ahw b{font:600 46px/1 var(--fn)}
+.lgs{display:grid;gap:6px}
+.lgs button{display:grid;grid-template-columns:24px 1fr auto;gap:2px 10px;align-items:center;text-align:left;background:var(--surface);border:0;border-radius:10px;padding:10px 12px;width:100%}
+.lgs .nn{grid-row:1/3;width:24px;height:24px;border-radius:50%;background:var(--c);color:#fff;font:700 12px/24px var(--f);text-align:center}
+.lgs b{font-weight:600;font-size:15.5px}
+.lgs .zh{font-size:15px;text-align:right}
+.lgs small{grid-column:2/-1;color:var(--muted);font-size:13px}
+.tips{margin:0;padding-left:20px;font-size:15px}
+.tips li{margin:6px 0}
+
+/* Mapas (Leaflet) */
+.lmap{position:relative;z-index:0;border-radius:14px;overflow:hidden;background:var(--surface)}
+.lmap.on{height:340px}
+.lmap>.n{padding:40px 16px;text-align:center;margin:0}
+.lmap .leaflet-container,.lmap.leaflet-container{font:13px var(--f)}
+.pin span{display:grid;place-items:center;width:24px;height:24px;border-radius:50%;color:#fff;font:700 12px/1 var(--f);border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.35)}
+@media (prefers-color-scheme:dark){.lmap .leaflet-tile-pane{filter:invert(1) hue-rotate(180deg) brightness(.85) contrast(.9)}}
+.leaflet-tooltip.tt{font:600 12.5px var(--f);padding:2px 8px;border-radius:12px}
+
+/* Entradas y documentos */
+.ent label{align-items:center}
+.ent span{flex:1;min-width:0}
+.ent span b{font-weight:600}
+.ent .zh{font-size:14.5px;margin-left:4px}
+.ent small{display:block;margin-top:2px}
+.ent em{flex:none;max-width:38%;font:14px var(--fn);font-style:normal;color:var(--muted);text-align:right}
+.docs{display:grid;gap:8px}
+.docs .fila .acc{flex-direction:row}
+
+/* Escritorio: menú lateral y columna más ancha */
+@media (min-width:900px){
+  body{padding:0 0 0 92px}
+  main{max-width:820px}
+  nav{top:0;right:auto;width:92px;flex-direction:column;justify-content:flex-start;gap:4px;padding:calc(var(--st) + 18px) 0 0;border-top:0;border-right:1px solid var(--line)}
+  nav button{flex:none;max-width:none;padding:12px 2px}
+  dialog{margin:auto;border-radius:18px}
+  #aviso{bottom:28px;margin-left:46px}
+  .lmap.on{height:460px}
+  .cds{grid-template-columns:1fr 1fr}
+  .lgs,.fr{grid-template-columns:1fr 1fr}
+}
 </style>
 </head>
 <body>
@@ -486,6 +555,66 @@ const FRASES=[
   ["Hospital","医院","yīyuàn"],["Farmacia","药店","yàodiàn"],["Llame a la policía","请报警","qǐng bàojǐng"]]]
 ];
 
+/* ---------- Guía de cada ciudad: clima habitual [máx, mín], qué comer y consejos ----------
+   Platos: [nombre, chino, pinyin, explicación]. El clima es orientativo, de principios de noviembre. */
+const GUIA={
+ pekin:{clima:[14,3],
+  comer:[["Pato laqueado","北京烤鸭","běijīng kǎoyā","Se pide medio (半只) o entero; viene con tortitas, cebolleta y salsa dulce."],
+   ["Fideos zhajiangmian","炸酱面","zhájiàngmiàn","Fideos con salsa de soja fermentada y cerdo: el plato de diario pequinés."],
+   ["Empanadillas jiaozi","饺子","jiǎozi","Se piden al peso, en liang (两): 2 o 3 por persona."],
+   ["Fruta caramelizada","冰糖葫芦","bīngtáng húlu","Brocheta dulce que se vende por los hutongs."]],
+  consejos:["Para Tiananmen y la Ciudad Prohibida, llevad el pasaporte físico: lo escanean en los controles.",
+   "El metro se paga con el código QR de Alipay (Transporte → Metro de Pekín).",
+   "Si alguien muy amable os invita a una casa de té o a una galería, declinad: es una estafa habitual."]},
+ xian:{clima:[16,6],
+  comer:[["Roujiamo","肉夹馍","ròujiāmó","El bocadillo de Xi'an: carne estofada en pan plano crujiente."],
+   ["Fideos con aceite caliente","油泼面","yóupō miàn","Fideos anchos regados con aceite y chile; pedid 少辣 si no queréis mucho picante."],
+   ["Sopa de cordero con pan","羊肉泡馍","yángròu pàomó","Se desmiga el pan en el cuenco antes de que lo llenen de caldo."],
+   ["Liangpi","凉皮","liángpí","Fideos fríos con vinagre, sésamo y pepino."]],
+  consejos:["A los Guerreros de Terracota: autobús turístico desde la estación de tren o DiDi, en torno a 1 h.",
+   "La vuelta completa a la muralla en bici son 14 km, unas 2 h.",
+   "El Barrio Musulmán se disfruta más al anochecer, con los puestos encendidos."]},
+ shanghai:{clima:[20,12],
+  comer:[["Xiaolongbao","小笼包","xiǎolóngbāo","Empanadillas al vapor con caldo dentro: mordisco pequeño y sorber primero."],
+   ["Shengjianbao","生煎包","shēngjiānbāo","Bollos de cerdo fritos por abajo, también con caldo."],
+   ["Cerdo estofado rojo","红烧肉","hóngshāo ròu","Panceta glaseada con soja y azúcar, clásico de Shanghái."],
+   ["Fideos con aceite de cebolleta","葱油拌面","cōngyóu bànmiàn","Sencillos, baratos y muy de aquí."]],
+  consejos:["El Bund y Pudong se miran de frente: id al anochecer, cuando se encienden los rascacielos.",
+   "Para cruzar el río, el ferry de Jinling Road es barato y tiene buenas vistas.",
+   "Desde el aeropuerto de Pudong, el Maglev llega a Longyang Road en unos 8 minutos."]},
+ zhangjiajie:{clima:[18,10],
+  comer:[["Olla tujia","三下锅","sān xià guō","Olla caliente de carnes y verduras de la etnia tujia; suele picar."],
+   ["Tocino ahumado salteado","腊肉","làròu","El tocino ahumado de Hunan, con pimientos o ajetes."],
+   ["Tofu ahumado","腊豆腐","là dòufu","Tofu curado al humo, típico de la zona."],
+   ["Arroz frito","蛋炒饭","dàn chǎofàn","El comodín si todo lo demás pica demasiado."]],
+  consejos:["La comida de Hunan pica mucho: «不要辣» (sin picante) os va a hacer falta.",
+   "La entrada del Parque Forestal vale varios días; en el primer acceso registran la huella o la cara.",
+   "Tianmen sale de la ciudad de Zhangjiajie; el Parque Forestal está en Wulingyuan, a unos 40 min."]},
+ yangshuo:{clima:[22,14],
+  comer:[["Pescado a la cerveza","啤酒鱼","píjiǔ yú","El plato estrella de Yangshuo, con pescado de río."],
+   ["Fideos de arroz de Guilin","桂林米粉","guìlín mǐfěn","Desayuno típico, barato y en cualquier esquina."],
+   ["Verduras rellenas","酿菜","niàng cài","Calabaza, setas o berenjena rellenas de carne."],
+   ["Té de aceite","油茶","yóuchá","Sopa-té de la etnia yao, con arroz inflado."]],
+  consejos:["Por el valle del río Yulong se va en bici o en moto eléctrica: se alquilan en la Calle Oeste.",
+   "Las balsas de bambú del río Li salen de Xingping; el crucero grande sale desde Guilin.",
+   "Llevad efectivo pequeño para los puestos de los pueblos."]},
+ shenzhen:{clima:[26,18],
+  comer:[["Dim sum","点心","diǎnxin","Desayuno y comida cantonesa: har gow, siu mai, bollos de cerdo."],
+   ["Arroz en olla de barro","煲仔饭","bāozǎi fàn","Con embutido cantonés y la costra tostada del fondo."],
+   ["Gachas cantonesas","粥","zhōu","Congee suave, ideal el día de viaje."]],
+  consejos:["El tren de Shenzhen Norte a West Kowloon tarda unos 15-20 minutos; la frontera se pasa al llegar.",
+   "Los billetes a Hong Kong se compran con pasaporte, como los de alta velocidad."]},
+ hongkong:{clima:[25,19],
+  comer:[["Dim sum","點心","diǎnxin","Tim Ho Wan es el dim sum con estrella Michelin más barato."],
+   ["Ganso asado","燒鵝","shāo é","Con arroz, en cualquier casa de asados (siu mei)."],
+   ["Sopa de wonton","雲吞麵","yúntūn miàn","Fideos finos con wantanes de gamba en caldo."],
+   ["Tarta de huevo","蛋撻","dàntà","Mejor recién hecha, para merendar."],
+   ["Té con leche","港式奶茶","gǎngshì nǎichá","En un cha chaan teng, la cafetería hongkonesa."]],
+  consejos:["Se paga en dólares de Hong Kong; la tarjeta Octopus sirve para metro, ferris, tranvía y tiendas.",
+   "Aquí se habla cantonés y se escribe en caracteres tradicionales.",
+   "El Star Ferry entre Tsim Sha Tsui y Central cuesta muy poco y tiene la mejor vista de la bahía."]}
+};
+
 const CATEGORIAS=["Comida","Transporte","Entradas","Compras","Alojamiento","Otros"];
 const TIPOS={visita:"Visita",comida:"Comida",traslado:"Traslado",hotel:"Hotel",libre:"Libre",vuelo:"Vuelo",tren:"Tren"};
 const FX_INICIAL={CNY:7.5259,HKD:8.8084,date:"2026-10-02"};   // unidades por 1 EUR (BCE)
@@ -507,7 +636,7 @@ let QUEUE=LS.json("china-queue")||[];
 let FX=LS.json("china-fx")||FX_INICIAL;
 let WX=LS.json("china-wx")||{};
 let DATA,DIAS;
-let tab="hoy",resTab="hoteles",sel=null,selManual=false,dirty=false,flushing=false,syncEstado="";
+let tab="hoy",resTab="hoteles",ciudadSel=null,sel=null,selManual=false,dirty=false,flushing=false,syncEstado="";
 let gMon=null,gPag=null,gCat="Comida";
 let DOCS=new Set();
 let POS=null,geoVigia=null;                  // última posición conocida del móvil
@@ -550,6 +679,7 @@ function repintarHoy(){
   rHoy();
   if(v!=null&&sel===s0) $("diarioT").value=v;
   if(tab==="gastos"||tab==="kit") renderAll();
+  if(tab==="viaje") montarMapa();
 }
 
 /* ---------- Utilidades ---------- */
@@ -694,7 +824,7 @@ const hotelSalida=iso=>DATA.alojamiento.find(h=>toISO(h["Check-out"])===iso);
 function lugarHotel(h){
   const c=ciudad(h.Ciudad);
   return {nombre:sinHotel(h)?"Hotel en "+h.Ciudad:h.Hotel,dir:limpio(h["Dirección (chino)"]),hotel:true,sin:sinHotel(h),
-    lat:c.lat,lon:c.lon,czh:c.zh,loc:limpio(h.Localizador)};
+    lat:c.lat,lon:c.lon,czh:c.zh,cn:c.mon==="CNY",loc:limpio(h.Localizador)};
 }
 function lugarDe(nombre,iso){
   const n=limpio(nombre); if(!n) return null;
@@ -704,12 +834,35 @@ function lugarDe(nombre,iso){
   }
   const k=norm(n),l=DATA.lugares.find(x=>norm(x.Nombre)===k);
   if(!l) return {nombre:n};
-  return {nombre:l.Nombre,zh:limpio(l.Chino),dir:limpio(l["Dirección"]),horario:limpio(l.Horario),precio:limpio(l.Precio),
+  const c=ciudad(l.Ciudad);
+  return {id:l.ID,nombre:l.Nombre,czh:c.zh,cn:c.mon==="CNY",zh:limpio(l.Chino),dir:limpio(l["Dirección"]),horario:limpio(l.Horario),precio:limpio(l.Precio),
     reserva:limpio(l.Reserva),notas:limpio(l.Notas),lat:parseFloat(l.Lat)||null,lon:parseFloat(l.Lon)||null};
 }
 function urlMapas(p){
   const q=p.zh||p.dir||(p.hotel?`${p.nombre} ${p.czh||""}`:p.nombre);
   return "https://maps.apple.com/?q="+encodeURIComponent(q.trim())+(p.lat?`&sll=${p.lat},${p.lon}`:"");
+}
+function urlAmap(p){                          // Amap (高德) es el mapa que mejor funciona en China continental
+  const q=p.zh||p.dir||(p.hotel&&!p.sin?p.nombre:"");
+  if(!p.cn||!q) return null;
+  return "https://uri.amap.com/search?keyword="+encodeURIComponent(q.trim())+(p.czh?"&city="+encodeURIComponent(p.czh):"")+"&callnative=1";
+}
+function primeraVisita(){                     // nombre del lugar → primera vez que sale en la agenda
+  const o={};
+  [...DATA.agenda].sort((a,b)=>String(toISO(a.Fecha)).localeCompare(String(toISO(b.Fecha)))||(horaMin(a.Hora)??0)-(horaMin(b.Hora)??0))
+    .forEach((a,i)=>{const k=norm(a.Lugar);if(k&&!o[k]) o[k]={i,iso:toISO(a.Fecha)}});
+  return o;
+}
+function lugaresCiudad(ck){                   // en el orden en que se visitan; los que no están en la agenda, al final
+  const o=primeraVisita();
+  return DATA.lugares.filter(l=>claveCiudad(l.Ciudad)===ck).map(l=>({l,o:o[norm(l.Nombre)]}))
+    .sort((a,b)=>(a.o?a.o.i:1e9)-(b.o?b.o.i:1e9)).map((x,i)=>({...x,n:i+1}));
+}
+const esEntrada=l=>!!limpio(l.Reserva)||/\d/.test(limpio(l.Precio));
+function entradas(){
+  const o=primeraVisita(),orden=Object.keys(CIUDADES);
+  return DATA.lugares.filter(esEntrada).map(l=>({l,o:o[norm(l.Nombre)],ok:ajuste("ent:"+l.ID,"")==="1"}))
+    .sort((a,b)=>(a.o?a.o.i:1e9)-(b.o?b.o.i:1e9)||orden.indexOf(claveCiudad(a.l.Ciudad))-orden.indexOf(claveCiudad(b.l.Ciudad)));
 }
 function itemsDia(iso){
   const out=[];
@@ -747,18 +900,38 @@ async function pedirClima(ck){
   const w=WX[ck]; if(w&&Date.now()-w.ts<3*3600e3) return;
   climaOcupado[ck]=1;
   try{
-    const r=await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${c.lat}&longitude=${c.lon}&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max&timezone=Asia%2FShanghai&forecast_days=16`);
+    const r=await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${c.lat}&longitude=${c.lon}&current=temperature_2m,apparent_temperature,weather_code,relative_humidity_2m,wind_speed_10m&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max&timezone=Asia%2FShanghai&forecast_days=16`);
     const j=await r.json();
-    if(j.daily){WX[ck]={ts:Date.now(),d:j.daily};LS.set("china-wx",WX);renderAll()}
+    if(j.daily){WX[ck]={ts:Date.now(),d:j.daily,cur:j.current||null};LS.set("china-wx",WX);renderAll()}
   }catch(e){}finally{climaOcupado[ck]=0}
 }
 function climaDia(ck,iso){
   const w=WX[ck]; if(!w||!w.d||!w.d.time) return null;
   const i=w.d.time.indexOf(iso); if(i<0) return null;
-  const code=w.d.weather_code[i];
-  const [ico,txt]=code===0?["☀️","Despejado"]:code<3?["🌤️","Poco nuboso"]:code===3?["☁️","Nublado"]:code<50?["🌫️","Niebla"]:
-    code<58?["🌦️","Llovizna"]:code<68?["🌧️","Lluvia"]:code<78?["❄️","Nieve"]:code<83?["🌧️","Chubascos"]:code<87?["❄️","Nieve"]:["⛈️","Tormenta"];
+  const [ico,txt]=wxInfo(w.d.weather_code[i]);
   return {ico,txt,max:Math.round(w.d.temperature_2m_max[i]),min:Math.round(w.d.temperature_2m_min[i]),pp:w.d.precipitation_probability_max[i]};
+}
+function wxInfo(code){
+  return code===0?["☀️","Despejado"]:code<3?["🌤️","Poco nuboso"]:code===3?["☁️","Nublado"]:code<50?["🌫️","Niebla"]:
+    code<58?["🌦️","Llovizna"]:code<68?["🌧️","Lluvia"]:code<78?["❄️","Nieve"]:code<83?["🌧️","Chubascos"]:code<87?["❄️","Nieve"]:["⛈️","Tormenta"];
+}
+function climaHoja(ck){
+  const c=CIUDADES[ck],w=WX[ck],g=GUIA[ck]||{},mias=new Set(DIAS.filter(d=>d.ck===ck).map(d=>d.iso));
+  let h=`<div class="cw" style="--c:${c.c}"><p class="dk">Previsión del tiempo</p><h3>${esc(c.n)} <span class="zh">${c.zh}</span></h3>`;
+  if(w&&w.cur&&w.cur.weather_code!=null){
+    const [ico,txt]=wxInfo(w.cur.weather_code);
+    h+=`<div class="ahw"><span>${ico}</span><b>${Math.round(w.cur.temperature_2m)}°</b><p class="n">${txt}. Sensación de ${Math.round(w.cur.apparent_temperature)}°<br>
+      Humedad ${Math.round(w.cur.relative_humidity_2m)}%, viento ${Math.round(w.cur.wind_speed_10m)} km/h</p></div>`;
+  }
+  if(w&&w.d&&w.d.time){
+    h+=`<div class="pr cab"><span>Día</span><span></span><span class="t">Máx / mín</span><span class="ll">Lluvia</span></div>`+w.d.time.map(iso=>{const x=climaDia(ck,iso);
+      return `<div class="pr ${mias.has(iso)?"vi":""}"><b>${fecha(iso,{weekday:"short",day:"numeric",month:"short"})}</b><span>${x.ico}</span><span class="t">${x.max}° / ${x.min}°</span><span class="ll">${x.pp!=null?x.pp+"%":""}</span></div>`}).join("")
+      +`<p class="n">${mias.size?"En color, los días que estaréis aquí. ":""}Open-Meteo, consultado hace ${durTxt(Math.round((Date.now()-w.ts)/6e4))}.</p>`;
+  }else h+=`<p class="n">Cargando la previsión… Necesita conexión.</p>`;
+  if(g.clima) h+=`<p class="n">Clima habitual a principios de noviembre: máximas de unos ${g.clima[0]}° y mínimas de ${g.clima[1]}°.</p>`;
+  hoja(h+`<div class="btns"><button class="btn" data-act="cerrar">Cerrar</button></div></div>`);
+  $("dlgB").dataset.clima=ck;
+  if(!FAKE) pedirClima(ck).then(()=>{if($("dlg").open&&$("dlgB").dataset.clima===ck&&WX[ck]!==w) climaHoja(ck)});
 }
 async function pedirCambio(){
   if(FX.ts&&Date.now()-FX.ts<12*3600e3) return;
@@ -773,7 +946,7 @@ const aEUR=(n,m)=>m==="EUR"?n:n/(FX[m]||1);
 /* ---------- Avisos, hoja inferior y pantalla grande ---------- */
 let avisoT;
 function aviso(t){const a=$("aviso");a.textContent=t;a.classList.add("on");clearTimeout(avisoT);avisoT=setTimeout(()=>a.classList.remove("on"),3500)}
-function hoja(html){$("dlgB").innerHTML=html;if(!$("dlg").open)$("dlg").showModal();$("dlgB").scrollTop=0}
+function hoja(html){delete $("dlgB").dataset.clima;$("dlgB").innerHTML=html;if(!$("dlg").open)$("dlg").showModal();$("dlgB").scrollTop=0}
 const cerrarHoja=()=>{if($("dlg").open)$("dlg").close()};
 function grande(zh,sub,pinyin){
   $("grande").innerHTML=`<button class="x" data-act="cerrar-grande" aria-label="Cerrar">Cerrar</button>
@@ -813,8 +986,9 @@ function rHoy(){
     <h1>${esc(c.n)}</h1>
     <p class="hf">${fecha(d.iso,{weekday:"long",day:"numeric",month:"long"})}</p>
     <div class="hm">
-      ${w?`<span>${w.ico} ${w.max}° / ${w.min}°${w.pp!=null?`, lluvia ${w.pp}%`:""}</span>`:""}
+      ${w?`<button data-clima="${d.ck}">${w.ico} ${w.max}° / ${w.min}°${w.pp!=null?`, lluvia ${w.pp}%`:""}</button>`:""}
       <span>China ${fmtMin(now.min)}</span><span>Madrid ${horaMadrid(now)}</span>
+      ${CIUDADES[d.ck]?`<button data-ciudad="${d.ck}">Guía de ${esc(c.n)}</button>`:""}
     </div>
   </div>
   <div class="tira" id="tira">${DIAS.map((x,i)=>`<button data-dia="${i}" class="${i===sel?"on":""}${x.iso===now.iso?" hoy":""}" style="--dc:${ciudad(x.Ciudad).c}" aria-label="Día ${i+1}, ${esc(x.Ciudad)}">
@@ -873,7 +1047,7 @@ function rHoy(){
       <div><b>${esc(p.nombre)}</b>${p.dir?`<span class="zh">${esc(p.dir)}</span>`:""}
         <span class="n">${p.sin?"Hotel por reservar":`Salida el ${fecha(toISO(h["Check-out"]),{weekday:"long",day:"numeric"})}`}${p.loc?". Localizador "+esc(p.loc):""}</span></div>
       ${p.sin?"":`<div class="acc"><button class="btn sm" data-taxi-hotel="${h._row||""}" data-hk="${esc(h.Ciudad)}">Taxista</button>
-        <a class="btn sm" href="${esc(urlMapas(p))}" target="_blank" rel="noopener">Mapas</a></div>`}
+        <a class="btn sm" href="${esc(urlMapas(p))}" target="_blank" rel="noopener">Mapas</a>${urlAmap(p)?`<a class="btn sm" href="${esc(urlAmap(p))}" target="_blank" rel="noopener">Amap</a>`:""}</div>`}
     </div>`;
   }
 
@@ -894,23 +1068,34 @@ function detalleItem(k){
     <h3>${esc(x.titulo)}</h3>
     <p class="dh">${x.t!=null?fmtMin(x.t):"Hora por confirmar"}${x.fin!=null?" a "+fmtMin(x.fin):""}</p>
     ${x.notas?`<p>${esc(x.notas)}</p>`:""}`;
-  if(p&&(p.zh||p.dir||p.horario||p.precio||p.reserva||p.notas||p.hotel)){
-    html+=`<div class="lugar">${p.zh?`<div class="zhG">${esc(p.zh)}</div>`:""}
-      <b>${esc(p.nombre)}</b>${p.dir?`<div class="zh">${esc(p.dir)}</div>`:""}
-      <dl>${p.horario?`<dt>Horario</dt><dd>${esc(p.horario)}</dd>`:""}${p.precio?`<dt>Precio</dt><dd>${esc(p.precio)}</dd>`:""}
-        ${p.reserva?`<dt>Reserva</dt><dd>${esc(p.reserva)}</dd>`:""}${p.notas?`<dt>Nota</dt><dd>${esc(p.notas)}</dd>`:""}
-        ${p.loc?`<dt>Localizador</dt><dd>${esc(p.loc)}</dd>`:""}</dl>
-      ${p.horario||p.precio?`<p class="n">Horarios y precios orientativos: confirmadlos antes de ir.</p>`:""}</div>`;
-  }
-  html+=`<div class="btns">`;
-  if(p&&!p.sin&&(p.zh||p.dir||p.hotel)){
-    html+=`<a class="btn pri" href="${esc(urlMapas(p))}" target="_blank" rel="noopener">Abrir en Mapas</a>
-      <button class="btn" data-taxi-item="${esc(k)}">Enseñar al taxista</button>`;
-  }
+  html+=fichaLugar(p)+`<div class="btns">`+botonesLugar(p,`data-taxi-item="${esc(k)}"`);
   if(x.a) html+=`<button class="btn" data-editar-agenda="${esc(x.a.ID)}">Editar</button><button class="btn peligro" data-borrar-agenda="${esc(x.a.ID)}">Borrar</button>`;
   if(x.tr&&x.tr._row) html+=`<button class="btn" data-edit="Transporte" data-row="${x.tr._row}">Editar trayecto</button>`;
   html+=`<button class="btn" data-act="cerrar">Cerrar</button></div>`;
   hoja(html);
+}
+function fichaLugar(p){
+  if(!p||!(p.zh||p.dir||p.horario||p.precio||p.reserva||p.notas||p.hotel)) return "";
+  return `<div class="lugar">${p.zh?`<div class="zhG">${esc(p.zh)}</div>`:""}
+    <b>${esc(p.nombre)}</b>${p.dir?`<div class="zh">${esc(p.dir)}</div>`:""}
+    <dl>${p.horario?`<dt>Horario</dt><dd>${esc(p.horario)}</dd>`:""}${p.precio?`<dt>Precio</dt><dd>${esc(p.precio)}</dd>`:""}
+      ${p.reserva?`<dt>Reserva</dt><dd>${esc(p.reserva)}</dd>`:""}${p.notas?`<dt>Nota</dt><dd>${esc(p.notas)}</dd>`:""}
+      ${p.loc?`<dt>Localizador</dt><dd>${esc(p.loc)}</dd>`:""}</dl>
+    ${p.horario||p.precio?`<p class="n">Horarios y precios orientativos: confirmadlos antes de ir.</p>`:""}</div>`;
+}
+function botonesLugar(p,taxi){
+  if(!p||p.sin||!(p.zh||p.dir||p.hotel)) return "";
+  const am=urlAmap(p);
+  return `<a class="btn pri" href="${esc(urlMapas(p))}" target="_blank" rel="noopener">Abrir en Mapas</a>
+    ${am?`<a class="btn" href="${esc(am)}" target="_blank" rel="noopener">Amap</a>`:""}<button class="btn" ${taxi}>Enseñar al taxista</button>`;
+}
+function detalleLugar(id){
+  const l=DATA.lugares.find(x=>x.ID===id); if(!l) return;
+  const p=lugarDe(l.Nombre),o=primeraVisita()[norm(l.Nombre)],di=o?DIAS.findIndex(d=>d.iso===o.iso):-1;
+  hoja(`<p class="dk">${esc(ciudad(l.Ciudad).n)}${o?", "+fecha(o.iso,{weekday:"long",day:"numeric",month:"long"}):""}</p>
+    <h3>${esc(p.nombre)}</h3>${fichaLugar(p)}
+    <div class="btns">${botonesLugar(p,`data-taxi-lugar="${esc(id)}"`)}${di>=0?`<button class="btn" data-ir="${di}">Ver ese día</button>`:""}
+      <button class="btn" data-act="cerrar">Cerrar</button></div>`);
 }
 function formAgenda(id){
   const a=id?DATA.agenda.find(x=>x.ID===id):null,d=DIAS[sel];
@@ -949,44 +1134,217 @@ function mapaRuta(now){
   return s+`</svg><p class="ley"><span><i class="l1"></i>Tren</span><span><i class="l2"></i>Vuelo</span></p>`;
 }
 function rViaje(){
+  if(ciudadSel&&CIUDADES[ciudadSel]) return rCiudad(ciudadSel);
   const now=ahoraCN(),H=DATA.alojamiento,T=DATA.transporte,hoyI=diaActual(now);
   const falta=diasEntre(now.iso,DIAS[0].iso);
   const tH=H.reduce((s,h)=>s+(num(h["Precio total"])||0),0),tT=T.reduce((s,t)=>s+(num(t.Precio)||0),0);
   const nTot=H.reduce((s,h)=>s+noches(h),0)||1,nOk=H.filter(h=>h.Estado==="Reservado").reduce((s,h)=>s+noches(h),0);
+  const E=entradas(),eOk=E.filter(x=>x.ok).length;
   const pend=[...H.filter(h=>h.Estado==="Pendiente").map(h=>`Hotel en ${h.Ciudad}, ${noches(h)} ${noches(h)===1?"noche":"noches"} desde el ${fecha(toISO(h["Check-in"]))}`),
     ...T.filter(t=>t.Estado==="Pendiente").map(t=>`${t.Tipo} ${t.Origen} → ${t.Destino}, ${fecha(toISO(t.Fecha))}`)];
+  const ks=[...new Set(DIAS.map(d=>d.ck))].filter(k=>CIUDADES[k]),hoyK=(DIAS[hoyI]||{}).ck;
   let html=`<div class="cab"><h1>El viaje</h1>
     <p>${falta>0?`Faltan ${falta} ${falta===1?"día":"días"} para salir`:hoyI>=0?`Día ${hoyI+1} de ${DIAS.length}`:"Viaje terminado"}.
       ${fecha(DIAS[0].iso,{day:"numeric",month:"long"})} a ${fecha(DIAS[DIAS.length-1].iso,{day:"numeric",month:"long"})}.</p></div><div class="pad">
-    <div class="mapa">${mapaRuta(now)}</div>
+    <div class="lmap" id="mapaV"><div class="mapa">${mapaRuta(now)}</div></div>
+    <h2>Ciudades <small>${ks.length} paradas</small></h2><div class="cds">`;
+  ks.forEach(k=>{
+    const c=CIUDADES[k],ds=DIAS.filter(d=>d.ck===k),hs=H.filter(h=>claveCiudad(h.Ciudad)===k),n=hs.reduce((s,h)=>s+noches(h),0);
+    if(!FAKE&&Math.abs(diasEntre(now.iso,ds[0].iso))<=15) pedirClima(k);
+    const w=climaDia(k,ds[0].iso),g=GUIA[k]||{};
+    html+=`<button class="cc ${k===hoyK?"hoy":""}" style="--dc:${c.c}" data-ciudad="${k}">
+      <span class="z">${c.zh}</span><b>${esc(c.n)}</b>
+      <small>${rangoFechas(ds)}${n?`, ${n} ${n===1?"noche":"noches"}`:""}${hs.length?`. ${hs.every(h=>h.Estado==="Reservado")?"Hotel reservado":"Hotel por reservar"}`:""}</small>
+      <span class="w">${w?`${w.ico} ${w.max}°`:g.clima?`≈ ${g.clima[0]}°`:""}</span></button>`;
+  });
+  html+=`</div>
     <h2>Por reservar</h2>
     ${pend.length?`<ul class="lista">${pend.map(p=>`<li>${esc(p)}</li>`).join("")}</ul>`:`<p class="n">Todo reservado.</p>`}
     <div class="prog"><div><span>Noches con hotel</span><b>${nOk} de ${nTot}</b></div><div class="bar"><i style="width:${nOk/nTot*100}%"></i></div></div>
+    ${E.length?`<div class="prog"><div><span>Entradas compradas</span><b>${eOk} de ${E.length}</b></div><div class="bar"><i style="width:${eOk/E.length*100}%"></i></div></div>`:""}
     <p class="n">Reservado hasta ahora: ${eur(tH+tT)} (${eur(tH)} en hoteles y ${eur(tT)} en trayectos).</p>
     <h2>Día a día</h2>`;
   let prev=null;
   DIAS.forEach((d,i)=>{
     const c=ciudad(d.Ciudad);
     if(d.ck!==prev){prev=d.ck;html+=`<h3 class="cd" style="--dc:${c.c}"><span>${esc(c.zh)}</span>${esc(c.n)}</h3>`}
-    const a=partes(d["Actividades Principales"]);
-    html+=`<div class="dia ${d.iso===now.iso?"hoy":d.iso<now.iso?"pas":""}" style="--dc:${c.c}">
-      <button class="dd" data-ir="${i}"><b>${D(d.iso).getDate()}</b><span>${fecha(d.iso,{weekday:"short"})}</span></button>
-      <div>${a.length?esc(a.join(", ")):`<span class="n">Sin actividades</span>`}
-        ${limpio(d["Transporte del día"])?`<span class="n">${esc(d["Transporte del día"])}</span>`:""}
-        ${d._row?`<button class="enl" data-edit="Itinerario" data-row="${d._row}">Editar</button>`:""}</div></div>`;
+    html+=filaDia(d,i,now);
   });
   $("viaje").innerHTML=html+`</div>`;
+}
+function rangoFechas(ds){
+  if(!ds.length) return "";
+  const a=ds[0].iso,b=ds[ds.length-1].iso;
+  if(a===b) return fecha(a,{weekday:"short",day:"numeric",month:"short"});
+  return `${D(a).getMonth()===D(b).getMonth()?D(a).getDate():fecha(a)} a ${fecha(b)}`;
+}
+function filaDia(d,i,now){
+  const c=ciudad(d.Ciudad),a=partes(d["Actividades Principales"]);
+  return `<div class="dia ${d.iso===now.iso?"hoy":d.iso<now.iso?"pas":""}" style="--dc:${c.c}">
+    <button class="dd" data-ir="${i}"><b>${D(d.iso).getDate()}</b><span>${fecha(d.iso,{weekday:"short"})}</span></button>
+    <div>${a.length?esc(a.join(", ")):`<span class="n">Sin actividades</span>`}
+      ${limpio(d["Transporte del día"])?`<span class="n">${esc(d["Transporte del día"])}</span>`:""}
+      ${d._row?`<button class="enl" data-edit="Itinerario" data-row="${d._row}">Editar</button>`:""}</div></div>`;
+}
+
+/* ---------- Guía de una ciudad ---------- */
+function rCiudad(ck){
+  const c=CIUDADES[ck],g=GUIA[ck]||{},now=ahoraCN();
+  const ds=DIAS.map((d,i)=>({d,i})).filter(x=>x.d.ck===ck),H=DATA.alojamiento.filter(h=>claveCiudad(h.Ciudad)===ck);
+  const Ls=lugaresCiudad(ck),n=H.reduce((s,h)=>s+noches(h),0);
+  if(!FAKE) pedirClima(ck);
+  const w=WX[ck]&&WX[ck].cur,primero=ds.length?ds[0].d.iso:null,ultimo=ds.length?ds[ds.length-1].d.iso:null;
+  const est=!ds.length?"":ds.some(x=>x.d.iso===now.iso)?"Estáis aquí":ultimo<now.iso?"Ya pasó":
+    diasEntre(now.iso,primero)===1?"Mañana":`Dentro de ${diasEntre(now.iso,primero)} días`;
+  let html=`<div class="cw" style="--c:${c.c}"><div class="hero">
+    <div class="hz ${[...c.zh].length>2?"l3":""}" aria-hidden="true">${c.zh}</div>
+    <button class="volver" data-act="volver">‹ El viaje</button>
+    <p class="hd">${ds.length?`Día ${ds[0].i+1}${ds.length>1?` al ${ds[ds.length-1].i+1}`:""}`:""}${est?`<span>${est}</span>`:""}</p>
+    <h1>${esc(c.n)}</h1>
+    <p class="hf">${rangoFechas(ds.map(x=>x.d))}${n?`, ${n} ${n===1?"noche":"noches"}`:""}</p>
+    <div class="hm">${w&&w.weather_code!=null?`<button data-clima="${ck}">${wxInfo(w.weather_code)[0]} ${Math.round(w.temperature_2m)}° ahora</button>`:""}
+      ${c.mon==="HKD"?"<span>Se paga en HKD</span>":""}</div>
+  </div><div class="pad">
+    <h2>El tiempo</h2>${tiraClima(ck)}`;
+  if(H.length){
+    html+=`<h2>Dónde dormís</h2>`+H.map(h=>{
+      const p=lugarHotel(h),am=urlAmap(p);
+      return `<div class="fila"><div><b>${esc(p.nombre)}</b>${p.dir?`<span class="zh">${esc(p.dir)}</span>`:""}
+        <span class="n">${fecha(toISO(h["Check-in"]),{weekday:"short",day:"numeric"})} a ${fecha(toISO(h["Check-out"]),{weekday:"short",day:"numeric",month:"short"})}${p.sin?". Por reservar":p.loc?". Localizador "+esc(p.loc):""}</span></div>
+        ${p.sin?"":`<div class="acc"><button class="btn sm" data-taxi-hotel="${h._row||""}" data-hk="${esc(h.Ciudad)}">Taxista</button>
+          <a class="btn sm" href="${esc(urlMapas(p))}" target="_blank" rel="noopener">Mapas</a>${am?`<a class="btn sm" href="${esc(am)}" target="_blank" rel="noopener">Amap</a>`:""}</div>`}</div>`}).join("");
+  }
+  if(ds.length) html+=`<h2>Días aquí</h2>`+ds.map(x=>filaDia(x.d,x.i,now)).join("");
+  if(Ls.some(x=>parseFloat(x.l.Lat))) html+=`<h2>Mapa</h2><div class="lmap" id="mapaV"><p class="n">Cargando mapa…</p></div>`;
+  if(Ls.length) html+=`<h2>Qué ver <small>${Ls.length} sitios</small></h2><div class="lgs">${Ls.map(x=>`<button data-lugar="${esc(x.l.ID)}">
+      <span class="nn">${x.n}</span><b>${esc(x.l.Nombre)}</b><span class="zh">${esc(limpio(x.l.Chino))}</span>
+      <small>${[x.o?fecha(x.o.iso,{weekday:"short",day:"numeric"}):"Fuera de la agenda",limpio(x.l.Precio),limpio(x.l.Horario)].filter(Boolean).map(esc).join(" · ")}</small></button>`).join("")}</div>`;
+  if(g.comer) html+=`<h2>Qué comer</h2><p class="n">Toca un plato para enseñarlo en grande.</p>
+    <div class="fr" style="margin-top:8px">${g.comer.map(([es,zh,py,t])=>`<button data-frase="${zh}" data-es="${esc(es+". "+t)}" data-py="${py}"><span>${esc(es)}</span><b>${zh}</b><i>${esc(t)}</i></button>`).join("")}</div>`;
+  if(g.consejos) html+=`<h2>Consejos</h2><ul class="tips">${g.consejos.map(t=>`<li>${esc(t)}</li>`).join("")}</ul>`;
+  $("viaje").innerHTML=html+`</div></div>`;
+}
+function tiraClima(ck){
+  const w=WX[ck],g=GUIA[ck]||{},mias=DIAS.filter(d=>d.ck===ck).map(d=>d.iso);
+  const habitual=g.clima?`Lo habitual a principios de noviembre: ${g.clima[0]}° de máxima y ${g.clima[1]}° de mínima.`:"";
+  if(!w||!w.d||!w.d.time) return `<button class="fila clb" data-clima="${ck}"><span>${habitual||"Sin previsión todavía."}
+    <span class="n">La previsión llega unos 16 días antes. Tócalo para consultarla.</span></span></button>`;
+  const en=w.d.time.filter(i=>mias.includes(i)),lista=en.length?en:w.d.time.slice(0,7);
+  return `<p class="n" style="margin:0 0 8px">${en.length?"Previsión para vuestros días aquí.":"Próximos días; vuestras fechas aún quedan lejos. "+habitual}</p>
+    <button class="pv" data-clima="${ck}" aria-label="Ver la previsión completa">${lista.map(iso=>{const x=climaDia(ck,iso);
+      return `<span class="${mias.includes(iso)?"vi":""}">${fecha(iso,{weekday:"short",day:"numeric"})}<i>${x.ico}</i><b>${x.max}°</b>${x.min}°</span>`}).join("")}</button>`;
+}
+
+/* ---------- Mapas interactivos (Leaflet; se carga solo cuando hay conexión) ---------- */
+let LEAF=null,MAPA={k:null,el:null,map:null,yo:null};
+function cargarLeaflet(){
+  if(window.L) return Promise.resolve();
+  return LEAF||(LEAF=new Promise((ok,ko)=>{
+    const css=document.createElement("link");css.rel="stylesheet";css.href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css";document.head.append(css);
+    const js=document.createElement("script");js.src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js";js.onload=ok;
+    js.onerror=()=>{LEAF=null;css.remove();js.remove();ko()};document.head.append(js);
+  }));
+}
+function defMapa(){
+  if(!ciudadSel){
+    const ks=[...new Set(DIAS.map(d=>d.ck))].filter(k=>CIUDADES[k]);
+    return {tipo:"viaje",hoy:(DIAS[diaActual(ahoraCN())]||{}).ck||null,
+      pts:ks.map((k,i)=>({k,n:i+1,lat:CIUDADES[k].lat,lon:CIUDADES[k].lon,c:CIUDADES[k].c,t:CIUDADES[k].n})),
+      lin:ks.slice(1).map((k,i)=>{const t=DATA.transporte.find(t=>claveCiudad(t.Destino)===k);return {a:ks[i],b:k,v:!!(t&&/vuelo/i.test(t.Tipo))}})};
+  }
+  const c=CIUDADES[ciudadSel],g={};
+  lugaresCiudad(ciudadSel).forEach(x=>{
+    const la=parseFloat(x.l.Lat),lo=parseFloat(x.l.Lon); if(!la||!lo) return;
+    const p=g[la+","+lo]||(g[la+","+lo]={lat:la,lon:lo,n:[],t:[],id:x.l.ID,iso:x.o&&x.o.iso});   // sitios con las mismas coordenadas comparten chincheta
+    p.n.push(x.n);p.t.push(x.l.Nombre);
+  });
+  const pts=Object.values(g),dias={};
+  pts.forEach(p=>{if(p.iso)(dias[p.iso]=dias[p.iso]||[]).push([p.lat,p.lon])});
+  return {tipo:"ciudad",c:c.c,centro:[c.lat,c.lon],pts,lin:Object.values(dias).filter(l=>l.length>1)};
+}
+function curva(a,b){                          // los vuelos se dibujan en arco
+  const mla=(a.lat+b.lat)/2-(b.lon-a.lon)*.18,mlo=(a.lon+b.lon)/2+(b.lat-a.lat)*.18,out=[];
+  for(let i=0;i<=20;i++){const t=i/20;out.push([(1-t)**2*a.lat+2*(1-t)*t*mla+t*t*b.lat,(1-t)**2*a.lon+2*(1-t)*t*mlo+t*t*b.lon])}
+  return out;
+}
+function dibujarMapa(map,def){
+  const oscuro=matchMedia("(prefers-color-scheme: dark)").matches,gris=oscuro?"#9AA1AA":"#636973";
+  L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:19,
+    attribution:'© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'}).addTo(map);
+  const pin=(txt,col)=>L.divIcon({className:"pin",html:`<span style="background:${col}">${txt}</span>`,iconSize:[24,24],iconAnchor:[12,12]});
+  if(def.tipo==="viaje"){
+    const P=Object.fromEntries(def.pts.map(p=>[p.k,p]));
+    def.lin.forEach(l=>{const a=P[l.a],b=P[l.b];
+      L.polyline(l.v?curva(a,b):[[a.lat,a.lon],[b.lat,b.lon]],{color:gris,weight:2.5,dashArray:l.v?"3 7":null,interactive:false}).addTo(map)});
+    def.pts.forEach(p=>{
+      const izq=p.lon<113||p.k==="shenzhen";
+      if(p.k===def.hoy) L.circleMarker([p.lat,p.lon],{radius:20,stroke:false,fillColor:p.c,fillOpacity:.25,interactive:false}).addTo(map);
+      L.marker([p.lat,p.lon],{icon:pin(p.n,p.c),title:p.t}).addTo(map)
+        .bindTooltip(esc(p.t),{permanent:true,direction:izq?"left":"right",offset:[izq?-10:10,0],className:"tt"})
+        .on("click",()=>{location.hash="viaje/"+p.k});
+    });
+    map.fitBounds(def.pts.map(p=>[p.lat,p.lon]),{padding:[30,30]});
+  }else{
+    def.lin.forEach(l=>L.polyline(l,{color:def.c,weight:3,opacity:.5,interactive:false}).addTo(map));
+    def.pts.forEach(p=>L.marker([p.lat,p.lon],{icon:pin(p.n[0]+(p.n.length>1?"+":""),def.c),title:p.t.join(", ")}).addTo(map)
+      .bindTooltip(p.t.map(esc).join("<br>"),{direction:"top",offset:[0,-12],className:"tt"}).on("click",()=>detalleLugar(p.id)));
+    if(def.pts.length>1) map.fitBounds(def.pts.map(p=>[p.lat,p.lon]),{padding:[30,30],maxZoom:15});
+    else map.setView(def.pts[0]?[def.pts[0].lat,def.pts[0].lon]:def.centro,13);
+  }
+}
+function montarMapa(){
+  if(tab!=="viaje"||!$("mapaV")) return;
+  const def=defMapa(),k=JSON.stringify(def);
+  const listo=()=>{                            // vuestra posición se pone aparte, sin rehacer el mapa
+    if(MAPA.yo){MAPA.yo.remove();MAPA.yo=null}
+    const c=ciudadSel&&CIUDADES[ciudadSel];
+    if(c&&POS&&distKm(POS.lat,POS.lon,c.lat,c.lon)<60)
+      MAPA.yo=L.circleMarker([POS.lat,POS.lon],{radius:7,color:"#fff",weight:2,fillColor:"#1A73E8",fillOpacity:1}).addTo(MAPA.map).bindTooltip("Estáis aquí");
+  };
+  if(MAPA.el&&MAPA.k===k){                     // al repintar se reutiliza el mapa que ya estaba
+    if($("mapaV")!==MAPA.el) $("mapaV").replaceWith(MAPA.el);
+    MAPA.map.invalidateSize(); listo(); return;
+  }
+  cargarLeaflet().then(()=>{
+    const ph=$("mapaV"); if(!ph||tab!=="viaje") return;
+    if(MAPA.map) MAPA.map.remove();
+    const el=document.createElement("div"); el.id="mapaV"; el.className="lmap on"; ph.replaceWith(el);
+    const map=L.map(el,{scrollWheelZoom:false});
+    MAPA={k,el,map,yo:null};
+    dibujarMapa(map,def); listo();
+  }).catch(()=>{
+    const ph=$("mapaV"); if(ph&&ciudadSel) ph.innerHTML=`<p class="n">El mapa necesita conexión. Los sitios de abajo se abren en Mapas igualmente.</p>`;
+  });
 }
 
 /* ---------- RESERVAS ---------- */
 const claveDoc=(hoja,r)=>`${hoja}:${r._k||""}:${r.Ciudad||r.Origen||""}`;
-function botonesDoc(k){
-  return DOCS.has(k)?`<button class="btn sm" data-ver-doc="${esc(k)}">Ver billete</button><button class="btn sm" data-quitar-doc="${esc(k)}">Quitar</button>`
-    :`<label class="btn sm">Adjuntar billete<input type="file" accept="image/*,application/pdf" data-doc="${esc(k)}" hidden></label>`;
+function botonesDoc(k,ver="Ver billete",adj="Adjuntar billete"){
+  return DOCS.has(k)?`<button class="btn sm" data-ver-doc="${esc(k)}">${ver}</button><button class="btn sm" data-quitar-doc="${esc(k)}">Quitar</button>`
+    :`<label class="btn sm">${adj}<input type="file" accept="image/*,application/pdf" data-doc="${esc(k)}" hidden></label>`;
 }
 function rReservas(){
   let html=`<div class="cab"><h1>Reservas</h1>
-    <div class="seg"><button data-res="hoteles" class="${resTab==="hoteles"?"on":""}">Hoteles</button><button data-res="transporte" class="${resTab==="transporte"?"on":""}">Transporte</button></div></div><div class="pad">`;
+    <div class="seg">${[["hoteles","Hoteles"],["transporte","Transporte"],["entradas","Entradas"]].map(([k,t])=>`<button data-res="${k}" class="${resTab===k?"on":""}">${t}</button>`).join("")}</div></div><div class="pad">`;
+  if(resTab==="entradas"){
+    const E=entradas(),ok=E.filter(x=>x.ok).length,ks=[...new Set(DIAS.map(d=>d.ck))].filter(k=>CIUDADES[k]);
+    html+=`<div class="prog" style="margin:0 0 6px"><div><span>Entradas compradas</span><b>${ok} de ${E.length}</b></div><div class="bar"><i style="width:${E.length?ok/E.length*100:0}%"></i></div></div>
+      <p class="n">Sitios de pago o con reserva previa, en el orden en que los visitáis. Marcadlos al comprar la entrada: se sincroniza con la hoja.</p>
+      <div class="chk ent">${E.map(x=>`<label><input type="checkbox" data-ent="${esc(x.l.ID)}" ${x.ok?"checked":""}>
+        <span><b>${esc(x.l.Nombre)}</b>${limpio(x.l.Chino)?`<span class="zh">${esc(x.l.Chino)}</span>`:""}
+          <small class="n">${esc(ciudad(x.l.Ciudad).n)}${x.o?", "+fecha(x.o.iso,{weekday:"short",day:"numeric",month:"short"}):""}${limpio(x.l.Reserva)?". "+esc(x.l.Reserva):""}</small></span>
+        <em>${esc(limpio(x.l.Precio))}</em></label>`).join("")}</div>
+      <h2>Añadir una entrada</h2>
+      ${v2()?"":`<p class="alerta">Hasta que actualices el script de la hoja, se guarda solo en este móvil.</p>`}
+      <form data-form="entrada"><label for="eC">Ciudad</label><select id="eC">${ks.map(k=>`<option value="${k}">${esc(CIUDADES[k].n)}</option>`).join("")}</select>
+        <label for="eN">Qué</label><input id="eN" type="text" required placeholder="Ej.: Espectáculo de acrobacias">
+        <div class="dos"><div><label for="eP">Precio</label><input id="eP" type="text" placeholder="Opcional"></div>
+          <div><label for="eR">Cómo se compra</label><input id="eR" type="text" placeholder="Trip.com, taquilla…"></div></div>
+        <button class="btn">Añadir</button></form>
+      <p class="n">Lo que añadas aparece también en la guía de su ciudad.</p>`;
+    $("reservas").innerHTML=html+`</div>`;
+    return;
+  }
   if(resTab==="hoteles"){
     html+=DATA.alojamiento.map(h=>{
       const n=noches(h),p=num(h["Precio total"]),c=ciudad(h.Ciudad),lg=lugarHotel(h),sin=sinHotel(h);
@@ -1104,6 +1462,12 @@ function rKit(){
     <div class="em"><a href="tel:110"><b>110</b>Policía (China)</a><a href="tel:120"><b>120</b>Ambulancia (China)</a><a href="tel:119"><b>119</b>Bomberos (China)</a><a href="tel:999"><b>999</b>Emergencias (Hong Kong)</a></div>
     <form data-form="seguro"><label for="segT">Seguro, embajada y otros teléfonos</label>
       <textarea id="segT" rows="3" placeholder="Compañía, número de póliza, teléfono de asistencia…">${esc(ajuste("seguro",""))}</textarea><button class="btn">Guardar</button></form>
+    ${contactos(ajuste("seguro",""))}
+
+    <h2>Documentos</h2>
+    <p class="n">Foto o PDF de pasaportes, póliza y visados. Se guardan solo en este móvil y se abren sin conexión.</p>
+    <div class="docs" style="margin-top:10px">${[["doc:pas1","Pasaporte de "+p1],["doc:pas2","Pasaporte de "+p2],["doc:seguro","Póliza del seguro"],["doc:visado","Visado o permiso de entrada"],["doc:otro","Otro documento"]]
+      .map(([k,t])=>`<div class="fila"><b>${esc(t)}</b><div class="acc">${botonesDoc(k,"Ver","Adjuntar")}</div></div>`).join("")}</div>
 
     <h2>Avisos en el calendario</h2>
     <p class="n">Pasa la agenda y los trayectos al Calendario del iPhone, con alarma antes de cada vuelo y tren. Si cambias la agenda, vuelve a exportarla.</p>
@@ -1124,14 +1488,29 @@ function rKit(){
     <button class="btn" data-act="sync">Sincronizar ahora</button></div>`;
 }
 
-const CONSERVAR=["gI","gC","cvI","addT","diarioT"];
+/* Teléfonos y correos escritos en el seguro → botones para llamar, escribir o abrir WhatsApp */
+function contactos(t){
+  let out="";const vistos=new Set();
+  String(t||"").split("\n").forEach(linea=>{
+    const wa=/whats/i.test(linea);
+    (linea.match(/\+?\d[\d ().-]{7,}\d/g)||[]).forEach(x=>{
+      const d=x.replace(/[^\d+]/g,""); if(d.replace(/\D/g,"").length<9||vistos.has(d)) return; vistos.add(d);
+      out+=wa?`<a class="btn sm" href="https://wa.me/${d.replace(/\D/g,"")}" target="_blank" rel="noopener">WhatsApp ${esc(x.trim())}</a>`
+        :`<a class="btn sm" href="tel:${d}">Llamar al ${esc(x.trim())}</a>`;
+    });
+    (linea.match(/[\w.+-]+@[\w-]+(\.[\w-]+)+/g)||[]).forEach(m=>{if(!vistos.has(m)){vistos.add(m);out+=`<a class="btn sm" href="mailto:${esc(m)}">${esc(m)}</a>`}});
+  });
+  return out?`<div class="acc" style="margin-top:10px">${out}</div>`:"";
+}
+
+const CONSERVAR=["gI","gC","cvI","addT","diarioT","eN","eP","eR"];
 function renderAll(forzar){
   const a=document.activeElement;
   if(!forzar&&a&&/INPUT|TEXTAREA|SELECT/.test(a.tagName)&&document.querySelector("main").contains(a)){dirty=true;return}
   dirty=false;
   const y=scrollY,selAntes=sel,vals={};
   CONSERVAR.forEach(id=>{if($(id)) vals[id]=$(id).value});      // lo escrito y aún sin guardar no se pierde
-  rHoy();rViaje();rReservas();rGastos();rKit();
+  rHoy();rViaje();rReservas();rGastos();rKit();montarMapa();
   CONSERVAR.forEach(id=>{if($(id)&&vals[id]!=null&&(id!=="diarioT"||sel===selAntes)) $(id).value=vals[id]});
   previaGasto();conversor();
   const n=pendientes(); $("pend").textContent=n?`${n} sin enviar`:""; $("pend").classList.toggle("on",!!n);
@@ -1170,7 +1549,7 @@ async function compartirArchivo(file){
 /* ---------- Billetes guardados en el móvil (IndexedDB) ---------- */
 function bd(){return new Promise((ok,ko)=>{const r=indexedDB.open("china-docs",1);r.onupgradeneeded=()=>r.result.createObjectStore("docs");r.onsuccess=()=>ok(r.result);r.onerror=()=>ko(r.error)})}
 async function bdOp(modo,fn){const db=await bd();return new Promise((ok,ko)=>{const tx=db.transaction("docs",modo),q=fn(tx.objectStore("docs"));tx.oncomplete=()=>ok(q&&q.result);tx.onerror=()=>ko(tx.error)})}
-async function cargarDocs(){try{DOCS=new Set(await bdOp("readonly",s=>s.getAllKeys()));rReservas()}catch(e){}}
+async function cargarDocs(){try{DOCS=new Set(await bdOp("readonly",s=>s.getAllKeys()));renderAll()}catch(e){}}
 async function verDoc(k){
   try{
     const d=await bdOp("readonly",s=>s.get(k)); if(!d) return;
@@ -1183,19 +1562,32 @@ async function verDoc(k){
 }
 
 /* ---------- Eventos ---------- */
-function irA(t){
+const TABS=["hoy","viaje","reservas","gastos","kit"];
+function mostrar(t){
   tab=t;
   document.querySelectorAll("nav button").forEach(x=>x.classList.toggle("on",x.dataset.t===t));
   document.querySelectorAll("main>section").forEach(s=>s.classList.toggle("on",s.id===t));
-  scrollTo(0,0);
+  montarMapa();
 }
+function ruta(){                              // la dirección manda: #viaje/pekin abre la guía de Pekín
+  const [t,s]=decodeURIComponent(location.hash.slice(1)).split("/"),T=TABS.includes(t)?t:"hoy";
+  if(T==="viaje"){const c=s&&CIUDADES[s]?s:null;if(c!==ciudadSel){ciudadSel=c;rViaje()}}
+  if(T==="reservas"&&["hoteles","transporte","entradas"].includes(s)&&s!==resTab){resTab=s;rReservas()}
+  mostrar(T);scrollTo(0,0);
+}
+function irA(t){if(location.hash.slice(1)===t) ruta(); else location.hash=t}
+addEventListener("hashchange",()=>{cerrarHoja();ruta()});
 document.querySelector("nav").addEventListener("click",e=>{const b=e.target.closest("button");if(b) irA(b.dataset.t)});
 
 document.addEventListener("click",async e=>{
   const q=s=>e.target.closest(s);
   let b;
   if(b=q("[data-dia]")){sel=+b.dataset.dia;selManual=sel!==diaActual(ahoraCN());rHoy();return}
-  if(b=q("[data-ir]")){sel=+b.dataset.ir;selManual=true;rHoy();irA("hoy");return}
+  if(b=q("[data-ir]")){sel=+b.dataset.ir;selManual=true;cerrarHoja();rHoy();irA("hoy");return}
+  if(b=q("[data-ciudad]")){location.hash="viaje/"+b.dataset.ciudad;return}
+  if(b=q("[data-clima]")) return climaHoja(b.dataset.clima);
+  if(b=q("[data-lugar]")) return detalleLugar(b.dataset.lugar);
+  if(b=q("[data-taxi-lugar]")){const l=DATA.lugares.find(x=>x.ID===b.dataset.taxiLugar);if(l) taxista(lugarDe(l.Nombre));return}
   if(b=q("[data-item]")) return detalleItem(b.dataset.item);
   if(b=q("[data-taxi-item]")){const x=itemsDia(DIAS[sel].iso).find(i=>i.k===b.dataset.taxiItem);if(x&&x.lugar) taxista(x.lugar);return}
   if(b=q("[data-taxi-hotel]")){const h=DATA.alojamiento.find(h=>h.Ciudad===b.dataset.hk);if(h) taxista(lugarHotel(h));return}
@@ -1203,7 +1595,7 @@ document.addEventListener("click",async e=>{
   if(b=q("[data-borrar-agenda]")){cerrarHoja();mutar({action:"remove",sheet:"Agenda",id:b.dataset.borrarAgenda});aviso("Plan borrado");return}
   if(b=q("[data-borrar-gasto]")){mutar({action:"remove",sheet:"Gastos",id:b.dataset.borrarGasto});aviso("Gasto borrado");return}
   if(b=q("[data-edit]")) return formFila(b.dataset.edit,+b.dataset.row);
-  if(b=q("[data-res]")){resTab=b.dataset.res;rReservas();return}
+  if(b=q("[data-res]")){resTab=b.dataset.res;history.replaceState(null,"","#reservas/"+resTab);rReservas();return}
   if(b=q("[data-mon]")){gMon=b.dataset.mon;$("gM").querySelectorAll("button").forEach(x=>x.classList.toggle("on",x===b));previaGasto();return}
   if(b=q("[data-cat]")){gCat=b.dataset.cat;$("gK").querySelectorAll("button").forEach(x=>x.classList.toggle("on",x===b));return}
   if(b=q("[data-pag]")){gPag=b.dataset.pag;LS.set("china-yo",gPag);$("gP").querySelectorAll("button").forEach(x=>x.classList.toggle("on",x===b));return}
@@ -1214,6 +1606,7 @@ document.addEventListener("click",async e=>{
     const a=b.dataset.act;
     if(a==="cerrar") cerrarHoja();
     if(a==="cerrar-grande") $("grande").classList.remove("on");
+    if(a==="volver") location.hash="viaje";
     if(a==="nuevo-agenda") formAgenda(null);
     if(a==="sync") sincronizar(true);
     if(a==="geo"){ubicar(true);renderAll()}
@@ -1237,6 +1630,9 @@ function conversor(){
 }
 document.addEventListener("change",async e=>{
   const t=e.target;
+  if(t.matches("[data-ent]")){
+    mutar({action:"upsert",sheet:"Ajustes",id:"ent:"+t.dataset.ent,values:{Valor:t.checked?"1":""}});return;
+  }
   if(t.matches(".chk input")){
     const c=DATA.checklist.find(x=>x._row===+t.dataset.row); if(!c) return;
     mutar({action:"check",row:c._row,key:c._k,done:t.checked});
@@ -1270,6 +1666,11 @@ document.addEventListener("submit",e=>{
     aviso("Gasto añadido");
   }else if(tipo==="tarea"){
     const t=$("addT").value.trim(); $("addT").value=""; if(t){mutar({action:"addTask",text:t});aviso("Tarea añadida")}
+  }else if(tipo==="entrada"){
+    const k=$("eC").value,nombre=$("eN").value.trim(); if(!nombre) return;
+    mutar({action:"upsert",sheet:"Lugares",id:"l"+Date.now().toString(36),values:{Ciudad:CIUDADES[k].n,Nombre:nombre,Chino:"","Dirección":"",Horario:"",
+      Precio:$("eP").value.trim(),Reserva:$("eR").value.trim()||"Comprar antes de ir",Notas:"",Lat:"",Lon:""}});
+    $("eN").value=$("eP").value=$("eR").value="";aviso("Entrada añadida");
   }else if(tipo==="seguro"){
     mutar({action:"upsert",sheet:"Ajustes",id:"seguro",values:{Valor:$("segT").value.trim()}});aviso("Datos guardados");
   }else if(tipo==="personas"){
@@ -1288,6 +1689,7 @@ setInterval(()=>{                       // el reloj avanza: se repinta solo la p
 /* ---------- Arranque ---------- */
 rebuild();
 renderAll(true);
+if(location.hash.length>1) ruta();
 sincronizar();
 pedirCambio();
 cargarDocs();

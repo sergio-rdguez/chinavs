@@ -1,6 +1,6 @@
 /* Viaje a China: copia de la app para que abra sin conexión.
    Sirve primero lo guardado y se actualiza por detrás; la versión nueva aparece al abrir la app la vez siguiente. */
-const CACHE = "china-v2";
+const CACHE = "china-v3";
 const ARCHIVOS = ["./", "./index.html", "./manifest.webmanifest", "./icon-180.png", "./icon-512.png"];
 
 self.addEventListener("install", e => {
