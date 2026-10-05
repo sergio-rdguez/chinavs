@@ -3,327 +3,591 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#B3261E">
+<meta name="theme-color" content="#FFFFFF">
+<script>try{if(localStorage.getItem("china-tema")==="oscuro"){document.documentElement.dataset.tema="oscuro";document.querySelector('meta[name="theme-color"]').content="#0F172A"}}catch(e){}</script>
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="China">
 <meta name="format-detection" content="telephone=no">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="icon" href="icon-180.png">
 <title>Viaje a China</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
+/* ============================================================
+   Estilo: paleta slate, tarjetas blancas redondeadas, acentos rojos
+   y un color por ciudad (--c). Los tonos suaves salen de --c.
+   ============================================================ */
 :root{
-  --bg:#F3F4F2; --surface:#FFFFFF; --ink:#15181D; --muted:#636973; --line:#DFE2DD;
-  --c:#B3261E; --ctext:var(--c); --ok:#1B7447; --warn:#96560A; --rojo:#B3261E;
-  --f:"Avenir Next","Avenir",-apple-system,system-ui,"Segoe UI",sans-serif;
-  --fd:"Avenir Next Condensed","Avenir Next","Arial Narrow",-apple-system,system-ui,sans-serif;
-  --fn:"DIN Alternate","Avenir Next Condensed","Arial Narrow",system-ui,sans-serif;
-  --fz:"Songti SC","STSong","Noto Serif CJK SC","PingFang SC",serif;
+  --bg:#F1F5F9; --surface:#FFFFFF; --soft:#F8FAFC; --ink:#0F172A; --text:#1E293B; --muted:#64748B; --faint:#94A3B8;
+  --line:#E2E8F0; --line2:#F1F5F9;
+  --red:#DC2626; --red7:#B91C1C; --red50:#FEF2F2; --red100:#FEE2E2;
+  --blue:#2563EB; --blue7:#1D4ED8; --ok:#059669; --warn:#B45309; --rojo:#DC2626;
+  --amb50:#FFFBEB; --amb200:#FDE68A; --amb9:#78350F;
+  --sh:0 1px 2px rgba(15,23,42,.05); --sh2:0 10px 35px -10px rgba(15,23,42,.08);
+  --c:#DC2626;
+  --f:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji";
+  --fm:ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;
+  --fz:"PingFang SC","Hiragino Sans GB","Microsoft YaHei","Noto Sans CJK SC","Source Han Sans SC",sans-serif;
   --st:env(safe-area-inset-top,0px); --sb:env(safe-area-inset-bottom,0px);
+  color-scheme:light;
 }
-@media (prefers-color-scheme:dark){
-  :root{--bg:#0F1113; --surface:#1B1E22; --ink:#ECEEF0; --muted:#9AA1AA; --line:#2C3036;
-    --ctext:color-mix(in srgb,var(--c) 48%,white); --ok:#63C897; --warn:#E5AE58; --rojo:#F08A80}
-}
+:root[data-tema="oscuro"]{--bg:#020617; --surface:#0F172A; --soft:#111C31; --ink:#F8FAFC; --text:#E2E8F0; --muted:#94A3B8; --faint:#64748B;
+    --line:#1E293B; --line2:#162033; --red50:#2A0F12; --red100:#3B1216; --red7:#F87171;
+    --blue:#3B82F6; --blue7:#60A5FA; --ok:#34D399; --warn:#FBBF24; --rojo:#F87171;
+    --amb50:#2B2111; --amb200:#5C4516; --amb9:#FCD34D;
+    --sh:0 1px 2px rgba(0,0,0,.4); --sh2:0 10px 35px -10px rgba(0,0,0,.6); color-scheme:dark}
+/* Tonos de la ciudad: se recalculan en cada elemento que define --c */
+:root,.th{--cs:color-mix(in srgb,var(--c) 8%,var(--surface));--cb:color-mix(in srgb,var(--c) 26%,var(--surface));--ct:color-mix(in srgb,var(--c) 82%,var(--ink))}
+:root[data-tema="oscuro"],[data-tema="oscuro"] .th{--cs:color-mix(in srgb,var(--c) 16%,var(--surface));--cb:color-mix(in srgb,var(--c) 40%,var(--surface));--ct:color-mix(in srgb,var(--c) 55%,white)}
+
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html{-webkit-text-size-adjust:100%}
-body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 var(--f);padding-bottom:calc(66px + var(--sb));overscroll-behavior-y:none}
-main{max-width:560px;margin:0 auto}
+body{margin:0;background:var(--bg);color:var(--text);font:15px/1.5 var(--f);-webkit-font-smoothing:antialiased;min-height:100vh;
+  padding-bottom:calc(92px + var(--sb));overscroll-behavior-y:none}
+main{max-width:72rem;margin:0 auto;padding:12px}
 main>section{display:none}
-main>section.on{display:block}
-h1,h2,h3,p{margin:0}
+main>section.on{display:block;animation:entra .18s ease}
+@keyframes entra{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+h1,h2,h3,h4,p{margin:0}
 button{font:inherit;color:inherit;cursor:pointer}
-:focus-visible{outline:2px solid var(--ctext);outline-offset:2px}
-.pad{padding:16px 16px 28px}
-.n{display:block;color:var(--muted);font-size:13.5px;line-height:1.4;margin-top:3px}
-p.n{margin-top:10px}
-.zh{font-family:var(--fz);color:var(--ctext)}
-h2{font:600 22px/1.15 var(--fd);margin:28px 0 10px}
-h2 small{font:400 14px var(--f);color:var(--muted);margin-left:6px}
+:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+.fa-solid,.fa-regular,.fa-brands{line-height:1}
+.pila{display:grid;gap:16px}
+.n{display:block;color:var(--muted);font-size:12.5px;line-height:1.5;margin-top:2px}
+p.n{margin-top:8px}
+.zh{font-family:var(--fz);color:var(--ct)}
+.mono{font-family:var(--fm)}
 
-/* Cabecera del día: el color y los caracteres de la ciudad */
-.hero{position:relative;overflow:hidden;background:var(--c);color:#fff;padding:calc(var(--st) + 20px) 20px 18px;min-height:calc(var(--st) + 196px)}
-.hz{position:absolute;right:14px;top:calc(var(--st) + 14px);writing-mode:vertical-rl;white-space:nowrap;font:900 84px/1 var(--fz);opacity:.26;pointer-events:none;user-select:none}
-.hz.l3{font-size:57px}
-.hd{font-size:14px;font-weight:600;opacity:.95}
-.hd span{margin-left:8px;background:rgba(255,255,255,.22);padding:2px 9px;border-radius:20px;font-weight:500}
-.hero h1{font:600 54px/1 var(--fd);letter-spacing:-.01em;margin:8px 0 6px}
-.hf::first-letter{text-transform:uppercase}
-.hm{display:flex;flex-wrap:wrap;gap:6px 16px;font:15px var(--fn);margin-top:16px;position:relative}
+/* ---------- Cabecera de cristal ---------- */
+.top{position:sticky;top:0;z-index:50;background:color-mix(in srgb,var(--surface) 90%,transparent);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--line);box-shadow:var(--sh);padding-top:var(--st)}
+.top-in{max-width:72rem;margin:0 auto;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.marca{display:flex;align-items:center;gap:12px;min-width:0;background:none;border:0;padding:0;text-align:left}
+.logo{width:40px;height:40px;border-radius:12px;background:var(--red);color:#fff;display:grid;place-items:center;font:900 20px/1 var(--fz);
+  box-shadow:0 4px 10px -2px rgba(220,38,38,.35);flex:none}
+.mt{display:flex;align-items:center;gap:8px}
+.mt h1{font-size:17px;font-weight:900;color:var(--ink);letter-spacing:-.01em;line-height:1}
+.cuenta{border:0;cursor:pointer;display:inline-flex;align-items:center;gap:4px;border-radius:999px;background:var(--red50);padding:4px 10px;font-size:10px;font-weight:900;color:var(--red7);
+  box-shadow:inset 0 0 0 1px var(--red100);white-space:nowrap}
+.cuenta:empty{display:none}
+.cuenta .vivo{width:7px;height:7px;border-radius:50%;background:#10B981;animation:late 1.6s infinite}
+@keyframes late{50%{opacity:.35}}
+.sub{font-size:12px;color:var(--muted);font-weight:500;margin-top:3px}
+.acciones{display:none;gap:8px}
+.acciones button{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:600;padding:8px 12px;border-radius:12px;border:1px solid var(--line);background:var(--surface);
+  color:var(--text);transition:background .15s}
+.acciones button i{color:var(--red)}
+.acciones button:hover{background:var(--line2)}
+.acciones button.on{background:var(--red);border-color:var(--red);color:#fff;box-shadow:var(--sh)}
+.acciones button.on i{color:#fff}
+.fases{max-width:72rem;margin:0 auto;padding:8px 16px;display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;border-top:1px solid var(--line2)}
+.fases::-webkit-scrollbar{display:none}
+.fase{flex:none;display:flex;align-items:center;gap:6px;padding:6px 14px;border-radius:12px;font-size:12px;font-weight:700;white-space:nowrap;
+  background:var(--surface);color:var(--ct);border:1px solid var(--cb);transition:background .15s}
+.fase:hover{background:var(--cs)}
+.fase.on{background:var(--c);border-color:var(--c);color:#fff;box-shadow:0 2px 8px -2px color-mix(in srgb,var(--c) 55%,transparent)}
+.fase.hoy:not(.on)::after{content:"";width:6px;height:6px;border-radius:50%;background:var(--c)}
 
-.cab{padding:calc(var(--st) + 20px) 20px 4px}
-.cab h1{font:600 36px/1.05 var(--fd)}
-.cab p{color:var(--muted);margin-top:6px;font-size:15px}
+/* ---------- Barra inferior (móvil) ---------- */
+nav.abajo{position:fixed;left:0;right:0;bottom:0;z-index:80;display:grid;grid-template-columns:repeat(5,1fr);gap:2px;
+  background:color-mix(in srgb,var(--surface) 95%,transparent);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  border-top:1px solid var(--line);box-shadow:0 -4px 18px rgba(15,23,42,.1);padding:8px 4px max(12px,var(--sb))}
+nav.abajo button{min-height:50px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;border:0;background:none;border-radius:12px;
+  font-size:10px;font-weight:700;color:var(--muted);transition:background .18s,color .18s,transform .18s}
+nav.abajo i{font-size:16px}
+nav.abajo button.on{background:var(--red50);color:var(--red7)}
+nav.abajo button:active{transform:scale(.94)}
+
+/* ---------- Tarjetas y piezas comunes ---------- */
+.card{background:var(--surface);border:1px solid var(--line);border-radius:16px;box-shadow:var(--sh);padding:16px}
+.card.xl{border-radius:24px}
+.card>h2:first-child,.card>.ch:first-child{margin-top:0}
+.ch{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}
+h2{display:flex;align-items:center;gap:8px;font-size:17px;font-weight:900;color:var(--ink);letter-spacing:-.01em;margin:4px 0 12px}
+h2 i{color:var(--ct);font-size:15px}
+h2 small,.cuantos{margin-left:auto;font-size:11px;font-weight:700;color:var(--muted);background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:3px 10px;letter-spacing:0}
+.lbl{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:800;color:var(--ct);text-transform:uppercase;letter-spacing:.06em;margin:0 0 10px}
+.eyebrow{font-size:11px;font-weight:900;color:var(--red);text-transform:uppercase;letter-spacing:.2em}
+.cab{background:var(--surface);border:1px solid var(--line);border-radius:16px;box-shadow:var(--sh);padding:20px}
+.cab h1{display:flex;align-items:center;gap:10px;font-size:23px;font-weight:900;color:var(--ink);letter-spacing:-.02em;line-height:1.15}
+.cab h1 i{color:var(--red);font-size:20px}
+.cab p{color:var(--muted);font-size:13px;margin-top:4px}
 .cab .seg{margin-top:14px}
+.pill{display:inline-flex;align-items:center;gap:5px;border-radius:999px;padding:3px 10px;font-size:11px;font-weight:700;white-space:nowrap}
+.pill.mono{font-family:var(--fm);background:var(--line2);color:var(--muted);border:1px solid var(--line)}
+.chipzh{display:block;font:500 13px/1.6 var(--fz);color:var(--amb9);background:var(--amb50);border:1px solid var(--amb200);border-radius:12px;padding:8px 12px;margin-top:10px;word-break:break-word}
 
-/* Tira de días */
-.tira{display:flex;gap:2px;overflow-x:auto;padding:8px 12px;background:var(--surface);border-bottom:1px solid var(--line);scrollbar-width:none}
-.tira::-webkit-scrollbar{display:none}
-.tira button{flex:0 0 44px;height:58px;border:0;background:none;border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;padding:0}
-.tira span{font-size:11px;color:var(--muted)}
-.tira b{font:400 18px/1.1 var(--fn)}
-.tira i{width:5px;height:5px;border-radius:50%;background:var(--dc)}
-.tira .hoy b{text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:3px}
-.tira .on{background:var(--ink);color:var(--bg)}
-.tira .on span{color:inherit;opacity:.7}
-
-/* Ahora y después */
-.ahora{background:var(--surface);border-left:4px solid var(--c);border-radius:4px 12px 12px 4px;padding:12px 14px;display:grid;gap:10px;margin-bottom:18px}
-.ahora small{display:block;color:var(--muted);font-size:13px}
-.ahora b{display:block;font-size:17px;line-height:1.25}
-.ahora em{font-style:normal;color:var(--muted);font-size:14px}
-.ahora .tr{border-top:1px solid var(--line);padding-top:10px}
-
-/* Línea de tiempo */
-.it{display:grid;grid-template-columns:50px 30px 1fr;width:100%;text-align:left;background:none;border:0;padding:0;min-height:56px}
-.it .h{font:18px/1.2 var(--fn);padding-top:3px}
-.it .h small{display:block;font-size:12.5px;color:var(--muted)}
-.it .r{position:relative;display:flex;justify-content:center}
-.it .r::before{content:"";position:absolute;top:0;bottom:0;width:2px;background:var(--line)}
-.it:first-child .r::before{top:10px}
-.it:last-of-type .r::before{bottom:auto;height:14px}
-.it .r i{position:relative;width:26px;height:26px;border-radius:50%;background:var(--surface);border:1.5px solid var(--line);font-size:13px;font-style:normal;display:grid;place-items:center}
-.it .b{padding:2px 0 18px 10px;min-width:0}
-.it .b b{display:block;font-size:16px;line-height:1.3;font-weight:600}
-.it .b .zh{display:block;font-size:15px;margin-top:1px}
-.it.cur .r i{border-color:var(--c);box-shadow:0 0 0 4px color-mix(in srgb,var(--c) 22%,transparent)}
-.it.cur .b b{color:var(--ctext)}
-.it.pas{opacity:.5}
-.it.t-vuelo .r i,.it.t-tren .r i{background:var(--c);border-color:var(--c)}
-.it.t-vuelo .b b,.it.t-tren .b b{font-weight:700}
-.now{display:grid;grid-template-columns:50px 1fr;align-items:center;margin:-6px 0 8px}
-.now span{font:700 13px var(--fn);color:var(--ctext)}
-.now i{height:2px;background:var(--c);border-radius:2px}
-.vacio{color:var(--muted);padding:6px 0 14px}
-.it .km{color:var(--ctext)}
-.pad>.enl{display:block;margin:8px auto 0}
-.alerta .enl{display:block;padding:4px 0 0}
-
-.fila{background:var(--surface);border-radius:12px;padding:12px 14px;display:flex;gap:12px;justify-content:space-between;align-items:center}
-.fila.col{display:block}
-.fila.col p+p{margin-top:6px}
-.fila .zh{display:block;font-size:15px}
-.acc{display:flex;flex-wrap:wrap;gap:8px}
-.fila .acc{flex:none;flex-direction:column}
-.diario{display:grid;gap:8px;justify-items:start}
-
-.btn{font:600 15px var(--f);min-height:44px;padding:9px 14px;border-radius:10px;border:1px solid var(--line);background:var(--surface);color:var(--ink);
-  display:inline-flex;align-items:center;justify-content:center;text-decoration:none;text-align:center}
-.btn.pri{background:var(--c);border-color:transparent;color:#fff}
-.btn.sm{min-height:36px;padding:5px 12px;font-size:14px}
-label.btn{margin:0;color:var(--ink);cursor:pointer}
-.btn.linea{width:100%;background:none;border-style:dashed;color:var(--muted)}
+.btn{font:700 13px var(--f);min-height:40px;padding:8px 14px;border-radius:12px;border:1px solid var(--line);background:var(--line2);color:var(--text);
+  display:inline-flex;align-items:center;justify-content:center;gap:7px;text-decoration:none;text-align:center;transition:filter .15s,transform .1s}
+.btn:active{transform:scale(.96)}
+.btn:hover{filter:brightness(.97)}
+.btn.pri{background:var(--red);border-color:var(--red);color:#fff;box-shadow:var(--sh)}
+.btn.azul{background:var(--blue);border-color:var(--blue);color:#fff;box-shadow:var(--sh)}
+.btn.verde{background:var(--ok);border-color:var(--ok);color:#fff}
+.btn.sm{min-height:34px;padding:5px 12px;font-size:12px;border-radius:10px}
+label.btn{margin:0;color:var(--text);cursor:pointer}
+.btn.linea{width:100%;background:none;border:1.5px dashed var(--line);color:var(--muted)}
 .btn.peligro{color:var(--rojo)}
 .btn.ancho{width:100%}
 .btns{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
-.enl{background:none;border:0;padding:6px 0;color:var(--ctext);font-size:14px;text-decoration:underline;text-underline-offset:2px}
+.acc{display:flex;flex-wrap:wrap;gap:8px}
+.pie{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px;padding-top:12px;border-top:1px solid var(--line2)}
+.pie .btn{flex:1 1 auto}
+.enl{background:none;border:0;padding:6px 0;color:var(--blue);font-size:13px;font-weight:600}
+.alerta{display:flex;gap:10px;background:var(--amb50);border:1px solid var(--amb200);color:var(--amb9);border-radius:16px;padding:12px 14px;font-size:13px;line-height:1.5}
+.alerta>i{margin-top:3px}
+.alerta .enl{display:block;padding:4px 0 0;color:inherit;text-decoration:underline}
+.vacio{color:var(--muted);padding:18px 4px;font-size:13px;text-align:center}
 
-input[type=text],input[type=time],textarea,select{font:16px var(--f);width:100%;padding:11px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink);appearance:none;-webkit-appearance:none}
-textarea{resize:vertical;line-height:1.4}
-label{display:block;font-size:13.5px;color:var(--muted);margin:12px 0 4px}
+input[type=text],input[type=time],textarea,select{font:15px var(--f);width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--surface);
+  color:var(--ink);appearance:none;-webkit-appearance:none}
+input:focus,textarea:focus,select:focus{outline:0;border-color:var(--red);box-shadow:0 0 0 3px color-mix(in srgb,var(--red) 18%,transparent)}
+textarea{resize:vertical;line-height:1.45}
+label{display:block;font-size:12px;font-weight:700;color:var(--muted);margin:12px 0 5px}
 .dos{display:grid;grid-template-columns:1fr 1fr;gap:0 10px;align-items:end}
 .dos>.btn{grid-column:1/-1;margin-top:10px;justify-self:start}
-form>.btn{margin-top:10px}
-
-/* Hoja inferior */
-dialog{margin:auto auto 0;width:100%;max-width:560px;max-height:88dvh;border:0;border-radius:18px 18px 0 0;padding:0;background:var(--surface);color:var(--ink)}
-dialog::backdrop{background:rgba(0,0,0,.5)}
-#dlgB{padding:22px 18px calc(22px + var(--sb));overflow-y:auto;max-height:88dvh}
-#dlgB h3{font:600 26px/1.1 var(--fd)}
-.dk{color:var(--muted);font-size:14px;margin-bottom:4px}
-.dk::first-letter{text-transform:uppercase}
-.dh{font:20px var(--fn);margin:6px 0 10px}
-.lugar{margin-top:14px;padding:14px;background:var(--bg);border-radius:12px}
-.zhG{font:700 34px/1.15 var(--fz);color:var(--ctext);margin-bottom:6px}
-.lugar dl{display:grid;grid-template-columns:auto 1fr;gap:6px 12px;margin:10px 0 0;font-size:15px}
-.lugar dt{color:var(--muted);font-size:13.5px;padding-top:1px}
-.lugar dd{margin:0}
-
-/* Pantalla grande para enseñar a alguien */
-#grande{position:fixed;inset:0;z-index:50;background:#fff;color:#000;display:none;flex-direction:column;align-items:center;justify-content:center;padding:calc(var(--st) + 64px) 22px calc(var(--sb) + 30px);text-align:center;overflow:auto}
-#grande.on{display:flex}
-#grande .x{position:absolute;top:calc(var(--st) + 12px);right:14px;border:1px solid #bbb;background:#fff;color:#000;border-radius:10px;padding:9px 14px;font-weight:600}
-.gz{font:700 clamp(42px,14vw,88px)/1.25 var(--fz);white-space:pre-line}
-.gz.lg{font-size:clamp(30px,9.5vw,58px)}
-.gp{font-size:20px;color:#444;margin-top:14px}
-.gs{font-size:16px;color:#555;margin-top:22px;max-width:30em}
-#grande img{max-width:100%;max-height:100%;object-fit:contain}
-
-/* Viaje */
-.mapa{background:var(--surface);border-radius:14px;padding:8px 8px 12px}
-.mapa svg{display:block;width:100%;height:auto;max-height:400px}
-.mapa path{fill:none;stroke:var(--muted);stroke-width:1.8;stroke-linecap:round}
-.mapa .vu{stroke-dasharray:2 6}
-.mapa .cn{font:600 13px var(--f);fill:var(--ink)}
-.mapa .cz{font:12px var(--fz);fill:var(--muted)}
-.mapa .nn{font:700 9px var(--f);fill:#fff;text-anchor:middle}
-.ley{display:flex;gap:18px;justify-content:center;font-size:13px;color:var(--muted)}
-.ley span{display:flex;align-items:center;gap:6px}
-.ley i{width:22px;border-top:2px solid var(--muted)}
-.ley .l2{border-top-style:dotted;border-top-width:3px}
-.lista{margin:0;padding-left:20px}
-.lista li{margin:5px 0}
-.prog{margin-top:16px}
-.prog>div:first-child{display:flex;justify-content:space-between;font-size:15px;margin-bottom:6px}
-.bar{height:6px;background:var(--line);border-radius:6px;overflow:hidden}
-.bar i{display:block;height:100%;background:var(--c);border-radius:6px}
-.cd{font:600 21px var(--fd);margin:24px 0 4px}
-.cd span{font:700 19px var(--fz);color:color-mix(in srgb,var(--dc) 70%,var(--ink));margin-right:8px}
-.dia{display:grid;grid-template-columns:46px 1fr;gap:12px;padding:10px 0;border-top:1px solid var(--line);font-size:15px}
-.dd{background:none;border:0;padding:0;text-align:center;align-self:start}
-.dd b{display:block;font:400 24px/1 var(--fn);color:color-mix(in srgb,var(--dc) 70%,var(--ink))}
-.dd span{font-size:12px;color:var(--muted)}
-.dia.hoy .dd b{text-decoration:underline;text-underline-offset:4px}
-.dia.pas{opacity:.55}
-
-/* Reservas */
-.res{background:var(--surface);border-radius:14px;border-top:4px solid var(--dc);padding:14px 16px;margin-bottom:12px}
-.res header{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
-.res h3{font:600 22px/1.15 var(--fd)}
-.res h3 .zh{font-size:17px;font-weight:400;color:var(--muted);margin-left:4px}
-.res header p{color:var(--muted);font-size:14.5px;margin-top:2px}
-.res header p::first-letter{text-transform:uppercase}
-.est{flex:none;font-size:12.5px;font-weight:600;padding:3px 10px;border-radius:20px}
-.est.ok{color:var(--ok);background:color-mix(in srgb,var(--ok) 14%,transparent)}
-.est.pend{color:var(--warn);background:color-mix(in srgb,var(--warn) 16%,transparent)}
-.rf{margin-top:10px;font-size:15px}
-.rp{font:19px var(--fn);margin-top:4px}
-.rp span{font:13.5px var(--f);color:var(--muted);margin-left:6px}
-.res p.zh{font-size:17px;margin-top:8px}
-.res .acc{margin-top:12px}
-.seg{display:flex;background:var(--line);border-radius:10px;padding:3px}
-.seg button{flex:1;border:0;background:none;border-radius:8px;padding:8px 10px;font-weight:600;font-size:14px;color:var(--muted);min-height:36px}
-.seg .on{background:var(--surface);color:var(--ink)}
+form>.btn{margin-top:12px}
+.seg{display:flex;background:var(--line2);border:1px solid var(--line);border-radius:12px;padding:3px;gap:2px}
+.seg button{flex:1;border:0;background:none;border-radius:9px;padding:7px 10px;font-weight:700;font-size:12.5px;color:var(--muted);min-height:34px;display:flex;align-items:center;justify-content:center;gap:6px}
+.seg .on{background:var(--surface);color:var(--ink);box-shadow:var(--sh)}
 .seg.mini{flex:none}
+.prog{background:var(--line2);border:1px solid var(--line);border-radius:12px;padding:14px}
+.prog>div:first-child{display:flex;justify-content:space-between;font-size:12px;font-weight:700;color:var(--text);margin-bottom:8px}
+.bar{height:10px;background:var(--line);border-radius:999px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--red);border-radius:999px;transition:width .3s}
 
-/* Gastos */
-.gf{background:var(--surface);border-radius:14px;padding:14px;display:grid;gap:12px}
+/* ---------- Cabecera con foto ---------- */
+.hero{position:relative;height:190px;border-radius:24px;overflow:hidden;background:var(--c);box-shadow:0 4px 14px -4px rgba(15,23,42,.25);color:#fff}
+.hero>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.hero .ov{position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.85),rgba(0,0,0,.2) 55%,transparent);display:flex;flex-direction:column;justify-content:flex-end;padding:16px 18px}
+.hero .badge{display:inline-flex;align-items:center;gap:6px;width:fit-content;background:var(--c);color:#fff;border-radius:999px;padding:3px 11px;font-size:10.5px;font-weight:800;
+  text-transform:uppercase;letter-spacing:.06em;box-shadow:var(--sh);margin-bottom:6px}
+.hero h1{font-size:30px;font-weight:900;letter-spacing:-.02em;line-height:1.05;text-shadow:0 2px 8px rgba(0,0,0,.35)}
+.hero .hf{font-size:13px;font-weight:600;opacity:.92;margin-top:4px}
+.hero .hf::first-letter{text-transform:uppercase}
+.hero .hm{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12px;font-weight:600;opacity:.9;margin-top:6px}
+.hero .hm i{opacity:.8;margin-right:4px}
+.hero .arriba{position:absolute;top:12px;left:12px;right:12px;display:flex;justify-content:space-between;align-items:flex-start;gap:8px;z-index:2}
+.cristal{display:inline-flex;align-items:center;gap:7px;padding:6px 12px;border-radius:999px;color:#fff;font-size:12.5px;font-weight:700;
+  background:linear-gradient(135deg,rgba(15,23,42,.78),rgba(30,41,59,.68));backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+  border:1px solid rgba(255,255,255,.28);box-shadow:0 4px 18px -2px rgba(0,0,0,.45),inset 0 1px 1px rgba(255,255,255,.35);text-decoration:none}
+.cristal:active{transform:scale(.95)}
+.cristal .mc{width:24px;height:24px}
+.cristal b{font-size:15px;font-weight:900}
+.credito{position:absolute;right:10px;bottom:6px;font-size:9px;opacity:.55;color:#fff;text-decoration:none;z-index:2}
+
+/* ---------- Tira de días ---------- */
+.tira{display:flex;gap:4px;overflow-x:auto;padding:8px;background:var(--surface);border:1px solid var(--line);border-radius:16px;box-shadow:var(--sh);scrollbar-width:none}
+.tira::-webkit-scrollbar{display:none}
+.tira button{flex:0 0 46px;height:60px;border:0;background:none;border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;padding:0;position:relative}
+.tira span{font-size:10px;font-weight:700;color:var(--faint);text-transform:uppercase}
+.tira b{font-size:17px;font-weight:900;color:var(--ink);line-height:1.1}
+.tira i{width:6px;height:6px;border-radius:50%;background:var(--dc)}
+.tira .hoy{box-shadow:inset 0 0 0 2px var(--dc)}
+.tira .on{background:var(--dc)}
+.tira .on span,.tira .on b{color:#fff}
+.tira .on i{background:#fff}
+
+/* ---------- Ahora / después ---------- */
+.ahora{background:var(--cs);border:1px solid var(--cb);border-radius:16px;padding:14px;display:grid;gap:12px}
+.ahora>div{display:grid;grid-template-columns:34px 1fr;gap:2px 12px;align-items:center}
+.ahora .ai{grid-row:1/4;width:34px;height:34px;border-radius:10px;background:var(--c);color:#fff;display:grid;place-items:center;font-size:13px;box-shadow:var(--sh)}
+.ahora .ai.gris{background:var(--surface);color:var(--ct);border:1px solid var(--cb)}
+.ahora>div>:not(.ai){grid-column:2}
+.ahora small{font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:.08em;color:var(--ct)}
+.ahora b{font-size:15px;font-weight:800;color:var(--ink);line-height:1.25}
+.ahora em{font-style:normal;color:var(--muted);font-size:12.5px}
+.ahora .tr{border-top:1px solid var(--cb);padding-top:12px}
+
+/* ---------- Tarjeta de un día ---------- */
+.dcard{background:var(--surface);border:1px solid var(--line);border-radius:24px;box-shadow:var(--sh);overflow:hidden}
+.dcard>header{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:14px 16px;border-bottom:1px solid var(--line2);
+  background:linear-gradient(to bottom,var(--soft),var(--surface))}
+.dcard .dh{display:flex;align-items:center;gap:10px;min-width:0}
+.dnum{width:40px;height:40px;border-radius:14px;background:var(--c);color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;flex:none;box-shadow:var(--sh)}
+.dnum small{font-size:8px;font-weight:900;letter-spacing:.08em;opacity:.85;line-height:1}
+.dnum b{font-size:14px;font-weight:900;line-height:1;margin-top:2px}
+.dcard h3{font-size:15px;font-weight:900;color:var(--ink);line-height:1.2}
+.dcard h3::first-letter{text-transform:uppercase}
+.dcard .dt{font-size:12.5px;font-weight:600;color:var(--muted);line-height:1.35;margin-top:2px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.dbad{display:flex;flex-direction:column;align-items:flex-end;gap:5px;flex:none}
+.vuelo{display:inline-flex;align-items:center;gap:4px;border-radius:999px;background:var(--blue);color:#fff;padding:2px 9px;font-size:10px;font-weight:900;letter-spacing:.05em}
+.int{display:inline-flex;align-items:center;gap:6px;padding:2px 10px;border-radius:999px;font-size:11px;font-weight:600;color:var(--text);
+  background:linear-gradient(135deg,color-mix(in srgb,var(--surface) 86%,transparent),color-mix(in srgb,var(--soft) 60%,transparent));
+  border:1px solid var(--line);box-shadow:inset 0 1px 1px rgba(255,255,255,.6),var(--sh)}
+.int .p{width:6px;height:6px;border-radius:50%;background:var(--ni)}
+.int .bs{display:flex;gap:2px;align-items:center}
+.int .bs i{width:3px;height:9px;border-radius:9px;background:color-mix(in srgb,var(--faint) 45%,transparent)}
+.int .bs i.on{background:var(--ni)}
+.tl{padding:6px 14px 10px}
+.tl>.btn.linea{margin:8px 0 4px}
+
+/* Línea de tiempo: hora, icono pastel y texto */
+.it{display:grid;grid-template-columns:14px 58px 42px 1fr;gap:0 10px;align-items:center;width:100%;text-align:left;background:none;border:0;border-bottom:1px solid var(--line2);
+  padding:12px 0;position:relative;border-radius:0}
+.it:last-of-type{border-bottom:0}
+.it .tk{align-self:stretch;display:flex;flex-direction:column;align-items:center}
+.it .tk::before,.it .tk::after{content:"";width:1px;flex:1;background:var(--line)}
+.it .tk i{width:10px;height:10px;border-radius:50%;background:var(--faint);border:2px solid var(--surface);box-shadow:var(--sh);margin:3px 0;flex:none}
+.it:first-of-type .tk::before,.it:last-of-type .tk::after{opacity:0}
+.it .h{text-align:center;line-height:1.2}
+.it .h b{display:block;font-size:13.5px;font-weight:800;color:var(--ink);letter-spacing:-.01em}
+.it .h small{display:block;font-size:10.5px;color:var(--faint);font-weight:600;margin-top:2px;white-space:nowrap}
+.ic{--h:#059669;width:42px;height:42px;border-radius:16px;display:grid;place-items:center;font-size:15px;flex:none;
+  background:color-mix(in srgb,var(--h) 8%,var(--surface));border:1px solid color-mix(in srgb,var(--h) 16%,var(--surface));color:var(--h);box-shadow:var(--sh)}
+[data-tema="oscuro"] .ic{background:color-mix(in srgb,var(--h) 18%,var(--surface));border-color:color-mix(in srgb,var(--h) 32%,var(--surface));color:color-mix(in srgb,var(--h) 55%,white)}
+.ic-indigo{--h:#4F46E5}.ic-blue{--h:#2563EB}.ic-sky{--h:#0284C7}.ic-cyan{--h:#0891B2}.ic-amber{--h:#D97706}.ic-purple{--h:#9333EA}.ic-rose{--h:#E11D48}.ic-emerald{--h:#059669}
+.it .b{min-width:0}
+.it .b b{display:block;font-size:13.5px;font-weight:700;color:var(--ink);line-height:1.35}
+.it .b .zh{display:inline-block;font-size:12px;font-weight:600;background:var(--cs);border:1px solid var(--cb);border-radius:999px;padding:0 8px;margin-top:3px}
+.it .b .n{font-size:12px}
+.it .km{color:var(--blue);font-weight:600}
+.it.cur{background:var(--cs);border-radius:14px;border-bottom-color:transparent}
+.it.cur .tk i{background:var(--c);box-shadow:0 0 0 4px color-mix(in srgb,var(--c) 22%,transparent)}
+.it.cur .h b{color:var(--ct)}
+.it.pas{opacity:.5}
+.now{display:grid;grid-template-columns:auto 1fr;gap:8px;align-items:center;margin:4px 0}
+.now span{font-size:10.5px;font-weight:900;color:#fff;background:var(--red);border-radius:999px;padding:2px 8px}
+.now i{height:2px;background:var(--red);border-radius:2px}
+
+/* ---------- Hotel ---------- */
+.hcard{background:var(--surface);border:1px solid var(--line);border-radius:24px;box-shadow:var(--sh2);padding:18px;display:flex;flex-direction:column}
+.hcard .ht{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px}
+.hcard .hc{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:900;color:var(--ct);text-transform:uppercase;letter-spacing:.06em}
+.hcard h3{font-size:16px;font-weight:900;color:var(--ink);line-height:1.3}
+.hcard .pie{margin-top:auto}
+.hcard .hp{font-size:13px;color:var(--text);margin-top:8px}
+.hcard .hp b{font-weight:900}
+.est{flex:none;font-size:11px;font-weight:800;padding:3px 10px;border-radius:999px}
+.est.ok{color:#047857;background:#ECFDF5;border:1px solid #A7F3D0}
+.est.pend{color:#B45309;background:#FFFBEB;border:1px solid #FDE68A}
+[data-tema="oscuro"] .est.ok{color:#34D399;background:#052E22;border-color:#065F46}
+[data-tema="oscuro"] .est.pend{color:#FBBF24;background:#2B2111;border-color:#5C4516}
+
+/* ---------- Tiempo ---------- */
+.wcard{position:relative;overflow:hidden;border-radius:24px;padding:16px;border:1px solid var(--line);
+  background:linear-gradient(145deg,color-mix(in srgb,var(--surface) 94%,transparent),color-mix(in srgb,var(--surface) 78%,transparent));box-shadow:var(--sh2);width:100%;text-align:left;display:block}
+.wcard::before,.wcard::after{content:"";position:absolute;border-radius:50%;pointer-events:none}
+.wcard::before{top:-30%;right:-15%;width:220px;height:220px;background:radial-gradient(circle,rgba(251,191,36,.14),transparent 70%);animation:aura 7s ease-in-out infinite alternate}
+.wcard::after{bottom:-35%;left:-15%;width:200px;height:200px;background:radial-gradient(circle,rgba(56,189,248,.12),transparent 70%);animation:aura 9s ease-in-out infinite alternate-reverse}
+@keyframes aura{to{transform:translate(14px,-10px) scale(1.2)}}
+.wcard>*{position:relative;z-index:1}
+.wc{display:flex;gap:12px;align-items:stretch;justify-content:space-between}
+.wc .ya{flex:1;min-width:130px;display:flex;flex-direction:column;justify-content:space-between;gap:8px}
+.wc .wl{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:800;color:var(--text)}
+.wc .wl i{color:var(--blue)}
+.wc .gr{display:flex;align-items:center;gap:8px}
+@media (max-width:420px){.wc .gr{gap:6px;white-space:nowrap}.wc .gr .mc{width:44px;height:44px}.wc .gr b{font-size:28px}.fmc{width:68px}.wc .ya{min-width:0}}
+.wc .gr .mc{width:58px;height:58px;animation:flota 4.8s ease-in-out infinite}
+@keyframes flota{50%{transform:translateY(-4px) rotate(2deg)}}
+.wc .gr b{font-size:34px;font-weight:900;color:var(--ink);letter-spacing:-.03em;line-height:1}
+.wc .gr span{font-size:15px;font-weight:500;color:var(--faint)}
+.lluvia{display:inline-flex;align-items:center;gap:5px;width:fit-content;background:#EFF6FF;color:#2563EB;border:1px solid #BFDBFE;border-radius:999px;padding:2px 10px;font-size:11.5px;font-weight:700}
+[data-tema="oscuro"] .lluvia{background:#10213F;color:#93C5FD;border-color:#1E3A8A}
+.wc .cond{font-size:12px;color:var(--muted)}
+.fmcs{display:flex;gap:6px;flex:none}
+.fmc{width:78px;padding:9px 5px;border-radius:18px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:2px;
+  background:linear-gradient(180deg,#F0F9FF,color-mix(in srgb,var(--surface) 90%,transparent));border:1px solid #DBEAFE;box-shadow:0 2px 8px -2px rgba(15,23,42,.04)}
+[data-tema="oscuro"] .fmc{background:linear-gradient(180deg,#0C1D33,var(--surface));border-color:#1E3A5F}
+.fmc span{font-size:11.5px;font-weight:600;color:var(--muted)}
+.fmc .mc{width:44px;height:44px;margin:2px 0}
+.fmc b{font-size:16px;font-weight:900;color:var(--ink);line-height:1.1}
+.fmc small{font-size:11px;color:var(--faint);font-weight:500}
+.fmc em{font-style:normal;font-size:11px;font-weight:700;color:#2563EB;min-height:15px}
+.fmc.vi{border-color:var(--c);box-shadow:inset 0 0 0 1px var(--c)}
+.wnota{display:flex;gap:8px;align-items:flex-start;font-size:11.5px;color:var(--muted);margin-top:12px;padding-top:10px;border-top:1px solid var(--line2)}
+.mc{display:inline-block;object-fit:contain;filter:drop-shadow(0 4px 10px rgba(15,23,42,.12))}
+.pv{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;margin-top:12px;padding-bottom:2px}
+.pv::-webkit-scrollbar{display:none}
+.pv .fmc{flex:none}
+.pr{display:grid;grid-template-columns:1fr 36px 82px 44px;gap:10px;align-items:center;padding:7px 0;border-top:1px solid var(--line2);font-size:13.5px}
+.pr .mc{width:32px;height:32px}
+.pr.vi>b{color:var(--ct)}
+.pr b{font-weight:700}
+.pr b::first-letter{text-transform:uppercase}
+.pr .t{font-weight:800;text-align:right;color:var(--ink)}
+.pr .ll{color:#2563EB;font-size:12px;font-weight:700;text-align:right}
+.pr.cab{color:var(--faint);font-size:11px;font-weight:700;border-top:0;padding-bottom:2px;text-transform:uppercase;letter-spacing:.05em}
+.ahw{display:flex;align-items:center;gap:14px;margin:12px 0 16px;padding:14px;border-radius:18px;background:var(--soft);border:1px solid var(--line)}
+.ahw .mc{width:64px;height:64px}
+.ahw b{font-size:44px;font-weight:900;color:var(--ink);line-height:1;letter-spacing:-.03em}
+.ahw .n{margin:0}
+
+/* ---------- Viaje: mapa y paradas ---------- */
+.ruta{display:grid;gap:14px}
+.paradas{background:var(--surface);border:1px solid var(--line);border-radius:16px;box-shadow:var(--sh);padding:10px}
+.paradas>h3{font-size:14px;font-weight:900;color:var(--ink);padding:6px 8px 8px}
+.parada{display:flex;gap:12px;align-items:flex-start;width:100%;text-align:left;background:none;border:0;border-radius:12px;padding:10px;transition:background .15s}
+.parada:hover{background:var(--cs)}
+.parada .num{flex:none;width:28px;height:28px;border-radius:50%;background:var(--c);color:#fff;display:grid;place-items:center;font-size:12px;font-weight:900}
+.parada.hoy .num{box-shadow:0 0 0 4px color-mix(in srgb,var(--c) 25%,transparent)}
+.parada b{display:block;font-size:14px;font-weight:900;color:var(--ink)}
+.parada .fe{display:block;font-size:11px;font-weight:700;color:var(--ct);margin-top:1px}
+.parada .no{display:block;font-size:11.5px;color:var(--muted);margin-top:4px;line-height:1.4}
+.hls{display:flex;flex-wrap:wrap;gap:4px;margin-top:7px}
+.hl{display:inline-flex;align-items:center;gap:4px;border-radius:999px;background:var(--line2);border:1px solid var(--line);padding:1px 8px;font-size:10.5px;font-weight:600;color:var(--muted)}
+.hl i{color:#F59E0B;font-size:8px}
+.ver{display:inline-flex;align-items:center;gap:5px;font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:.06em;color:var(--ct);margin-top:8px}
+.parada .ft{flex:none;width:58px;height:58px;border-radius:14px;object-fit:cover;margin-left:auto;background:var(--c)}
+.dia{display:grid;grid-template-columns:44px 1fr;gap:12px;padding:11px 4px;border-top:1px solid var(--line2);font-size:13.5px}
+.dia:first-child{border-top:0}
+.dd{background:var(--cs);border:1px solid var(--cb);border-radius:12px;padding:5px 0;text-align:center;align-self:start}
+.dd b{display:block;font-size:17px;font-weight:900;color:var(--ct);line-height:1.1}
+.dd span{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase}
+.dia.hoy .dd{background:var(--c);border-color:var(--c)}
+.dia.hoy .dd b,.dia.hoy .dd span{color:#fff}
+.dia.pas{opacity:.55}
+.cd{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:900;color:var(--ct);text-transform:uppercase;letter-spacing:.06em;margin:18px 0 6px}
+.cd:first-child{margin-top:4px}
+.cd span{font:700 15px var(--fz)}
+.lista{margin:0;padding:0;list-style:none;display:grid;gap:6px}
+.lista li{display:flex;gap:8px;font-size:13px;align-items:baseline}
+.lista li i{color:var(--warn);font-size:11px}
+
+.mapa{padding:8px 8px 12px}
+.mapa svg{display:block;width:100%;height:auto;max-height:420px}
+.mapa path{fill:none;stroke:var(--faint);stroke-width:1.8;stroke-linecap:round}
+.mapa .vu{stroke-dasharray:2 6}
+.mapa .cn{font:700 12.5px var(--f);fill:var(--ink)}
+.mapa .cz{font:12px var(--fz);fill:var(--muted)}
+.mapa .nn{font:800 9px var(--f);fill:#fff;text-anchor:middle}
+.ley{display:flex;gap:18px;justify-content:center;font-size:12px;color:var(--muted)}
+.ley span{display:flex;align-items:center;gap:6px}
+.ley i{width:22px;border-top:2px solid var(--faint)}
+.ley .l2{border-top-style:dotted;border-top-width:3px}
+.lmap{position:relative;z-index:0;border-radius:16px;overflow:hidden;background:var(--surface);border:1px solid var(--line);box-shadow:var(--sh)}
+.lmap.on{height:380px}
+.lmap>.n{padding:40px 16px;text-align:center;margin:0}
+.lmap.leaflet-container{font:12px var(--f)}
+[data-tema="oscuro"] .lmap .leaflet-tile-pane{filter:invert(1) hue-rotate(180deg) brightness(.85) contrast(.9)}
+.pin span{display:grid;place-items:center;width:26px;height:26px;border-radius:50%;color:#fff;font:900 11px/1 var(--f);border:2px solid #fff;box-shadow:0 2px 6px rgba(15,23,42,.35)}
+.leaflet-tooltip.tt{font:800 10.5px var(--f);padding:3px 8px;border-radius:999px;border:1px solid #CBD5E1;color:#1E293B;box-shadow:0 2px 7px rgba(15,23,42,.16)}
+
+/* ---------- Ciudad: qué ver, comer y consejos ---------- */
+.dos-col{display:grid;gap:14px}
+.lgs{display:grid;gap:8px}
+.lgs button{display:grid;grid-template-columns:26px 1fr auto;gap:2px 10px;align-items:center;text-align:left;background:var(--soft);border:1px solid var(--line);border-radius:12px;padding:10px 12px;width:100%;transition:border-color .15s}
+.lgs button:hover{border-color:var(--cb)}
+.lgs .nn{grid-row:1/3;width:26px;height:26px;border-radius:50%;background:var(--c);color:#fff;font:900 11px/26px var(--f);text-align:center}
+.lgs b{font-weight:800;font-size:13.5px;color:var(--ink)}
+.lgs .zh{font-size:12.5px;text-align:right;font-weight:600}
+.lgs small{grid-column:2/-1;color:var(--muted);font-size:11.5px}
+.foods{display:grid;gap:10px}
+.food{display:flex;flex-direction:column;gap:6px;text-align:left;background:var(--soft);border:1px solid var(--line);border-radius:12px;padding:14px;width:100%}
+.food b{font-size:14px;font-weight:900;color:var(--ink)}
+.food .zh{display:inline-flex;align-items:center;gap:6px;width:fit-content;font-size:14px;font-weight:700;background:var(--cs);border:1px solid var(--cb);border-radius:999px;padding:2px 10px}
+.food .zh small{font:600 11px var(--f);color:var(--muted)}
+.food p{font-size:12px;color:var(--muted);line-height:1.5}
+.food .ver{margin-top:2px}
+.tips{margin:0;padding:0;list-style:none;display:grid;gap:8px}
+.tips li{display:flex;gap:10px;font-size:13px;line-height:1.5;align-items:flex-start}
+.tips li i{flex:none;width:24px;height:24px;border-radius:8px;display:grid;place-items:center;background:var(--cs);color:var(--ct);font-size:11px;margin-top:1px}
+.picante{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--ct);background:var(--soft);border:1px solid var(--line);border-radius:999px;padding:3px 10px;white-space:nowrap}
+
+/* ---------- Reservas ---------- */
+.rgrid{display:grid;gap:14px}
+.tcard{background:var(--surface);border:1px solid var(--line);border-radius:16px;box-shadow:var(--sh);padding:18px;display:flex;flex-direction:column}
+.tcard .tt{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px}
+.tipo{display:inline-flex;align-items:center;gap:5px;border-radius:999px;padding:3px 10px;font-size:11px;font-weight:800}
+.tipo.av{background:#E0F2FE;color:#075985}.tipo.tr{background:#FEF3C7;color:#92400E}
+[data-tema="oscuro"] .tipo.av{background:#0C2A40;color:#7DD3FC}
+[data-tema="oscuro"] .tipo.tr{background:#2B2111;color:#FCD34D}
+.tcard h4{font-size:15px;font-weight:900;color:var(--ink)}
+.caja{margin-top:10px;padding:12px;background:var(--soft);border:1px solid var(--line);border-radius:12px;font-size:12.5px}
+.caja b{font-weight:700;color:var(--text)}
+.loc{display:inline-flex;align-items:center;gap:6px;margin-top:10px;background:#EFF6FF;color:#1D4ED8;border:1px solid #BFDBFE;border-radius:10px;padding:4px 10px;font:700 12px var(--fm)}
+[data-tema="oscuro"] .loc{background:#10213F;color:#93C5FD;border-color:#1E3A8A}
+.ent{display:grid}
+.ent label{display:flex;gap:12px;align-items:flex-start;margin:0;padding:12px 8px;border-bottom:1px solid var(--line2);border-radius:12px;font-size:13.5px;color:var(--text);cursor:pointer;transition:background .15s}
+.ent label:hover{background:var(--soft)}
+.ent input,.chk input{flex:none;width:20px;height:20px;margin:1px 0 0;accent-color:var(--red);cursor:pointer}
+.ent span{flex:1;min-width:0}
+.ent b{display:block;font-weight:800;color:var(--ink)}
+.ent .zh{font-size:12.5px;margin-left:4px;font-weight:600}
+.ent small{display:block;font-size:11.5px;font-weight:600;color:var(--red);margin-top:2px}
+.ent em{flex:none;max-width:40%;font:700 12px var(--fm);font-style:normal;color:var(--text);text-align:right}
+.ent input:checked~span b{color:var(--muted);text-decoration:line-through}
+
+/* ---------- Gastos ---------- */
+.gf{display:grid;gap:12px}
 .imp{display:flex;gap:10px;align-items:center}
-#gI{font:42px/1.1 var(--fn);border:0;background:none;padding:0;min-width:0;flex:1}
-#gI:focus{outline:0}
-.conv{color:var(--muted);font-size:13.5px;margin-top:-6px}
+#gI{font:900 40px/1.1 var(--f);letter-spacing:-.03em;border:0;background:none;padding:0;min-width:0;flex:1;color:var(--ink);box-shadow:none}
+.conv{color:var(--muted);font-size:12.5px;margin-top:-6px}
 .chips{display:flex;flex-wrap:wrap;gap:6px}
-.chips button{border:1px solid var(--line);background:none;border-radius:20px;padding:6px 12px;font-size:14px;min-height:36px}
-.chips .on{background:var(--ink);border-color:var(--ink);color:var(--bg)}
-.bl{display:grid;grid-template-columns:96px 1fr auto;gap:10px;align-items:center;font-size:14.5px;margin:7px 0}
-.bl b{font:15px var(--fn)}
-.gd{display:flex;justify-content:space-between;font:600 14px var(--f);color:var(--muted);margin:18px 0 2px}
-.gd span:first-child::first-letter{text-transform:uppercase}
-.g{display:grid;grid-template-columns:1fr auto auto;gap:12px;align-items:center;padding:10px 0;border-top:1px solid var(--line)}
-.g b{font-weight:600;font-size:15px}
+.chips button{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:6px 12px;font-size:12.5px;font-weight:700;color:var(--muted);min-height:34px}
+.chips .on{background:var(--red);border-color:var(--red);color:#fff}
+.kpis{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.kpi{background:var(--surface);border:1px solid var(--line);border-radius:16px;box-shadow:var(--sh);padding:14px}
+.kpi small{display:block;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+.kpi b{display:block;font-size:22px;font-weight:900;color:var(--ink);margin-top:4px;letter-spacing:-.02em}
+.bl{display:grid;grid-template-columns:96px 1fr auto;gap:10px;align-items:center;font-size:12.5px;font-weight:600;margin:8px 0}
+.bl b{font-weight:800;color:var(--ink)}
+.gd{display:flex;justify-content:space-between;font-size:11px;font-weight:900;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin:16px 0 4px}
+.gd:first-child{margin-top:0}
+.g{display:grid;grid-template-columns:34px 1fr auto auto;gap:10px;align-items:center;padding:10px 0;border-top:1px solid var(--line2)}
+.g .gc{width:34px;height:34px;border-radius:12px;display:grid;place-items:center;font-size:13px}
+.g b{font-weight:700;font-size:13.5px;color:var(--ink)}
 .gi{text-align:right}
-.gi b{font:16px var(--fn)}
+.gi b{font-weight:900}
+.g .enl{color:var(--faint);padding:6px}
 
-/* Kit */
-.chk label{display:flex;gap:12px;align-items:flex-start;margin:0;padding:11px 0;border-bottom:1px solid var(--line);font-size:15.5px;color:var(--ink)}
-.chk input{flex:none;width:22px;height:22px;margin:0;accent-color:var(--c)}
-.chk input:checked+span{color:var(--muted);text-decoration:line-through}
+/* ---------- Kit ---------- */
+.chk label{display:flex;gap:12px;align-items:flex-start;margin:0;padding:11px 4px;border-bottom:1px solid var(--line2);font-size:13.5px;font-weight:600;color:var(--text);cursor:pointer}
+.chk input:checked+span{color:var(--faint);text-decoration:line-through}
 .add{display:flex;gap:8px;margin-top:12px}
 .add .btn{margin:0;flex:none}
-.cv{background:var(--surface);border-radius:12px;padding:12px 14px}
-.cv input{font:22px var(--fn)}
-.cv .n{font-size:15px;margin-top:10px;line-height:1.6}
-.cv .n b{color:var(--ink);font-weight:600}
-.fg{font:600 14px var(--f);color:var(--muted);margin:16px 0 6px}
-.fr{display:grid;gap:6px}
-.fr button{display:grid;grid-template-columns:1fr auto;gap:2px 12px;text-align:left;background:var(--surface);border:0;border-radius:10px;padding:10px 12px;align-items:baseline}
-.fr span{font-size:15px}
-.fr b{font:600 19px var(--fz);color:var(--ctext);text-align:right}
-.fr i{grid-column:1/-1;font-style:normal;font-size:13px;color:var(--muted)}
-.em{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:6px}
-.em a{background:var(--surface);border-radius:12px;padding:12px;text-decoration:none;color:var(--muted);font-size:13.5px}
-.em b{display:block;font:26px/1.1 var(--fn);color:var(--ctext)}
-.alerta{background:color-mix(in srgb,var(--warn) 13%,transparent);border-left:3px solid var(--warn);border-radius:4px 10px 10px 4px;padding:10px 12px;font-size:14.5px;margin-bottom:14px}
-
-nav{position:fixed;left:0;right:0;bottom:0;z-index:10;background:var(--surface);border-top:1px solid var(--line);display:flex;justify-content:center;padding-bottom:var(--sb)}
-nav button{flex:1;max-width:112px;background:none;border:0;padding:8px 2px 7px;font-size:11.5px;color:var(--muted);display:flex;flex-direction:column;align-items:center;gap:2px}
-nav svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
-nav .on{color:var(--ctext);font-weight:600}
-#pend{position:fixed;top:calc(var(--st) + 8px);right:10px;z-index:9;background:rgba(0,0,0,.6);color:#fff;font-size:12px;padding:3px 10px;border-radius:20px;display:none}
-#pend.on{display:block}
-#aviso{position:fixed;left:50%;bottom:calc(80px + var(--sb));transform:translateX(-50%);z-index:60;max-width:88vw;background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:12px;font-size:14.5px;text-align:center;opacity:0;pointer-events:none;transition:opacity .2s}
-#aviso.on{opacity:1}
-@media (prefers-reduced-motion:reduce){#aviso{transition:none}}
-
-/* Guía de cada ciudad */
-.cw{--ctext:var(--c)}
-@media (prefers-color-scheme:dark){.cw{--ctext:color-mix(in srgb,var(--c) 48%,white)}}
-.volver{position:relative;background:rgba(255,255,255,.2);border:0;color:#fff;border-radius:20px;padding:5px 12px 5px 9px;font-size:14px;font-weight:600;margin-bottom:12px}
-.hero .hm button{background:none;border:0;color:#fff;padding:0;font:inherit;text-decoration:underline;text-decoration-color:rgba(255,255,255,.55);text-underline-offset:3px}
-.cds{display:grid;gap:8px}
-.cc{display:grid;grid-template-columns:auto 1fr auto;gap:2px 14px;align-items:center;width:100%;text-align:left;background:var(--surface);border:0;border-left:4px solid var(--dc);border-radius:4px 14px 14px 4px;padding:12px 14px}
-.cc .z{grid-column:1;grid-row:1/3;font:700 24px/1 var(--fz);color:color-mix(in srgb,var(--dc) 75%,var(--ink));min-width:2.2em}
-.cc b{grid-column:2;font:600 19px/1.15 var(--fd)}
-.cc small{grid-column:2;color:var(--muted);font-size:13.5px}
-.cc .w{grid-column:3;grid-row:1/3;font:15px var(--fn);color:var(--muted);text-align:right}
-.cc.hoy{box-shadow:inset 0 0 0 2px var(--dc)}
-.pv{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding:0;border:0;background:none;width:100%;text-align:center}
-.pv::-webkit-scrollbar{display:none}
-.pv>span{flex:0 0 62px;background:var(--surface);border-radius:12px;padding:8px 4px;font-size:12.5px;color:var(--muted)}
-.pv i{display:block;font-style:normal;font-size:20px;margin:2px 0}
-.pv b{display:block;font:17px var(--fn);color:var(--ink)}
-.pv .vi{box-shadow:inset 0 0 0 2px var(--c)}
-.fila.clb{width:100%;border:0;text-align:left;font-size:15px}
-.pr{display:grid;grid-template-columns:1fr auto 74px 44px;gap:10px;align-items:center;padding:8px 0;border-top:1px solid var(--line);font-size:15px}
-.pr.vi>b{color:var(--ctext)}
-.pr b::first-letter{text-transform:uppercase}
-.pr .t{font:16px var(--fn);text-align:right}
-.pr .ll{color:var(--muted);font-size:13px;text-align:right}
-.pr.cab{color:var(--muted);font-size:12.5px;border-top:0;padding-bottom:2px}
-.ahw{display:flex;align-items:center;gap:14px;margin:12px 0 16px}
-.ahw>span{font-size:40px}
-.ahw b{font:600 46px/1 var(--fn)}
-.lgs{display:grid;gap:6px}
-.lgs button{display:grid;grid-template-columns:24px 1fr auto;gap:2px 10px;align-items:center;text-align:left;background:var(--surface);border:0;border-radius:10px;padding:10px 12px;width:100%}
-.lgs .nn{grid-row:1/3;width:24px;height:24px;border-radius:50%;background:var(--c);color:#fff;font:700 12px/24px var(--f);text-align:center}
-.lgs b{font-weight:600;font-size:15.5px}
-.lgs .zh{font-size:15px;text-align:right}
-.lgs small{grid-column:2/-1;color:var(--muted);font-size:13px}
-.tips{margin:0;padding-left:20px;font-size:15px}
-.tips li{margin:6px 0}
-
-/* Mapas (Leaflet) */
-.lmap{position:relative;z-index:0;border-radius:14px;overflow:hidden;background:var(--surface)}
-.lmap.on{height:340px}
-.lmap>.n{padding:40px 16px;text-align:center;margin:0}
-.lmap .leaflet-container,.lmap.leaflet-container{font:13px var(--f)}
-.pin span{display:grid;place-items:center;width:24px;height:24px;border-radius:50%;color:#fff;font:700 12px/1 var(--f);border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.35)}
-@media (prefers-color-scheme:dark){.lmap .leaflet-tile-pane{filter:invert(1) hue-rotate(180deg) brightness(.85) contrast(.9)}}
-.leaflet-tooltip.tt{font:600 12.5px var(--f);padding:2px 8px;border-radius:12px}
-
-/* Entradas y documentos */
-.ent label{align-items:center}
-.ent span{flex:1;min-width:0}
-.ent span b{font-weight:600}
-.ent .zh{font-size:14.5px;margin-left:4px}
-.ent small{display:block;margin-top:2px}
-.ent em{flex:none;max-width:38%;font:14px var(--fn);font-style:normal;color:var(--muted);text-align:right}
+.cv input{font:900 24px var(--f)}
+.cv .n{font-size:13.5px;margin-top:10px;line-height:1.7}
+.cv .n b{color:var(--ink);font-weight:800}
+.fg{font-size:11px;font-weight:900;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin:16px 0 8px}
+.fr{display:grid;gap:8px}
+.fr button{display:grid;grid-template-columns:1fr auto;gap:2px 12px;text-align:left;background:var(--soft);border:1px solid var(--line);border-radius:12px;padding:10px 12px;align-items:baseline}
+.fr span{font-size:13.5px;font-weight:700;color:var(--ink)}
+.fr b{font:700 17px var(--fz);color:var(--ct);text-align:right}
+.fr i{grid-column:1/-1;font-style:normal;font-size:11.5px;color:var(--muted)}
+.em{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.em a{border-radius:16px;padding:14px;text-decoration:none;font-size:12px;font-weight:700;border:1px solid;display:flex;flex-direction:column;gap:4px}
+.em a b{font-size:24px;font-weight:900;line-height:1}
+.em a i{font-size:14px}
+.em .e1{background:#FEF2F2;border-color:#FECACA;color:#991B1B}.em .e2{background:#FFFBEB;border-color:#FDE68A;color:#92400E}
+.em .e3{background:#FFF7ED;border-color:#FED7AA;color:#9A3412}.em .e4{background:#F0F9FF;border-color:#BAE6FD;color:#075985}
+[data-tema="oscuro"] .em .e1{background:#2A0F12;border-color:#5B1A1F;color:#FCA5A5}
+[data-tema="oscuro"] .em .e2{background:#2B2111;border-color:#5C4516;color:#FCD34D}
+[data-tema="oscuro"] .em .e3{background:#2B1608;border-color:#5C3112;color:#FDBA74}
+[data-tema="oscuro"] .em .e4{background:#0C2A40;border-color:#164E63;color:#7DD3FC}
+.seguro{position:relative;overflow:hidden;border-radius:24px;padding:22px;color:#fff;background:linear-gradient(135deg,#B91C1C,#DC2626 55%,#F97316);box-shadow:0 8px 24px -8px rgba(220,38,38,.45)}
+.seguro .fondo{position:absolute;right:-20px;top:-30px;font-size:150px;opacity:.1}
+.seguro h2{color:#fff;margin:0;font-size:22px}
+.seguro h2 i{color:#fff}
+.seguro p{color:#FEE2E2;font-size:12.5px;margin-top:4px;position:relative}
+.seguro .acc{margin-top:14px;position:relative}
+.seguro .btn{background:rgba(255,255,255,.18);border-color:rgba(255,255,255,.35);color:#fff}
 .docs{display:grid;gap:8px}
-.docs .fila .acc{flex-direction:row}
+.doc{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 12px;border:1px solid var(--line);background:var(--soft);border-radius:12px}
+.doc>span{display:flex;align-items:center;gap:10px;font-weight:700;font-size:13.5px;color:var(--ink)}
+.doc>span i{width:32px;height:32px;border-radius:10px;display:grid;place-items:center;background:#EFF6FF;color:#2563EB;font-size:13px}
+[data-tema="oscuro"] .doc>span i{background:#10213F;color:#93C5FD}
+.doc .acc{flex:none}
+.ajuste{display:flex;gap:12px;align-items:flex-start}
+.ajuste>i{flex:none;width:36px;height:36px;border-radius:12px;display:grid;place-items:center;background:var(--line2);color:var(--muted)}
 
-/* Escritorio: menú lateral y columna más ancha */
-@media (min-width:900px){
-  body{padding:0 0 0 92px}
-  main{max-width:820px}
-  nav{top:0;right:auto;width:92px;flex-direction:column;justify-content:flex-start;gap:4px;padding:calc(var(--st) + 18px) 0 0;border-top:0;border-right:1px solid var(--line)}
-  nav button{flex:none;max-width:none;padding:12px 2px}
-  dialog{margin:auto;border-radius:18px}
-  #aviso{bottom:28px;margin-left:46px}
-  .lmap.on{height:460px}
-  .cds{grid-template-columns:1fr 1fr}
-  .lgs,.fr{grid-template-columns:1fr 1fr}
+/* ---------- Hoja inferior ---------- */
+dialog{margin:auto auto 0;width:100%;max-width:640px;max-height:90dvh;border:1px solid var(--line);border-radius:24px 24px 0 0;padding:0;background:color-mix(in srgb,var(--surface) 96%,transparent);
+  backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);color:var(--text);box-shadow:0 -10px 40px rgba(15,23,42,.25)}
+dialog[open]{animation:sube .28s cubic-bezier(.16,1,.3,1)}
+@keyframes sube{from{transform:translateY(40px);opacity:0}}
+dialog::backdrop{background:rgba(2,6,23,.6);backdrop-filter:blur(3px)}
+#dlgB{position:relative;padding:12px 20px calc(24px + var(--sb));overflow-y:auto;max-height:90dvh}
+#dlgB::before{content:"";display:block;width:48px;height:6px;border-radius:9px;background:var(--line);margin:0 auto 10px}
+.dlg-x{position:absolute;top:14px;right:14px;width:34px;height:34px;border-radius:12px;border:0;background:var(--line2);color:var(--muted);display:grid;place-items:center;z-index:2}
+#dlgB h3{font-size:22px;font-weight:900;color:var(--ink);letter-spacing:-.02em;padding-right:40px;line-height:1.2}
+.dk{display:flex;align-items:center;gap:6px;color:var(--blue);font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px}
+.dh{font-size:15px;font-weight:800;color:var(--muted);margin:4px 0 10px}
+.lugar{margin-top:14px;padding:14px;background:var(--soft);border:1px solid var(--line);border-radius:16px}
+.zhG{font:700 32px/1.2 var(--fz);color:var(--ct);margin-bottom:6px}
+.lugar b{font-weight:800;color:var(--ink)}
+.lugar dl{display:grid;grid-template-columns:auto 1fr;gap:6px 12px;margin:10px 0 0;font-size:13.5px}
+.lugar dt{color:var(--muted);font-size:12px;font-weight:700;padding-top:1px}
+.lugar dd{margin:0}
+
+/* ---------- Pantalla grande para enseñar ---------- */
+#grande{position:fixed;inset:0;z-index:140;background:#fff;color:#000;display:none;flex-direction:column;align-items:center;justify-content:center;padding:calc(var(--st) + 64px) 22px calc(var(--sb) + 30px);text-align:center;overflow:auto}
+#grande.on{display:flex}
+#grande .x{position:absolute;top:calc(var(--st) + 12px);right:14px;border:1px solid #CBD5E1;background:#fff;color:#0F172A;border-radius:12px;padding:9px 14px;font-weight:800}
+.gz{font:700 clamp(42px,14vw,88px)/1.25 var(--fz);white-space:pre-line}
+.gz.lg{font-size:clamp(30px,9.5vw,58px)}
+.gp{font-size:20px;color:#475569;margin-top:14px}
+.gs{font-size:16px;color:#64748B;margin-top:22px;max-width:30em}
+#grande img{max-width:100%;max-height:100%;object-fit:contain}
+
+/* ---------- Avisos ---------- */
+#pend{position:fixed;top:calc(var(--st) + 70px);right:12px;z-index:60;background:var(--amb50);color:var(--amb9);border:1px solid var(--amb200);font-size:11px;font-weight:800;padding:3px 10px;border-radius:999px;display:none}
+#pend.on{display:block}
+#aviso{position:fixed;left:50%;bottom:calc(100px + var(--sb));transform:translateX(-50%);z-index:150;max-width:88vw;background:#0F172A;color:#fff;padding:10px 16px;border-radius:12px;
+  font-size:13px;font-weight:600;text-align:center;opacity:0;pointer-events:none;transition:opacity .2s;box-shadow:0 10px 30px -6px rgba(0,0,0,.4)}
+#aviso.on{opacity:1}
+
+/* ---------- Presentación con cuenta atrás ---------- */
+#intro{position:fixed;inset:0;z-index:100;display:flex;align-items:center;justify-content:center;overflow:hidden;background:#B91C1C;color:#fff;text-align:center;padding:24px;
+  animation:introIn .7s cubic-bezier(.22,1,.36,1) both}
+#intro::before{content:"";position:absolute;inset:0;background:radial-gradient(circle at top right,rgba(255,255,255,.2),transparent 35%),radial-gradient(circle at bottom left,rgba(127,29,29,.55),transparent 45%)}
+#intro>div{position:relative}
+#intro .s{font-size:12px;font-weight:900;text-transform:uppercase;letter-spacing:.3em;color:#FEE2E2}
+#intro .p{margin-top:24px;font-size:19px;font-weight:600;color:#FEF2F2}
+#intro strong{display:block;margin-top:4px;font-size:clamp(4.5rem,18vw,11rem);font-weight:900;line-height:1;letter-spacing:-.03em;animation:pulso 1.8s ease-in-out infinite}
+#intro strong.txt{font-size:clamp(2.5rem,8vw,5rem);line-height:1.1}
+#intro .l{margin-top:8px;font-size:17px;font-weight:700;color:#FEE2E2}
+#intro .f{margin-top:24px;font-size:12px;font-weight:500;color:rgba(254,226,226,.8)}
+#intro.sale{animation:introOut .9s ease forwards;pointer-events:none}
+@keyframes introIn{from{opacity:0;transform:scale(1.04)}}
+@keyframes introOut{to{opacity:0;transform:scale(.96);filter:blur(10px);visibility:hidden}}
+@keyframes pulso{50%{transform:translateY(-6px)}}
+.cuenta.llega{animation:llega .7s cubic-bezier(.22,1,.36,1) both}
+@keyframes llega{from{opacity:0;transform:translateY(12px) scale(.85)}}
+
+/* ---------- Tamaños mayores ---------- */
+@media (min-width:640px){
+  body{padding-bottom:32px}
+  main{padding:24px}
+  nav.abajo{display:none}
+  .acciones{display:flex}
+  .top-in{padding:12px 24px}
+  .fases{padding:8px 24px}
+  .hero{height:260px}
+  .hero .ov{padding:28px}
+  .hero h1{font-size:40px}
+  .card{padding:22px}
+  .lgs,.foods,.fr,.rgrid{grid-template-columns:1fr 1fr}
+  #aviso{bottom:28px}
+  dialog{margin:auto;border-radius:24px}
+  .em{grid-template-columns:repeat(4,1fr)}
+  .kpis{grid-template-columns:repeat(3,1fr)}
 }
+@media (min-width:768px){.hero{height:290px}}
+@media (min-width:1024px){
+  .hero{height:320px}
+  .ruta{grid-template-columns:minmax(0,1.6fr) minmax(280px,.75fr)}
+  .ruta .lmap.on,.ruta .lmap{height:560px}
+  .paradas{max-height:560px;overflow-y:auto}
+  .dos-col{grid-template-columns:7fr 5fr;align-items:stretch}
+  .foods{grid-template-columns:repeat(3,1fr)}
+  .lmap.on{height:460px}
+}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
 </style>
 </head>
 <body>
+<section id="intro" hidden aria-live="polite"><div>
+  <p class="s" id="inS">China</p><p class="p" id="inP"></p><strong id="inN">--</strong><p class="l" id="inL"></p><p class="f" id="inF"></p>
+</div></section>
+
+<header class="top">
+  <div class="top-in">
+    <div class="marca">
+      <span class="logo" aria-hidden="true">中</span>
+      <div><div class="mt"><h1 id="tituloApp">China</h1><button class="cuenta" id="cuenta" data-t="hoy" aria-label="Estado del viaje"></button></div>
+        <p class="sub" id="sub"></p></div>
+    </div>
+    <div class="acciones" role="navigation" aria-label="Secciones">
+      <button data-t="hoy"><i class="fa-solid fa-calendar-day"></i>Hoy</button>
+      <button data-t="viaje"><i class="fa-solid fa-map"></i>Viaje</button>
+      <button data-t="reservas"><i class="fa-solid fa-ticket"></i>Reservas</button>
+      <button data-t="gastos"><i class="fa-solid fa-wallet"></i>Gastos</button>
+      <button data-t="kit"><i class="fa-solid fa-suitcase-medical"></i>Kit</button>
+    </div>
+  </div>
+  <div class="fases" id="fases" aria-label="Ciudades"></div>
+</header>
+
 <main>
-  <section id="hoy" class="on"></section>
-  <section id="viaje"></section>
-  <section id="reservas"></section>
-  <section id="gastos"></section>
-  <section id="kit"></section>
+  <section id="s-hoy" class="on"></section>
+  <section id="s-viaje"></section>
+  <section id="s-reservas"></section>
+  <section id="s-gastos"></section>
+  <section id="s-kit"></section>
 </main>
 
 <div id="pend" role="status"></div>
@@ -331,12 +595,12 @@ nav .on{color:var(--ctext);font-weight:600}
 <dialog id="dlg"><div id="dlgB"></div></dialog>
 <div id="grande"></div>
 
-<nav aria-label="Secciones">
-  <button data-t="hoy" class="on"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg>Hoy</button>
-  <button data-t="viaje"><svg viewBox="0 0 24 24"><circle cx="6" cy="6" r="2.2"/><circle cx="18" cy="18" r="2.2"/><path d="M8.2 6H15a3 3 0 0 1 0 6H9a3 3 0 0 0 0 6h6.8"/></svg>Viaje</button>
-  <button data-t="reservas"><svg viewBox="0 0 24 24"><path d="M4 8a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v2a2 2 0 0 0 0 4v2a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-2a2 2 0 0 0 0-4z"/><path d="M14 6v12" stroke-dasharray="2 2.5"/></svg>Reservas</button>
-  <button data-t="gastos"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M9 7.5l3 4.5 3-4.5M12 12v5M9.2 12.5h5.6M9.2 15h5.6"/></svg>Gastos</button>
-  <button data-t="kit"><svg viewBox="0 0 24 24"><rect x="4" y="8" width="16" height="11" rx="2"/><path d="M9 8V6.5A1.5 1.5 0 0 1 10.5 5h3A1.5 1.5 0 0 1 15 6.5V8M4 13h16"/></svg>Kit</button>
+<nav class="abajo" aria-label="Secciones">
+  <button data-t="hoy" class="on"><i class="fa-solid fa-calendar-day"></i><span>Hoy</span></button>
+  <button data-t="viaje"><i class="fa-solid fa-route"></i><span>Viaje</span></button>
+  <button data-t="reservas"><i class="fa-solid fa-ticket"></i><span>Reservas</span></button>
+  <button data-t="gastos"><i class="fa-solid fa-wallet"></i><span>Gastos</span></button>
+  <button data-t="kit"><i class="fa-solid fa-suitcase-medical"></i><span>Kit</span></button>
 </nav>
 
 <script>
@@ -352,13 +616,20 @@ const API_FIJA="https://script.google.com/macros/s/AKfycbwp28-qm4kX92ACiFU8-xxIk
 const INICIAL={"itinerario":[{"_row":2,"_k":"1","Día":1,"Fecha":"2026-10-27","Ciudad":"Pekín","Actividades Principales":"Llegada (08:45), Templo del Cielo, cena de pato laqueado","Transporte del día":"Vuelo España → Pekín (llegada 8:45)","Noche en":"Zhong An Hotel Beijing"},{"_row":3,"_k":"2","Día":2,"Fecha":"2026-10-28","Ciudad":"Pekín","Actividades Principales":"Ciudad Prohibida, Plaza de Tiananmen, Parque Jingshan","Transporte del día":"-","Noche en":"Zhong An Hotel Beijing"},{"_row":4,"_k":"3","Día":3,"Fecha":"2026-10-29","Ciudad":"Pekín","Actividades Principales":"Gran Muralla (Mutianyu), Hutongs","Transporte del día":"-","Noche en":"Zhong An Hotel Beijing"},{"_row":5,"_k":"4","Día":4,"Fecha":"2026-10-30","Ciudad":"Xi'an","Actividades Principales":"Paseo en bici por la Muralla antigua, Barrio Musulmán","Transporte del día":"Tren bala Pekín → Xi'an (salida mañana)","Noche en":"Chang Gexing Hotel (Bell Tower Hui Fang)"},{"_row":6,"_k":"5","Día":5,"Fecha":"2026-10-31","Ciudad":"Xi'an","Actividades Principales":"Guerreros de Terracota (mañana)","Transporte del día":"Vuelo Xi'an → Shanghái (salida 21:00)","Noche en":"HOMEINN"},{"_row":7,"_k":"6","Día":6,"Fecha":"2026-11-01","Ciudad":"Shanghái","Actividades Principales":"El Bund, rascacielos de Pudong (Torre de Shanghái)","Transporte del día":"-","Noche en":"HOMEINN"},{"_row":8,"_k":"7","Día":7,"Fecha":"2026-11-02","Ciudad":"Shanghái","Actividades Principales":"Jardín Yuyuan, Templo del Buda de Jade","Transporte del día":"-","Noche en":"HOMEINN"},{"_row":9,"_k":"8","Día":8,"Fecha":"2026-11-03","Ciudad":"Shanghái","Actividades Principales":"Concesión Francesa","Transporte del día":"Vuelo Shanghái → Zhangjiajie (salida 13:15)","Noche en":"Por reservar"},{"_row":10,"_k":"9","Día":9,"Fecha":"2026-11-04","Ciudad":"Zhangjiajie","Actividades Principales":"Montaña Tianmen (Teleférico, puerta al cielo, pasarelas de cristal)","Transporte del día":"-","Noche en":"Por reservar"},{"_row":11,"_k":"10","Día":10,"Fecha":"2026-11-05","Ciudad":"Zhangjiajie","Actividades Principales":"Parque Nacional Forestal (Yuanjiajie, Montaña Tianzi)","Transporte del día":"-","Noche en":"Por reservar"},{"_row":12,"_k":"11","Día":11,"Fecha":"2026-11-06","Ciudad":"Zhangjiajie","Actividades Principales":"Parque Nacional Forestal (elevador Bailong)","Transporte del día":"-","Noche en":"Por reservar"},{"_row":13,"_k":"12","Día":12,"Fecha":"2026-11-07","Ciudad":"Yangshuo","Actividades Principales":"Llegada Guillin, Crucero/balsas por el río Li hasta yangshuo","Transporte del día":"Tren Zhangjiajie → Guilin","Noche en":"Por reservar"},{"_row":14,"_k":"13","Día":13,"Fecha":"2026-11-08","Ciudad":"Yangshuo","Actividades Principales":"Bicicletas entre colinas kársticas, arrozales","Transporte del día":"-","Noche en":"Por reservar"},{"_row":15,"_k":"14","Día":14,"Fecha":"2026-11-09","Ciudad":"Yangshuo","Actividades Principales":"Cueva de la Flauta de Caña, Colina de la Luna","Transporte del día":"-","Noche en":"Por reservar"},{"_row":16,"_k":"15","Día":15,"Fecha":"2026-11-10","Ciudad":"Yangshuo","Actividades Principales":"Terrazas de arroz de Longji (Longsheng) y miradores panorámicos","Transporte del día":"Tren bala Guilin/Yangshuo → Shenzhen","Noche en":"Por reservar"},{"_row":17,"_k":"16","Día":16,"Fecha":"2026-11-11","Ciudad":"ShenZen","Actividades Principales":"","Transporte del día":"Tren bala Shenzhen → Hong Kong","Noche en":"Por reservar"},{"_row":18,"_k":"17","Día":17,"Fecha":"2026-11-12","Ciudad":"Hong Kong","Actividades Principales":"Monasterio de los 10.000 Budas, Mong Kok, tranvía al pico victoria","Transporte del día":"-","Noche en":"Por reservar"},{"_row":19,"_k":"18","Día":18,"Fecha":"2026-11-13","Ciudad":"Hong Kong","Actividades Principales":"Mercados nocturnos, Symphony of Lights","Transporte del día":"-","Noche en":"Por reservar"},{"_row":20,"_k":"19","Día":19,"Fecha":"2026-11-14","Ciudad":"Hong Kong","Actividades Principales":"Últimas compras, Avenida de las Estrellas","Transporte del día":"Vuelo Hong Kong → España (salida 19:35)","Noche en":"-"}],"alojamiento":[{"_row":2,"_k":"Pekín","Ciudad":"Pekín","Hotel":"Zhong An Hotel Beijing","Check-in":"2026-10-27","Check-out":"2026-10-30","Noches":3,"Precio total":115.68,"Precio por noche":38.56,"Estado":"Reservado","Recibo":"HotelPekin.pdf","Notas":""},{"_row":3,"_k":"Xi'an","Ciudad":"Xi'an","Hotel":"Chang Gexing Hotel (Bell Tower Hui Fang)","Check-in":"2026-10-30","Check-out":"2026-10-31","Noches":1,"Precio total":9,"Precio por noche":9,"Estado":"Reservado","Recibo":"HotelXian.pdf","Notas":""},{"_row":4,"_k":"Shanghái","Ciudad":"Shanghái","Hotel":"HOMEINN","Check-in":"2026-10-31","Check-out":"2026-11-03","Noches":3,"Precio total":172,"Precio por noche":57.333333333333336,"Estado":"Reservado","Recibo":"HotelShangai.pdf","Notas":"Llegada de noche (vuelo de las 21:00)"},{"_row":5,"_k":"Zhangjiajie","Ciudad":"Zhangjiajie","Hotel":"Por reservar","Check-in":"2026-11-03","Check-out":"2026-11-07","Noches":4,"Precio total":"","Precio por noche":"","Estado":"Pendiente","Recibo":"","Notas":""},{"_row":6,"_k":"Yangshuo","Ciudad":"Yangshuo","Hotel":"Por reservar","Check-in":"2026-11-07","Check-out":"2026-11-10","Noches":3,"Precio total":"","Precio por noche":"","Estado":"Pendiente","Recibo":"","Notas":""},{"_row":7,"_k":"Shenzhen","Ciudad":"Shenzhen","Hotel":"Por reservar","Check-in":"2026-11-10","Check-out":"2026-11-11","Noches":1,"Precio total":"","Precio por noche":"","Estado":"Pendiente","Recibo":"","Notas":""},{"_row":8,"_k":"Hong Kong","Ciudad":"Hong Kong","Hotel":"Por reservar","Check-in":"2026-11-11","Check-out":"2026-11-14","Noches":3,"Precio total":"","Precio por noche":"","Estado":"Pendiente","Recibo":"","Notas":""}],"transporte":[{"_row":2,"_k":"27/10/2026","Fecha":"2026-10-27","Tipo":"Vuelo","Origen":"España","Destino":"Pekín","Salida":"","Llegada":"8:45","Nº vuelo/tren":"","Precio":"","Estado":"","Recibo":"","Notas":""},{"_row":3,"_k":"30/10/2026","Fecha":"2026-10-30","Tipo":"Tren bala","Origen":"Pekín","Destino":"Xi'an","Salida":"mañana","Llegada":"","Nº vuelo/tren":"","Precio":165.81,"Estado":"Reservado","Recibo":"","Notas":""},{"_row":4,"_k":"31/10/2026","Fecha":"2026-10-31","Tipo":"Vuelo","Origen":"Xi'an","Destino":"Shanghái","Salida":"21:00","Llegada":"","Nº vuelo/tren":"","Precio":146,"Estado":"Reservado","Recibo":"Vuelo Xian - Shangai","Notas":""},{"_row":5,"_k":"03/11/2026","Fecha":"2026-11-03","Tipo":"Vuelo","Origen":"Shanghái","Destino":"Zhangjiajie","Salida":"13:15","Llegada":"","Nº vuelo/tren":"","Precio":182.32,"Estado":"Reservado","Recibo":"VueloShangaiZhangiaye.pdf","Notas":""},{"_row":6,"_k":"07/11/2026","Fecha":"2026-11-07","Tipo":"Tren","Origen":"Zhangjiajie","Destino":"Guilin","Salida":"","Llegada":"","Nº vuelo/tren":"","Precio":"","Estado":"Pendiente","Recibo":"","Notas":"Después, crucero por el río Li hasta Yangshuo"},{"_row":7,"_k":"10/11/2026","Fecha":"2026-11-10","Tipo":"Tren bala","Origen":"Guilin/Yangshuo","Destino":"Shenzhen","Salida":"","Llegada":"","Nº vuelo/tren":"","Precio":"","Estado":"Pendiente","Recibo":"","Notas":""},{"_row":8,"_k":"11/11/2026","Fecha":"2026-11-11","Tipo":"Tren bala","Origen":"Shenzhen","Destino":"Hong Kong","Salida":"","Llegada":"","Nº vuelo/tren":"","Precio":"","Estado":"Pendiente","Recibo":"","Notas":""},{"_row":9,"_k":"14/11/2026","Fecha":"2026-11-14","Tipo":"Vuelo","Origen":"Hong Kong","Destino":"España","Salida":"19:35","Llegada":"","Nº vuelo/tren":"","Precio":"","Estado":"","Recibo":"","Notas":""}],"checklist":[{"_row":2,"_k":"Pasaportes con validez suficiente (mínimo 6 meses)","Tarea":"Pasaportes con validez suficiente (mínimo 6 meses)","Hecho":false},{"_row":3,"_k":"Comprobar requisitos de entrada / visado para China y Hong Kong","Tarea":"Comprobar requisitos de entrada / visado para China y Hong Kong","Hecho":false},{"_row":4,"_k":"Seguro de viaje","Tarea":"Seguro de viaje","Hecho":false},{"_row":5,"_k":"Alipay y/o WeChat Pay con tarjeta vinculada","Tarea":"Alipay y/o WeChat Pay con tarjeta vinculada","Hecho":false},{"_row":6,"_k":"eSIM o roaming con datos","Tarea":"eSIM o roaming con datos","Hecho":false},{"_row":7,"_k":"Mapas y traductor descargados sin conexión","Tarea":"Mapas y traductor descargados sin conexión","Hecho":false},{"_row":8,"_k":"Entradas Ciudad Prohibida","Tarea":"Entradas Ciudad Prohibida","Hecho":false},{"_row":9,"_k":"Entradas Guerreros de Terracota","Tarea":"Entradas Guerreros de Terracota","Hecho":false},{"_row":10,"_k":"Entradas Tianmen y Parque Forestal de Zhangjiajie","Tarea":"Entradas Tianmen y Parque Forestal de Zhangjiajie","Hecho":false},{"_row":11,"_k":"Crucero / balsas del río Li","Tarea":"Crucero / balsas del río Li","Hecho":false},{"_row":12,"_k":"Adaptador de enchufe y batería externa","Tarea":"Adaptador de enchufe y batería externa","Hecho":false},{"_row":13,"_k":"Copias de pasaportes y reservas","Tarea":"Copias de pasaportes y reservas","Hecho":false}]};
 
 const CIUDADES={
-  pekin:      {n:"Pekín",       zh:"北京",   c:"#B3261E", lat:39.905, lon:116.397, mon:"CNY"},
-  xian:       {n:"Xi'an",       zh:"西安",   c:"#8F5527", lat:34.265, lon:108.947, mon:"CNY"},
-  shanghai:   {n:"Shanghái",    zh:"上海",   c:"#2B3A8C", lat:31.230, lon:121.474, mon:"CNY"},
-  zhangjiajie:{n:"Zhangjiajie", zh:"张家界", c:"#2C6A4B", lat:29.117, lon:110.479, mon:"CNY"},
-  yangshuo:   {n:"Yangshuo",    zh:"阳朔",   c:"#0B6E6E", lat:24.778, lon:110.497, mon:"CNY"},
-  shenzhen:   {n:"Shenzhen",    zh:"深圳",   c:"#5B3A9E", lat:22.543, lon:114.058, mon:"CNY"},
-  hongkong:   {n:"Hong Kong",   zh:"香港",   c:"#B81D5B", lat:22.302, lon:114.172, mon:"HKD"}
+  pekin:      {n:"Pekín",       zh:"北京",   c:"#DC2626", ico:"fa-landmark",     lat:39.905, lon:116.397, mon:"CNY", fp:"center 75%",
+    cr:["Pixelflake","CC BY-SA 3.0","https://commons.wikimedia.org/wiki/File:The_Forbidden_City_-_View_from_Coal_Hill.jpg"]},
+  xian:       {n:"Xi'an",       zh:"西安",   c:"#D97706", ico:"fa-monument",     lat:34.265, lon:108.947, mon:"CNY", fp:"center 35%",
+    cr:["xiquinhosilva","CC BY 2.0","https://commons.wikimedia.org/wiki/File:City_wall_of_Xi%27an_51550-Xian_(27959363326).jpg"]},
+  shanghai:   {n:"Shanghái",    zh:"上海",   c:"#4F46E5", ico:"fa-city",         lat:31.230, lon:121.474, mon:"CNY", fp:"center 45%",
+    cr:["xiquinhosilva","CC BY 2.0","https://commons.wikimedia.org/wiki/File:Huangpu_Park_20124-Shanghai_(32208802494).jpg"]},
+  zhangjiajie:{n:"Zhangjiajie", zh:"张家界", c:"#059669", ico:"fa-mountain-sun", lat:29.117, lon:110.479, mon:"CNY", fp:"center 50%",
+    cr:["chensiyuan","CC BY-SA 4.0","https://commons.wikimedia.org/wiki/File:1_tianzishan_wulingyuan_zhangjiajie_2012.jpg"]},
+  yangshuo:   {n:"Yangshuo",    zh:"阳朔",   c:"#65A30D", ico:"fa-leaf",         lat:24.778, lon:110.497, mon:"CNY", fp:"center 40%",
+    cr:["xiquinhosilva","CC BY 2.0","https://commons.wikimedia.org/wiki/File:87318-Li-River.jpg"]},
+  shenzhen:   {n:"Shenzhen",    zh:"深圳",   c:"#7C3AED", ico:"fa-building",     lat:22.543, lon:114.058, mon:"CNY", fp:"center 35%",
+    cr:["Charlie fong","CC BY-SA 4.0","https://commons.wikimedia.org/wiki/File:Commercial_area_of_futian_to_east2020.jpg"]},
+  hongkong:   {n:"Hong Kong",   zh:"香港",   c:"#0284C7", ico:"fa-ship",         lat:22.302, lon:114.172, mon:"HKD", fp:"center 50%",
+    cr:["Benh LIEU SONG (Flickr)","CC BY-SA 4.0","https://commons.wikimedia.org/wiki/File:Hong_Kong_Harbour_Night_2019-06-11.jpg"]}
 };
 const ALIAS_CIUDAD={shenzen:"shenzhen",beijing:"pekin",guilin:"yangshuo"};
 
@@ -716,7 +987,7 @@ function durTxt(min){
   const d=Math.floor(h/24); return d===1?"1 día":`${d} días`;
 }
 function claveCiudad(c){const k=norm(c);return ALIAS_CIUDAD[k]||k}
-function ciudad(c){return CIUDADES[claveCiudad(c)]||{n:limpio(c)||"Viaje",zh:"",c:"#3D4652",lat:null,lon:null,mon:"CNY"}}
+function ciudad(c){return CIUDADES[claveCiudad(c)]||{n:limpio(c)||"Viaje",zh:"",c:"#475569",ico:"fa-location-dot",lat:null,lon:null,mon:"CNY"}}
 const v2=()=>((SERVER&&SERVER.version)||1)>=2;
 const partes=s=>limpio(s).split(/,\s*(?![^()]*\))/).map(x=>x.trim()).filter(Boolean);
 const sinHotel=h=>!limpio(h.Hotel)||/por reservar/i.test(h.Hotel);
@@ -900,7 +1171,7 @@ async function pedirClima(ck){
   const w=WX[ck]; if(w&&Date.now()-w.ts<3*3600e3) return;
   climaOcupado[ck]=1;
   try{
-    const r=await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${c.lat}&longitude=${c.lon}&current=temperature_2m,apparent_temperature,weather_code,relative_humidity_2m,wind_speed_10m&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max&timezone=Asia%2FShanghai&forecast_days=16`);
+    const r=await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${c.lat}&longitude=${c.lon}&current=temperature_2m,apparent_temperature,weather_code,is_day,relative_humidity_2m,wind_speed_10m&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max&timezone=Asia%2FShanghai&forecast_days=16`);
     const j=await r.json();
     if(j.daily){WX[ck]={ts:Date.now(),d:j.daily,cur:j.current||null};LS.set("china-wx",WX);renderAll()}
   }catch(e){}finally{climaOcupado[ck]=0}
@@ -908,28 +1179,66 @@ async function pedirClima(ck){
 function climaDia(ck,iso){
   const w=WX[ck]; if(!w||!w.d||!w.d.time) return null;
   const i=w.d.time.indexOf(iso); if(i<0) return null;
-  const [ico,txt]=wxInfo(w.d.weather_code[i]);
-  return {ico,txt,max:Math.round(w.d.temperature_2m_max[i]),min:Math.round(w.d.temperature_2m_min[i]),pp:w.d.precipitation_probability_max[i]};
+  const code=w.d.weather_code[i],[ico,txt]=wxInfo(code);
+  return {code,ico,txt,max:Math.round(w.d.temperature_2m_max[i]),min:Math.round(w.d.temperature_2m_min[i]),pp:w.d.precipitation_probability_max[i]};
 }
 function wxInfo(code){
   return code===0?["☀️","Despejado"]:code<3?["🌤️","Poco nuboso"]:code===3?["☁️","Nublado"]:code<50?["🌫️","Niebla"]:
     code<58?["🌦️","Llovizna"]:code<68?["🌧️","Lluvia"]:code<78?["❄️","Nieve"]:code<83?["🌧️","Chubascos"]:code<87?["❄️","Nieve"]:["⛈️","Tormenta"];
 }
+/* Iconos animados de Meteocons; sin conexión se cambian por el emoji */
+const METEO="https://cdn.jsdelivr.net/npm/@meteocons/svg/fill/";
+function wxSlug(code,dia=1){
+  return code===0?(dia?"clear-day":"clear-night"):code<3?(dia?"partly-cloudy-day":"partly-cloudy-night"):code===3?"overcast":code<50?"fog":
+    code<58?"drizzle":code<68?"rain":code<78?"snow":code<83?(dia?"partly-cloudy-day-rain":"partly-cloudy-night-rain"):code<87?"snow":(dia?"thunderstorms-day-rain":"thunderstorms-rain");
+}
+function mc(code,dia=1){const [e,t]=wxInfo(code);return `<img class="mc" src="${METEO}${wxSlug(code,dia)}.svg" alt="${t}" data-e="${e}">`}
+document.addEventListener("error",e=>{
+  const t=e.target; if(!t.classList||!t.classList.contains("mc")||!t.dataset.e) return;
+  const s=document.createElement("span"); s.className="mc emo"; s.textContent=t.dataset.e; t.replaceWith(s);
+},true);
+function consejoRopa(min,max){
+  return min<6?"Mañanas frías: abrigo, capas y algo para las manos.":min<11?"Fresco al amanecer y al anochecer: capas y una chaqueta.":
+    max>25?"Calor húmedo: ropa ligera, crema solar y un chubasquero fino.":"Entretiempo: camiseta, sudadera y una chaqueta fina.";
+}
+function tarjetaClima(ck){
+  const c=CIUDADES[ck],w=WX[ck],g=GUIA[ck]||{},mias=DIAS.filter(d=>d.ck===ck).map(d=>d.iso),hoyIso=ahoraCN().iso;
+  let h=`<button class="wcard" data-clima="${ck}" aria-label="Ver la previsión de ${esc(c.n)}">`;
+  if(w&&w.d&&w.d.time){
+    const hoy=climaDia(ck,hoyIso)||climaDia(ck,w.d.time[0]),cur=w.cur&&w.cur.weather_code!=null?w.cur:null;
+    const en=w.d.time.filter(i=>mias.includes(i)),sig=w.d.time.filter(i=>i>hoyIso).slice(0,2);
+    const fmc=(iso,lab)=>{const x=climaDia(ck,iso);return `<span class="fmc ${mias.includes(iso)?"vi":""}"><span>${lab}</span>${mc(x.code)}<b>${x.max}°</b><small>${x.min}°</small><em>${x.pp?x.pp+" %":""}</em></span>`};
+    h+=`<div class="wc"><div class="ya">
+        <span class="wl"><i class="fa-solid fa-location-dot"></i>${esc(c.n)}</span>
+        <span class="gr">${mc(cur?cur.weather_code:hoy.code,cur?cur.is_day??1:1)}<b>${cur?Math.round(cur.temperature_2m):hoy.max}°</b><span>/ ${hoy.min}°</span></span>
+        <span class="lluvia"><i class="fa-solid fa-umbrella"></i>lluvia ${hoy.pp??0} %</span>
+        <span class="cond">${cur?`${wxInfo(cur.weather_code)[1]} · sensación ${Math.round(cur.apparent_temperature)}°`:hoy.txt}</span>
+      </div><span class="fmcs">${sig.map(iso=>fmc(iso,fecha(iso,{weekday:"short"}))).join("")}</span></div>`;
+    if(en.length) h+=`<span class="lbl" style="margin:14px 0 0"><i class="fa-regular fa-calendar"></i>Vuestros días aquí</span><span class="pv">${en.map(iso=>fmc(iso,fecha(iso,{weekday:"short",day:"numeric"}))).join("")}</span>`;
+    const xs=(en.length?en:w.d.time.slice(0,3)).map(i=>climaDia(ck,i));
+    h+=`<span class="wnota"><i class="fa-solid fa-shirt"></i>${consejoRopa(Math.min(...xs.map(x=>x.min)),Math.max(...xs.map(x=>x.max)))}</span>`;
+  }else if(g.clima){
+    h+=`<div class="wc"><div class="ya"><span class="wl"><i class="fa-solid fa-location-dot"></i>${esc(c.n)}</span>
+        <span class="gr">${mc(2)}<b>${g.clima[0]}°</b><span>/ ${g.clima[1]}°</span></span>
+        <span class="cond">Lo habitual a principios de noviembre. La previsión real llega unos 16 días antes.</span></div></div>
+      <span class="wnota"><i class="fa-solid fa-shirt"></i>${consejoRopa(g.clima[1],g.clima[0])}</span>`;
+  }else h+=`<p class="n">Sin previsión todavía.</p>`;
+  return h+`</button>`;
+}
 function climaHoja(ck){
   const c=CIUDADES[ck],w=WX[ck],g=GUIA[ck]||{},mias=new Set(DIAS.filter(d=>d.ck===ck).map(d=>d.iso));
-  let h=`<div class="cw" style="--c:${c.c}"><p class="dk">Previsión del tiempo</p><h3>${esc(c.n)} <span class="zh">${c.zh}</span></h3>`;
+  let h=`<div class="th" style="--c:${c.c}"><p class="dk"><i class="fa-solid fa-cloud-sun"></i>Previsión detallada</p><h3>Tiempo en ${esc(c.n)} <span class="zh">${c.zh}</span></h3>`;
   if(w&&w.cur&&w.cur.weather_code!=null){
-    const [ico,txt]=wxInfo(w.cur.weather_code);
-    h+=`<div class="ahw"><span>${ico}</span><b>${Math.round(w.cur.temperature_2m)}°</b><p class="n">${txt}. Sensación de ${Math.round(w.cur.apparent_temperature)}°<br>
-      Humedad ${Math.round(w.cur.relative_humidity_2m)}%, viento ${Math.round(w.cur.wind_speed_10m)} km/h</p></div>`;
+    h+=`<div class="ahw">${mc(w.cur.weather_code,w.cur.is_day??1)}<b>${Math.round(w.cur.temperature_2m)}°</b><p class="n"><b>${wxInfo(w.cur.weather_code)[1]}</b><br>
+      Sensación de ${Math.round(w.cur.apparent_temperature)}°. Humedad ${Math.round(w.cur.relative_humidity_2m)} %, viento ${Math.round(w.cur.wind_speed_10m)} km/h</p></div>`;
   }
   if(w&&w.d&&w.d.time){
     h+=`<div class="pr cab"><span>Día</span><span></span><span class="t">Máx / mín</span><span class="ll">Lluvia</span></div>`+w.d.time.map(iso=>{const x=climaDia(ck,iso);
-      return `<div class="pr ${mias.has(iso)?"vi":""}"><b>${fecha(iso,{weekday:"short",day:"numeric",month:"short"})}</b><span>${x.ico}</span><span class="t">${x.max}° / ${x.min}°</span><span class="ll">${x.pp!=null?x.pp+"%":""}</span></div>`}).join("")
+      return `<div class="pr ${mias.has(iso)?"vi":""}"><b>${fecha(iso,{weekday:"short",day:"numeric",month:"short"})}</b>${mc(x.code)}<span class="t">${x.max}° / ${x.min}°</span><span class="ll">${x.pp?x.pp+" %":""}</span></div>`}).join("")
       +`<p class="n">${mias.size?"En color, los días que estaréis aquí. ":""}Open-Meteo, consultado hace ${durTxt(Math.round((Date.now()-w.ts)/6e4))}.</p>`;
   }else h+=`<p class="n">Cargando la previsión… Necesita conexión.</p>`;
   if(g.clima) h+=`<p class="n">Clima habitual a principios de noviembre: máximas de unos ${g.clima[0]}° y mínimas de ${g.clima[1]}°.</p>`;
-  hoja(h+`<div class="btns"><button class="btn" data-act="cerrar">Cerrar</button></div></div>`);
+  hoja(h+`</div>`);
   $("dlgB").dataset.clima=ck;
   if(!FAKE) pedirClima(ck).then(()=>{if($("dlg").open&&$("dlgB").dataset.clima===ck&&WX[ck]!==w) climaHoja(ck)});
 }
@@ -946,7 +1255,11 @@ const aEUR=(n,m)=>m==="EUR"?n:n/(FX[m]||1);
 /* ---------- Avisos, hoja inferior y pantalla grande ---------- */
 let avisoT;
 function aviso(t){const a=$("aviso");a.textContent=t;a.classList.add("on");clearTimeout(avisoT);avisoT=setTimeout(()=>a.classList.remove("on"),3500)}
-function hoja(html){delete $("dlgB").dataset.clima;$("dlgB").innerHTML=html;if(!$("dlg").open)$("dlg").showModal();$("dlgB").scrollTop=0}
+function hoja(html){
+  delete $("dlgB").dataset.clima;
+  $("dlgB").innerHTML=`<button class="dlg-x" data-act="cerrar" aria-label="Cerrar"><i class="fa-solid fa-xmark"></i></button>`+html;
+  if(!$("dlg").open)$("dlg").showModal();$("dlgB").scrollTop=0;
+}
 const cerrarHoja=()=>{if($("dlg").open)$("dlg").close()};
 function grande(zh,sub,pinyin){
   $("grande").innerHTML=`<button class="x" data-act="cerrar-grande" aria-label="Cerrar">Cerrar</button>
@@ -959,18 +1272,97 @@ function taxista(p){
   else grande((p.czh?p.czh+"\n":"")+p.nombre,p.hotel?"Falta la dirección en chino: añádela en Reservas para enseñársela al taxista.":p.nombre);
 }
 
+/* ---------- Piezas compartidas ---------- */
+function heroFoto(ck,{badge,titulo,sub="",hm="",izq="",der=""}){
+  const c=CIUDADES[ck]||ciudad(ck);
+  return `<div class="hero th" style="--c:${c.c}">
+    ${c.cr?`<img src="img/${ck}.jpg" alt="" style="object-position:${c.fp}" onerror="this.remove()">`:""}
+    <div class="ov"><span class="badge"><i class="fa-solid ${c.ico||"fa-location-dot"}"></i>${badge}</span>
+      <h1>${esc(titulo)}</h1>${sub?`<p class="hf">${sub}</p>`:""}${hm?`<div class="hm">${hm}</div>`:""}</div>
+    <div class="arriba"><span>${izq}</span><span>${der}</span></div>
+    ${c.cr?`<a class="credito" href="${c.cr[2]}" target="_blank" rel="noopener">Foto: ${esc(c.cr[0])} · ${c.cr[1]}</a>`:""}
+  </div>`;
+}
+function pildoraClima(ck,iso){                 // la píldora de cristal de la foto: ahora mismo si es hoy, si no la previsión del día
+  const w=WX[ck],cur=w&&w.cur&&iso===ahoraCN().iso?w.cur:null,x=climaDia(ck,iso);
+  if(cur&&cur.weather_code!=null) return `<button class="cristal" data-clima="${ck}">${mc(cur.weather_code,cur.is_day??1)}<b>${Math.round(cur.temperature_2m)}°</b>${x?`<span>/ ${x.min}°</span>`:""}</button>`;
+  if(x) return `<button class="cristal" data-clima="${ck}">${mc(x.code)}<b>${x.max}°</b><span>/ ${x.min}°</span></button>`;
+  const g=GUIA[ck]; return g&&g.clima?`<button class="cristal" data-clima="${ck}"><i class="fa-solid fa-temperature-half"></i><b>≈${g.clima[0]}°</b></button>`:"";
+}
+function icono(x){
+  const t=x.titulo;
+  if(x.tipo==="vuelo") return ["fa-plane","ic-sky"];
+  if(x.tipo==="tren") return ["fa-train-subway","ic-blue"];
+  if(x.tipo==="hotel") return ["fa-bed","ic-indigo"];
+  if(/crucero|balsa|barco|ferry|r[ií]o li\b/i.test(t)) return ["fa-ship","ic-cyan"];
+  if(x.tipo==="comida"||/\b(cena|comida|desayuno|almuerzo)\b/i.test(t)) return ["fa-utensils","ic-amber"];
+  if(x.tipo==="traslado") return ["fa-bus","ic-blue"];
+  if(/mirador|vistas|pico|panor|atardecer|amanecer|torre|colina|monta[ñn]a|symphony|skyline|\bbund\b/i.test(t)) return ["fa-mountain-sun","ic-purple"];
+  if(x.tipo==="libre") return ["fa-person-walking","ic-emerald"];
+  return ["fa-ticket","ic-rose"];
+}
+function intensidad(items){                     // exigencia física aproximada: horas de visita y madrugón
+  if(!items.length) return "";
+  let m=0; items.forEach(x=>{if(x.tipo==="visita"||x.tipo==="libre") m+=x.t!=null&&x.fin!=null&&x.fin>x.t?x.fin-x.t:60});
+  let n=m<150?1:m<270?2:m<390?3:m<510?4:5;
+  const pr=items.find(x=>x.t!=null); if(pr&&pr.t<8*60&&n<5) n++;
+  const [lab,col]=[["Suave","#10B981"],["Ligero","#10B981"],["Moderado","#F59E0B"],["Exigente","#F97316"],["Intenso","#F43F5E"]][n-1];
+  return `<span class="int" style="--ni:${col}" title="Exigencia del día: ${n} de 5"><span class="p"></span>${lab}<span class="bs">${[1,2,3,4,5].map(k=>`<i class="${k<=n?"on":""}"></i>`).join("")}</span></span>`;
+}
+/* Tarjeta de un día con su línea de tiempo. Con vivo, el día de hoy marca lo que ya pasó y dónde estáis */
+function htmlDia(i,o={}){
+  const d=DIAS[i],c=ciudad(d.Ciudad),items=itemsDia(d.iso),now=ahoraCN(),esHoy=o.vivo&&d.iso===now.iso,aqui=o.aqui||null,dist=o.dist||(()=>null);
+  const resumen=partes(d["Actividades Principales"]).join(", ")||limpio(d["Transporte del día"]);
+  let h=`<article class="dcard th" style="--c:${c.c}"><header><div class="dh"><span class="dnum"><small>DÍA</small><b>${String(i+1).padStart(2,"0")}</b></span>
+      <div style="min-width:0"><h3>${fecha(d.iso,{weekday:"short",day:"numeric",month:"short"})}</h3>${resumen?`<p class="dt">${esc(resumen)}</p>`:""}</div></div>
+      <div class="dbad">${items.some(x=>x.tipo==="vuelo")?`<span class="vuelo"><i class="fa-solid fa-plane"></i>VUELO</span>`:""}${intensidad(items)}</div></header>
+    <div class="tl"><div class="its">`;
+  let marcado=false;
+  items.forEach((x,j)=>{
+    const fin=x.fin??(items[j+1]&&items[j+1].t)??(x.t!=null?x.t+60:null);
+    const est=!esHoy||x.t==null?"":aqui?(x===aqui?"cur":x.t<(aqui.t??0)?"pas":""):now.min>=fin?"pas":now.min>=x.t?"cur":"";
+    const dx=esHoy&&est!=="pas"&&x!==aqui?dist(x.lugar):null,p=x.lugar,[fa,col]=icono(x);
+    if(esHoy&&!marcado&&x.t!=null&&x.t>now.min){marcado=true;h+=`<div class="now"><span>${fmtMin(now.min)}</span><i></i></div>`}
+    h+=`<button class="it ${est}" data-item="${esc(x.k)}" data-di="${i}">
+      <span class="tk"><i></i></span>
+      <span class="h"><b>${x.t!=null?fmtMin(x.t):"--:--"}</b>${x.t!=null&&x.fin!=null&&x.fin>x.t?`<small>${durTxt(x.fin-x.t)}</small>`:""}</span>
+      <span class="ic ${col}"><i class="fa-solid ${fa}"></i></span>
+      <span class="b"><b>${esc(x.titulo)}</b>${p&&p.zh?`<span class="zh">${esc(p.zh)}</span>`:""}
+        ${p&&p.hotel?`<span class="n">${esc(p.nombre)}</span>`:""}${x.notas?`<span class="n">${esc(x.notas)}</span>`:""}
+        ${dx!=null&&dx<150?`<span class="n km"><i class="fa-solid fa-location-arrow"></i> A ${kmTxt(dx)} de aquí</span>`:""}</span>
+    </button>`;
+  });
+  if(!items.length) h+=`<p class="vacio">Este día aún no tiene plan. Añade lo primero que vayáis a hacer.</p>`;
+  return h+`</div><button class="btn linea sm" data-act="nuevo-agenda" data-di="${i}"><i class="fa-solid fa-plus"></i>Añadir a la agenda</button></div></article>`;
+}
+function tarjetaHotel(h,o={}){
+  const c=ciudad(h.Ciudad),p=lugarHotel(h),n=noches(h),pre=num(h["Precio total"]),am=urlAmap(p),est=limpio(h.Estado);
+  return `<div class="hcard th" style="--c:${c.c}">
+    <div class="ht"><span class="hc"><i class="fa-solid fa-location-dot"></i>${esc(c.n)}</span>
+      <span style="display:flex;gap:6px;align-items:center">${o.estado&&est?`<span class="est ${est==="Reservado"?"ok":"pend"}">${esc(est)}</span>`:""}
+      <span class="pill mono">${fecha(toISO(h["Check-in"]),{day:"numeric",month:"short"})} – ${fecha(toISO(h["Check-out"]),{day:"numeric",month:"short"})}</span></span></div>
+    <h3>${p.sin?"Hotel por reservar":esc(h.Hotel)}</h3>
+    ${p.dir?`<p class="chipzh">${esc(p.dir)}</p>`:""}
+    <p class="n">${n} ${n===1?"noche":"noches"}${p.loc?` · Localizador <b class="mono">${esc(p.loc)}</b>`:""}${limpio(h.Notas)?`. ${esc(h.Notas)}`:""}</p>
+    ${o.precio&&pre!=null?`<p class="hp"><b>${eur(pre)}</b>${n?` · ${eur(pre/n)} por noche`:""}</p>`:""}
+    <div class="pie">${p.sin?"":`${am?`<a class="btn azul sm" href="${esc(am)}" target="_blank" rel="noopener"><i class="fa-solid fa-diamond-turn-right"></i>Abrir en Amap</a>`:""}
+      <a class="btn sm" href="${esc(urlMapas(p))}" target="_blank" rel="noopener"><i class="fa-solid fa-map-location-dot"></i>Mapas</a>
+      <button class="btn sm" data-taxi-hotel="${h._row||""}" data-hk="${esc(h.Ciudad)}"><i class="fa-solid fa-taxi"></i>Taxista</button>
+      ${p.dir?`<button class="btn sm" data-copiar="${esc(p.dir)}"><i class="fa-regular fa-copy"></i>Copiar</button>`:""}
+      ${o.docs?botonesDoc(claveDoc("Alojamiento",h)):""}`}
+      ${o.editar&&h._row?`<button class="btn sm" data-edit="Alojamiento" data-row="${h._row}"><i class="fa-solid fa-pen"></i>Editar</button>`:""}</div>
+  </div>`;
+}
+
 /* ---------- HOY ---------- */
-const ICO={visita:"📍",comida:"🍜",traslado:"🚕",hotel:"🛏️",libre:"☕",vuelo:"✈️",tren:"🚄"};
 function rHoy(){
   const now=ahoraCN(),hoyI=diaActual(now);
   if(sel==null||(!selManual&&hoyI>=0)) sel=hoyI>=0?hoyI:(now.iso>DIAS[DIAS.length-1].iso?DIAS.length-1:0);
   sel=Math.min(sel,DIAS.length-1);
   const d=DIAS[sel],c=ciudad(d.Ciudad),esHoy=d.iso===now.iso,items=itemsDia(d.iso);
   document.documentElement.style.setProperty("--c",c.c);
-  const meta=document.querySelector('meta[name="theme-color"]'); if(meta) meta.content=c.c;
   const falta=diasEntre(now.iso,DIAS[0].iso);
   if(Math.abs(diasEntre(now.iso,d.iso))<=15&&!FAKE) pedirClima(d.ck);
-  const w=climaDia(d.ck,d.iso);
   const gk=ciudadGPS(),conSitio=p=>p&&p.lat&&!p.hotel;
   const dist=p=>POS&&conSitio(p)?distKm(POS.lat,POS.lon,p.lat,p.lon):null;
   let aqui=null;                              // plan de hoy en cuyo lugar estáis (a menos de 600 m)
@@ -980,26 +1372,19 @@ function rHoy(){
   }
 
   const cuando=esHoy?"Hoy":falta>0&&sel===0?(falta===1?"Mañana empieza":`Faltan ${falta} días`):d.iso<now.iso?"Ya pasó":"";
-  let html=`<div class="hero">
-    <div class="hz ${[...c.zh].length>2?"l3":""}" aria-hidden="true">${esc(c.zh)}</div>
-    <p class="hd">Día ${sel+1} de ${DIAS.length}${cuando?`<span>${cuando}</span>`:""}</p>
-    <h1>${esc(c.n)}</h1>
-    <p class="hf">${fecha(d.iso,{weekday:"long",day:"numeric",month:"long"})}</p>
-    <div class="hm">
-      ${w?`<button data-clima="${d.ck}">${w.ico} ${w.max}° / ${w.min}°${w.pp!=null?`, lluvia ${w.pp}%`:""}</button>`:""}
-      <span>China ${fmtMin(now.min)}</span><span>Madrid ${horaMadrid(now)}</span>
-      ${CIUDADES[d.ck]?`<button data-ciudad="${d.ck}">Guía de ${esc(c.n)}</button>`:""}
-    </div>
-  </div>
-  <div class="tira" id="tira">${DIAS.map((x,i)=>`<button data-dia="${i}" class="${i===sel?"on":""}${x.iso===now.iso?" hoy":""}" style="--dc:${ciudad(x.Ciudad).c}" aria-label="Día ${i+1}, ${esc(x.Ciudad)}">
-      <span>${fecha(x.iso,{weekday:"short"}).slice(0,2)}</span><b>${D(x.iso).getDate()}</b><i></i></button>`).join("")}</div>
-  <div class="pad">`;
+  let html=`<div class="pila">`+heroFoto(d.ck,{badge:`Día ${sel+1} de ${DIAS.length}${cuando?" · "+cuando:""}`,titulo:c.n,
+      sub:fecha(d.iso,{weekday:"long",day:"numeric",month:"long"}),
+      hm:`<span><i class="fa-regular fa-clock"></i>China ${fmtMin(now.min)}</span><span><i class="fa-solid fa-house"></i>Madrid ${horaMadrid(now)}</span>`,
+      izq:CIUDADES[d.ck]?`<button class="cristal" data-ciudad="${d.ck}"><i class="fa-solid fa-book-open"></i>Guía</button>`:"",
+      der:CIUDADES[d.ck]?pildoraClima(d.ck,d.iso):""})+
+    `<div class="tira" id="tira">${DIAS.map((x,i)=>`<button data-dia="${i}" class="${i===sel?"on":""}${x.iso===now.iso?" hoy":""}" style="--dc:${ciudad(x.Ciudad).c}" aria-label="Día ${i+1}, ${esc(x.Ciudad)}">
+      <span>${fecha(x.iso,{weekday:"short"}).slice(0,2)}</span><b>${D(x.iso).getDate()}</b><i></i></button>`).join("")}</div>`;
 
   /* La ubicación manda sobre el plan */
   if(esHoy&&gk&&gk!==d.ck){
     const otro=DIAS.findIndex(x=>x.ck===gk&&x.iso>=now.iso),ir=otro>=0?otro:DIAS.findIndex(x=>x.ck===gk);
-    html+=`<p class="alerta">Estáis en ${esc(CIUDADES[gk].n)}, pero el plan de hoy es ${esc(c.n)}.
-      ${ir>=0?`<button class="enl" data-ir="${ir}">Ver el plan de ${esc(CIUDADES[gk].n)}</button>`:""}</p>`;
+    html+=`<div class="alerta"><i class="fa-solid fa-location-crosshairs"></i><div>Estáis en ${esc(CIUDADES[gk].n)}, pero el plan de hoy es ${esc(c.n)}.
+      ${ir>=0?`<button class="enl" data-ir="${ir}">Ver el plan de ${esc(CIUDADES[gk].n)}</button>`:""}</div></div>`;
   }
 
   /* Ahora y después */
@@ -1010,97 +1395,73 @@ function rHoy(){
     const sig=aqui?conHora[conHora.indexOf(aqui)+1]:conHora.find(x=>x.t>now.min),tr=proximoTrayecto(now);   // estando en un sitio, lo siguiente es lo que va detrás en el plan
     const dSig=sig?dist(sig.lugar):null;
     html+=`<div class="ahora">
-      ${actual?`<div><small>${aqui?"Estáis aquí":"Ahora"}</small><b>${esc(actual.titulo)}</b>${actual.fin&&actual.fin>now.min?`<em>hasta las ${fmtMin(actual.fin)}</em>`:""}</div>`
-              :`<div><small>Ahora</small><b>${sig?"Tiempo libre":"Fin del plan de hoy"}</b></div>`}
-      ${sig?`<div><small>${sig.t>now.min?`Después, en ${durTxt(sig.t-now.min)}`:`Después. Vais ${durTxt(now.min-sig.t)} por detrás del plan`}</small><b>${esc(sig.titulo)}</b><em>a las ${fmtMin(sig.t)}${dSig!=null&&dSig<150?`, a ${kmTxt(dSig)} de aquí`:""}</em></div>`:""}
-      ${tr?`<div class="tr"><small>Próximo trayecto, en ${durTxt(tr.falta)}</small><b>${esc(tr.t.Origen)} → ${esc(tr.t.Destino)}</b>
+      ${actual?`<div><span class="ai"><i class="fa-solid ${aqui?"fa-location-dot":"fa-play"}"></i></span><small>${aqui?"Estáis aquí":"Ahora"}</small><b>${esc(actual.titulo)}</b>${actual.fin&&actual.fin>now.min?`<em>hasta las ${fmtMin(actual.fin)}</em>`:""}</div>`
+              :`<div><span class="ai"><i class="fa-solid fa-mug-hot"></i></span><small>Ahora</small><b>${sig?"Tiempo libre":"Fin del plan de hoy"}</b></div>`}
+      ${sig?`<div><span class="ai gris"><i class="fa-solid fa-forward"></i></span><small>${sig.t>now.min?`Después, en ${durTxt(sig.t-now.min)}`:`Después. Vais ${durTxt(now.min-sig.t)} por detrás del plan`}</small><b>${esc(sig.titulo)}</b><em>a las ${fmtMin(sig.t)}${dSig!=null&&dSig<150?`, a ${kmTxt(dSig)} de aquí`:""}</em></div>`:""}
+      ${tr?`<div class="tr"><span class="ai gris"><i class="fa-solid ${/vuelo/i.test(tr.t.Tipo)?"fa-plane":"fa-train-subway"}"></i></span><small>Próximo trayecto, en ${durTxt(tr.falta)}</small><b>${esc(tr.t.Origen)} → ${esc(tr.t.Destino)}</b>
         <em>${fecha(tr.iso,{weekday:"short",day:"numeric",month:"short"})}${tr.s!=null?" a las "+fmtMin(tr.s):""}</em></div>`:""}
     </div>`;
   }
 
-  /* Línea de tiempo */
-  html+=`<div class="tl">`;
-  let marcado=false;
-  items.forEach((x,i)=>{
-    const fin=x.fin??(items[i+1]&&items[i+1].t)??(x.t!=null?x.t+60:null);
-    const est=!esHoy||x.t==null?"":aqui?(x===aqui?"cur":x.t<(aqui.t??0)?"pas":""):now.min>=fin?"pas":now.min>=x.t?"cur":"";
-    const dx=esHoy&&est!=="pas"&&x!==aqui?dist(x.lugar):null;
-    if(esHoy&&!marcado&&x.t!=null&&x.t>now.min){marcado=true;html+=`<div class="now"><span>${fmtMin(now.min)}</span><i></i></div>`}
-    const p=x.lugar;
-    html+=`<button class="it ${est} t-${x.tipo}" data-item="${esc(x.k)}">
-      <span class="h">${x.t!=null?fmtMin(x.t):"--:--"}${x.fin!=null?`<small>${fmtMin(x.fin)}</small>`:""}</span>
-      <span class="r"><i>${ICO[x.tipo]||"•"}</i></span>
-      <span class="b"><b>${esc(x.titulo)}</b>${p&&p.zh?`<span class="zh">${esc(p.zh)}</span>`:""}
-        ${p&&p.hotel?`<span class="n">${esc(p.nombre)}</span>`:""}${x.notas?`<span class="n">${esc(x.notas)}</span>`:""}
-        ${dx!=null&&dx<150?`<span class="n km">A ${kmTxt(dx)} de aquí</span>`:""}</span>
-    </button>`;
-  });
-  if(!items.length) html+=`<p class="vacio">Este día aún no tiene plan. Añade lo primero que vayáis a hacer.</p>`;
-  html+=`</div><button class="btn linea" data-act="nuevo-agenda">Añadir a la agenda</button>
-    ${geoActiva()?"":`<button class="enl" data-act="geo">Usar mi ubicación para ajustar el plan</button>`}`;
+  html+=htmlDia(sel,{vivo:true,aqui,dist});
+  if(!geoActiva()) html+=`<button class="enl" data-act="geo" style="justify-self:center"><i class="fa-solid fa-location-arrow"></i> Usar mi ubicación para ajustar el plan</button>`;
 
   /* Dónde se duerme */
   const h=hotelNoche(d.iso);
-  if(h){
-    const p=lugarHotel(h);
-    html+=`<h2>Esta noche</h2><div class="fila">
-      <div><b>${esc(p.nombre)}</b>${p.dir?`<span class="zh">${esc(p.dir)}</span>`:""}
-        <span class="n">${p.sin?"Hotel por reservar":`Salida el ${fecha(toISO(h["Check-out"]),{weekday:"long",day:"numeric"})}`}${p.loc?". Localizador "+esc(p.loc):""}</span></div>
-      ${p.sin?"":`<div class="acc"><button class="btn sm" data-taxi-hotel="${h._row||""}" data-hk="${esc(h.Ciudad)}">Taxista</button>
-        <a class="btn sm" href="${esc(urlMapas(p))}" target="_blank" rel="noopener">Mapas</a>${urlAmap(p)?`<a class="btn sm" href="${esc(urlAmap(p))}" target="_blank" rel="noopener">Amap</a>`:""}</div>`}
-    </div>`;
-  }
+  if(h) html+=`<div><p class="lbl"><i class="fa-solid fa-moon"></i>Esta noche</p>${tarjetaHotel(h)}</div>`;
 
   /* Diario */
   const nota=DATA.diario.find(x=>toISO(x.Fecha)===d.iso);
-  html+=`<h2>Diario del día</h2>
-    <form data-form="diario" class="diario"><textarea id="diarioT" rows="3" placeholder="Lo mejor de hoy, lo que no queréis olvidar…">${esc(nota?nota.Nota:"")}</textarea>
-    <button class="btn">Guardar nota</button></form></div>`;
+  html+=`<section class="card"><h2><i class="fa-solid fa-book"></i>Diario del día</h2>
+    <form data-form="diario"><textarea id="diarioT" rows="3" placeholder="Lo mejor de hoy, lo que no queréis olvidar…">${esc(nota?nota.Nota:"")}</textarea>
+    <button class="btn pri"><i class="fa-solid fa-floppy-disk"></i>Guardar nota</button></form></section></div>`;
 
-  $("hoy").innerHTML=html;
+  $("s-hoy").innerHTML=html;
   const b=$("tira").querySelector(".on"); if(b) $("tira").scrollLeft=b.offsetLeft-$("tira").clientWidth/2+b.offsetWidth/2;
+  rCabecera();
 }
 
-function detalleItem(k){
+function detalleItem(k,di){
+  if(di!=null&&di!==sel){sel=di;selManual=true;rHoy()}         // editar o añadir siempre va al día del plan
   const d=DIAS[sel],x=itemsDia(d.iso).find(i=>i.k===k); if(!x) return;
-  const p=x.lugar;
-  let html=`<p class="dk">${TIPOS[x.tipo]||"Plan"}, ${fecha(d.iso,{weekday:"long",day:"numeric",month:"long"})}</p>
+  const p=x.lugar,[fa]=icono(x);
+  let html=`<p class="dk"><i class="fa-solid ${fa}"></i>${TIPOS[x.tipo]||"Plan"} · ${fecha(d.iso,{weekday:"long",day:"numeric",month:"long"})}</p>
     <h3>${esc(x.titulo)}</h3>
-    <p class="dh">${x.t!=null?fmtMin(x.t):"Hora por confirmar"}${x.fin!=null?" a "+fmtMin(x.fin):""}</p>
+    <p class="dh"><i class="fa-regular fa-clock"></i> ${x.t!=null?fmtMin(x.t):"Hora por confirmar"}${x.fin!=null?" a "+fmtMin(x.fin):""}</p>
     ${x.notas?`<p>${esc(x.notas)}</p>`:""}`;
   html+=fichaLugar(p)+`<div class="btns">`+botonesLugar(p,`data-taxi-item="${esc(k)}"`);
-  if(x.a) html+=`<button class="btn" data-editar-agenda="${esc(x.a.ID)}">Editar</button><button class="btn peligro" data-borrar-agenda="${esc(x.a.ID)}">Borrar</button>`;
-  if(x.tr&&x.tr._row) html+=`<button class="btn" data-edit="Transporte" data-row="${x.tr._row}">Editar trayecto</button>`;
-  html+=`<button class="btn" data-act="cerrar">Cerrar</button></div>`;
-  hoja(html);
+  if(x.a) html+=`<button class="btn" data-editar-agenda="${esc(x.a.ID)}"><i class="fa-solid fa-pen"></i>Editar</button><button class="btn peligro" data-borrar-agenda="${esc(x.a.ID)}"><i class="fa-solid fa-trash"></i>Borrar</button>`;
+  if(x.tr&&x.tr._row) html+=`<button class="btn" data-edit="Transporte" data-row="${x.tr._row}"><i class="fa-solid fa-pen"></i>Editar trayecto</button>`;
+  hoja(html+`</div>`);
 }
 function fichaLugar(p){
   if(!p||!(p.zh||p.dir||p.horario||p.precio||p.reserva||p.notas||p.hotel)) return "";
   return `<div class="lugar">${p.zh?`<div class="zhG">${esc(p.zh)}</div>`:""}
-    <b>${esc(p.nombre)}</b>${p.dir?`<div class="zh">${esc(p.dir)}</div>`:""}
+    <b>${esc(p.nombre)}</b>${p.dir?`<p class="chipzh">${esc(p.dir)}</p>`:""}
     <dl>${p.horario?`<dt>Horario</dt><dd>${esc(p.horario)}</dd>`:""}${p.precio?`<dt>Precio</dt><dd>${esc(p.precio)}</dd>`:""}
       ${p.reserva?`<dt>Reserva</dt><dd>${esc(p.reserva)}</dd>`:""}${p.notas?`<dt>Nota</dt><dd>${esc(p.notas)}</dd>`:""}
-      ${p.loc?`<dt>Localizador</dt><dd>${esc(p.loc)}</dd>`:""}</dl>
+      ${p.loc?`<dt>Localizador</dt><dd class="mono">${esc(p.loc)}</dd>`:""}</dl>
     ${p.horario||p.precio?`<p class="n">Horarios y precios orientativos: confirmadlos antes de ir.</p>`:""}</div>`;
 }
 function botonesLugar(p,taxi){
   if(!p||p.sin||!(p.zh||p.dir||p.hotel)) return "";
-  const am=urlAmap(p);
-  return `<a class="btn pri" href="${esc(urlMapas(p))}" target="_blank" rel="noopener">Abrir en Mapas</a>
-    ${am?`<a class="btn" href="${esc(am)}" target="_blank" rel="noopener">Amap</a>`:""}<button class="btn" ${taxi}>Enseñar al taxista</button>`;
+  const am=urlAmap(p),zh=p.zh||p.dir;
+  return `${am?`<a class="btn azul" href="${esc(am)}" target="_blank" rel="noopener"><i class="fa-solid fa-diamond-turn-right"></i>Abrir en Amap</a>`:""}
+    <a class="btn ${am?"":"azul"}" href="${esc(urlMapas(p))}" target="_blank" rel="noopener"><i class="fa-solid fa-map-location-dot"></i>Mapas</a>
+    <button class="btn" ${taxi}><i class="fa-solid fa-taxi"></i>Taxista</button>
+    ${zh?`<button class="btn" data-copiar="${esc(zh)}"><i class="fa-regular fa-copy"></i>Copiar para DiDi</button>`:""}`;
 }
 function detalleLugar(id){
   const l=DATA.lugares.find(x=>x.ID===id); if(!l) return;
-  const p=lugarDe(l.Nombre),o=primeraVisita()[norm(l.Nombre)],di=o?DIAS.findIndex(d=>d.iso===o.iso):-1;
-  hoja(`<p class="dk">${esc(ciudad(l.Ciudad).n)}${o?", "+fecha(o.iso,{weekday:"long",day:"numeric",month:"long"}):""}</p>
+  const p=lugarDe(l.Nombre),o=primeraVisita()[norm(l.Nombre)],di=o?DIAS.findIndex(d=>d.iso===o.iso):-1,c=ciudad(l.Ciudad);
+  hoja(`<div class="th" style="--c:${c.c}"><p class="dk"><i class="fa-solid fa-location-dot"></i>${esc(c.n)}${o?" · "+fecha(o.iso,{weekday:"long",day:"numeric",month:"long"}):""}</p>
     <h3>${esc(p.nombre)}</h3>${fichaLugar(p)}
-    <div class="btns">${botonesLugar(p,`data-taxi-lugar="${esc(id)}"`)}${di>=0?`<button class="btn" data-ir="${di}">Ver ese día</button>`:""}
-      <button class="btn" data-act="cerrar">Cerrar</button></div>`);
+    <div class="btns">${botonesLugar(p,`data-taxi-lugar="${esc(id)}"`)}${di>=0?`<button class="btn" data-ir="${di}"><i class="fa-regular fa-calendar"></i>Ver ese día</button>`:""}</div></div>`);
 }
 function formAgenda(id){
   const a=id?DATA.agenda.find(x=>x.ID===id):null,d=DIAS[sel];
   hoja(`<form data-form="agenda" data-id="${esc(id||"")}">
-    <h3>${a?"Editar plan":"Añadir a la agenda"}</h3><p class="dk">${fecha(d.iso,{weekday:"long",day:"numeric",month:"long"})}, ${esc(d.Ciudad)}</p>
+    <p class="dk"><i class="fa-regular fa-calendar"></i>${fecha(d.iso,{weekday:"long",day:"numeric",month:"long"})} · ${esc(d.Ciudad)}</p><h3>${a?"Editar plan":"Añadir a la agenda"}</h3>
     <div class="dos"><div><label for="aH">Empieza</label><input id="aH" type="time" value="${esc(a?fmtMin(horaMin(a.Hora)):"")}" required></div>
       <div><label for="aF">Termina</label><input id="aF" type="time" value="${esc(a?fmtMin(horaMin(a.Fin)):"")}"></div></div>
     <label for="aQ">Qué</label><input id="aQ" type="text" value="${esc(a?a["Qué"]:"")}" required>
@@ -1108,9 +1469,54 @@ function formAgenda(id){
     <datalist id="lugaresL"><option value="Hotel"><option value="Hotel (salida)">${DATA.lugares.filter(l=>claveCiudad(l.Ciudad)===d.ck).map(l=>`<option value="${esc(l.Nombre)}">`).join("")}</datalist>
     <label for="aT">Tipo</label><select id="aT">${["visita","comida","traslado","hotel","libre"].map(t=>`<option value="${t}" ${a&&norm(a.Tipo)===t?"selected":""}>${TIPOS[t]}</option>`).join("")}</select>
     <label for="aN">Notas</label><textarea id="aN" rows="3">${esc(a?a.Notas:"")}</textarea>
-    <div class="btns"><button type="button" class="btn" data-act="cerrar">Cancelar</button><button class="btn pri">Guardar</button></div></form>`);
+    <div class="btns"><button type="button" class="btn" data-act="cerrar">Cancelar</button><button class="btn pri"><i class="fa-solid fa-check"></i>Guardar</button></div></form>`);
 }
 
+/* ---------- Cabecera: cuenta atrás, fechas y pestañas de ciudades ---------- */
+function estadoViaje(){
+  const now=ahoraCN(),f=diasEntre(now.iso,DIAS[0].iso),i=diaActual(now);
+  return f>0?{st:"antes",f}:i>=0?{st:"durante",i}:{st:"despues",ayer:diasEntre(DIAS[DIAS.length-1].iso,now.iso)===1};
+}
+function rCabecera(){
+  const e=estadoViaje(),a=DIAS[0],z=DIAS[DIAS.length-1];
+  $("cuenta").innerHTML=e.st==="antes"?`<i class="fa-regular fa-clock"></i>${e.f} ${e.f===1?"día":"días"}`:
+    e.st==="durante"?`<span class="vivo"></span>Día ${e.i+1} · ${esc(ciudad(DIAS[e.i].Ciudad).n)}`:e.ayer?`<i class="fa-solid fa-check"></i>Viaje completado`:"";
+  $("tituloApp").textContent="China "+a.iso.slice(0,4);
+  $("sub").textContent=`${fecha(a.iso)} – ${fecha(z.iso)} · ${ciudad(a.Ciudad).n} a ${ciudad(z.Ciudad).n}`;
+  const ks=[...new Set(DIAS.map(d=>d.ck))].filter(k=>CIUDADES[k]),hoyK=(DIAS[diaActual(ahoraCN())]||{}).ck;
+  const act=tab==="viaje"?ciudadSel:tab==="hoy"&&DIAS[sel]?DIAS[sel].ck:null;
+  $("fases").innerHTML=ks.map(k=>`<button class="fase th ${k===act?"on":""} ${k===hoyK?"hoy":""}" style="--c:${CIUDADES[k].c}" data-ciudad="${k}">
+    <i class="fa-solid ${CIUDADES[k].ico}"></i>${esc(CIUDADES[k].n)}</button>`).join("");
+  const on=$("fases").querySelector(".on"); if(on) $("fases").scrollLeft=on.offsetLeft-$("fases").clientWidth/2+on.offsetWidth/2;
+}
+/* Presentación al abrir: la cuenta atrás en grande y luego vuela a la cabecera. Una vez al día */
+function presentacion(){
+  const hoy=ahoraCN().iso,e=estadoViaje(),el=$("intro");
+  if(LS.get("china-intro")===hoy&&!PARAMS.has("intro")){el.remove();return}
+  LS.set("china-intro",hoy);
+  const [P,N,L,F]=e.st==="antes"?["Quedan",e.f,e.f===1?"día para despegar":"días para despegar",`${fecha(DIAS[0].iso,{day:"numeric",month:"long",year:"numeric"})} · ${ciudad(DIAS[0].Ciudad).n}`]:
+    e.st==="durante"?[e.i?"¡Estamos en China!":"¡Hoy empieza el viaje!","Día "+(e.i+1),ciudad(DIAS[e.i].Ciudad).n,`${fecha(DIAS[e.i].iso,{weekday:"long",day:"numeric",month:"long"})} · Día ${e.i+1} de ${DIAS.length}`]:
+    ["","Viaje a China","Guía, mapas y logística",`${fecha(DIAS[0].iso)} – ${fecha(DIAS[DIAS.length-1].iso)}`];
+  $("inS").textContent="China "+DIAS[0].iso.slice(0,4);$("inP").textContent=P;$("inN").textContent=N;$("inL").textContent=L;$("inF").textContent=F;
+  if(typeof N==="string"&&N.length>6) $("inN").classList.add("txt");
+  el.hidden=false;
+  let hecho=false;
+  const salir=()=>{
+    if(hecho) return; hecho=true;
+    const num=$("inN"),pill=$("cuenta"),a=num.getBoundingClientRect(),b=pill.getBoundingClientRect();
+    if(pill.innerHTML&&b.width&&!matchMedia("(prefers-reduced-motion: reduce)").matches){   // el número vuela hasta la píldora de la cabecera
+      const v=num.cloneNode(true);v.removeAttribute("id");
+      Object.assign(v.style,{position:"fixed",left:a.left+"px",top:a.top+"px",width:a.width+"px",margin:0,zIndex:110,color:"#fff",pointerEvents:"none",
+        transition:"transform .9s cubic-bezier(.22,1,.36,1),opacity .9s ease",transformOrigin:"top left",animation:"none"});
+      document.body.append(v);num.style.opacity=0;
+      requestAnimationFrame(()=>requestAnimationFrame(()=>{v.style.transform=`translate(${b.left-a.left}px,${b.top-a.top}px) scale(${Math.min(b.width/a.width,b.height/a.height)})`;v.style.opacity=0}));
+      setTimeout(()=>{v.remove();pill.classList.add("llega")},900);
+    }
+    el.classList.add("sale");setTimeout(()=>el.remove(),950);
+  };
+  el.addEventListener("click",salir);
+  setTimeout(salir,2100);
+}
 /* ---------- VIAJE ---------- */
 function mapaRuta(now){
   const ks=[...new Set(DIAS.map(d=>d.ck))].filter(k=>CIUDADES[k]);
@@ -1140,37 +1546,42 @@ function rViaje(){
   const tH=H.reduce((s,h)=>s+(num(h["Precio total"])||0),0),tT=T.reduce((s,t)=>s+(num(t.Precio)||0),0);
   const nTot=H.reduce((s,h)=>s+noches(h),0)||1,nOk=H.filter(h=>h.Estado==="Reservado").reduce((s,h)=>s+noches(h),0);
   const E=entradas(),eOk=E.filter(x=>x.ok).length;
-  const pend=[...H.filter(h=>h.Estado==="Pendiente").map(h=>`Hotel en ${h.Ciudad}, ${noches(h)} ${noches(h)===1?"noche":"noches"} desde el ${fecha(toISO(h["Check-in"]))}`),
-    ...T.filter(t=>t.Estado==="Pendiente").map(t=>`${t.Tipo} ${t.Origen} → ${t.Destino}, ${fecha(toISO(t.Fecha))}`)];
+  const pend=[...H.filter(h=>h.Estado==="Pendiente").map(h=>["fa-hotel",`Hotel en ${h.Ciudad}, ${noches(h)} ${noches(h)===1?"noche":"noches"} desde el ${fecha(toISO(h["Check-in"]))}`]),
+    ...T.filter(t=>t.Estado==="Pendiente").map(t=>[/vuelo/i.test(t.Tipo)?"fa-plane":"fa-train",`${t.Tipo} ${t.Origen} → ${t.Destino}, ${fecha(toISO(t.Fecha))}`])];
   const ks=[...new Set(DIAS.map(d=>d.ck))].filter(k=>CIUDADES[k]),hoyK=(DIAS[hoyI]||{}).ck;
-  let html=`<div class="cab"><h1>El viaje</h1>
-    <p>${falta>0?`Faltan ${falta} ${falta===1?"día":"días"} para salir`:hoyI>=0?`Día ${hoyI+1} de ${DIAS.length}`:"Viaje terminado"}.
-      ${fecha(DIAS[0].iso,{day:"numeric",month:"long"})} a ${fecha(DIAS[DIAS.length-1].iso,{day:"numeric",month:"long"})}.</p></div><div class="pad">
-    <div class="lmap" id="mapaV"><div class="mapa">${mapaRuta(now)}</div></div>
-    <h2>Ciudades <small>${ks.length} paradas</small></h2><div class="cds">`;
-  ks.forEach(k=>{
+  let html=`<div class="pila"><div style="display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:10px;padding:4px 2px">
+      <div><p class="eyebrow">Ruta del viaje</p><h1 style="font-size:clamp(24px,5vw,30px);font-weight:900;color:var(--ink);letter-spacing:-.02em;margin-top:4px">Las ${ks.length} paradas de China</h1>
+      <p class="n" style="font-size:13px">${falta>0?`Faltan ${falta} ${falta===1?"día":"días"} para salir`:hoyI>=0?`Día ${hoyI+1} de ${DIAS.length}`:"Viaje terminado"} · ${fecha(DIAS[0].iso,{day:"numeric",month:"long"})} a ${fecha(DIAS[DIAS.length-1].iso,{day:"numeric",month:"long"})}. Entra en una ciudad para ver su guía.</p></div>
+      <span class="pill" style="background:var(--red50);color:var(--red7);border:1px solid var(--red100)"><i class="fa-solid fa-location-dot"></i>${ks.length} paradas</span></div>
+    <div class="ruta"><div class="lmap" id="mapaV"><div class="mapa">${mapaRuta(now)}</div></div>
+      <div class="paradas"><h3>Paradas del itinerario</h3>`;
+  ks.forEach((k,i)=>{
     const c=CIUDADES[k],ds=DIAS.filter(d=>d.ck===k),hs=H.filter(h=>claveCiudad(h.Ciudad)===k),n=hs.reduce((s,h)=>s+noches(h),0);
     if(!FAKE&&Math.abs(diasEntre(now.iso,ds[0].iso))<=15) pedirClima(k);
-    const w=climaDia(k,ds[0].iso),g=GUIA[k]||{};
-    html+=`<button class="cc ${k===hoyK?"hoy":""}" style="--dc:${c.c}" data-ciudad="${k}">
-      <span class="z">${c.zh}</span><b>${esc(c.n)}</b>
-      <small>${rangoFechas(ds)}${n?`, ${n} ${n===1?"noche":"noches"}`:""}${hs.length?`. ${hs.every(h=>h.Estado==="Reservado")?"Hotel reservado":"Hotel por reservar"}`:""}</small>
-      <span class="w">${w?`${w.ico} ${w.max}°`:g.clima?`≈ ${g.clima[0]}°`:""}</span></button>`;
+    const w=climaDia(k,ds[0].iso),top=lugaresCiudad(k).slice(0,3);
+    html+=`<button class="parada th ${k===hoyK?"hoy":""}" style="--c:${c.c}" data-ciudad="${k}"><span class="num">${i+1}</span>
+      <span style="min-width:0;flex:1"><b>${esc(c.n)} <span class="zh" style="font-weight:600;font-size:12.5px">${c.zh}</span></b>
+        <span class="fe">${rangoFechas(ds)}${n?` · ${n} ${n===1?"noche":"noches"}`:""}${w?` · ${w.ico} ${w.max}°`:""}</span>
+        <span class="no">${hs.length?hs.every(h=>h.Estado==="Reservado")?`<i class="fa-solid fa-circle-check" style="color:var(--ok)"></i> ${esc(hs[0].Hotel)}`:`<i class="fa-solid fa-circle-exclamation" style="color:var(--warn)"></i> Hotel por reservar`:"De paso"}</span>
+        ${top.length?`<span class="hls">${top.map(x=>`<span class="hl"><i class="fa-solid fa-star"></i>${esc(x.l.Nombre)}</span>`).join("")}</span>`:""}
+        <span class="ver"><i class="fa-solid fa-route"></i>Ver guía</span></span>
+      <img class="ft" src="img/${k}.jpg" alt="" loading="lazy" style="object-position:${c.fp}" onerror="this.remove()"></button>`;
   });
-  html+=`</div>
-    <h2>Por reservar</h2>
-    ${pend.length?`<ul class="lista">${pend.map(p=>`<li>${esc(p)}</li>`).join("")}</ul>`:`<p class="n">Todo reservado.</p>`}
-    <div class="prog"><div><span>Noches con hotel</span><b>${nOk} de ${nTot}</b></div><div class="bar"><i style="width:${nOk/nTot*100}%"></i></div></div>
-    ${E.length?`<div class="prog"><div><span>Entradas compradas</span><b>${eOk} de ${E.length}</b></div><div class="bar"><i style="width:${eOk/E.length*100}%"></i></div></div>`:""}
-    <p class="n">Reservado hasta ahora: ${eur(tH+tT)} (${eur(tH)} en hoteles y ${eur(tT)} en trayectos).</p>
-    <h2>Día a día</h2>`;
+  html+=`</div></div>
+    <section class="card"><h2><i class="fa-solid fa-list-check"></i>Por reservar</h2>
+      ${pend.length?`<ul class="lista">${pend.map(([i,p])=>`<li><i class="fa-solid ${i}"></i>${esc(p)}</li>`).join("")}</ul>`:`<p class="n"><i class="fa-solid fa-circle-check" style="color:var(--ok)"></i> Todo reservado.</p>`}
+      <div class="pila" style="gap:10px;margin-top:14px">
+        <div class="prog"><div><span>Noches con hotel</span><b>${nOk} de ${nTot}</b></div><div class="bar"><i style="width:${nOk/nTot*100}%"></i></div></div>
+        ${E.length?`<div class="prog"><div><span>Entradas compradas</span><b>${eOk} de ${E.length}</b></div><div class="bar"><i style="width:${eOk/E.length*100}%"></i></div></div>`:""}</div>
+      <p class="n">Reservado hasta ahora: <b>${eur(tH+tT)}</b> (${eur(tH)} en hoteles y ${eur(tT)} en trayectos).</p></section>
+    <section class="card"><h2><i class="fa-regular fa-calendar"></i>Día a día <small>${DIAS.length} días</small></h2>`;
   let prev=null;
   DIAS.forEach((d,i)=>{
     const c=ciudad(d.Ciudad);
-    if(d.ck!==prev){prev=d.ck;html+=`<h3 class="cd" style="--dc:${c.c}"><span>${esc(c.zh)}</span>${esc(c.n)}</h3>`}
+    if(d.ck!==prev){prev=d.ck;html+=`<h3 class="cd th" style="--c:${c.c}"><i class="fa-solid ${c.ico||"fa-location-dot"}"></i>${esc(c.n)}<span>${esc(c.zh)}</span></h3>`}
     html+=filaDia(d,i,now);
   });
-  $("viaje").innerHTML=html+`</div>`;
+  $("s-viaje").innerHTML=html+`</section></div>`;
 }
 function rangoFechas(ds){
   if(!ds.length) return "";
@@ -1180,59 +1591,40 @@ function rangoFechas(ds){
 }
 function filaDia(d,i,now){
   const c=ciudad(d.Ciudad),a=partes(d["Actividades Principales"]);
-  return `<div class="dia ${d.iso===now.iso?"hoy":d.iso<now.iso?"pas":""}" style="--dc:${c.c}">
+  return `<div class="dia th ${d.iso===now.iso?"hoy":d.iso<now.iso?"pas":""}" style="--c:${c.c}">
     <button class="dd" data-ir="${i}"><b>${D(d.iso).getDate()}</b><span>${fecha(d.iso,{weekday:"short"})}</span></button>
     <div>${a.length?esc(a.join(", ")):`<span class="n">Sin actividades</span>`}
-      ${limpio(d["Transporte del día"])?`<span class="n">${esc(d["Transporte del día"])}</span>`:""}
-      ${d._row?`<button class="enl" data-edit="Itinerario" data-row="${d._row}">Editar</button>`:""}</div></div>`;
+      ${limpio(d["Transporte del día"])?`<span class="n"><i class="fa-solid fa-route"></i> ${esc(d["Transporte del día"])}</span>`:""}
+      ${d._row?`<button class="enl" data-edit="Itinerario" data-row="${d._row}"><i class="fa-solid fa-pen"></i> Editar</button>`:""}</div></div>`;
 }
 
 /* ---------- Guía de una ciudad ---------- */
 function rCiudad(ck){
-  const c=CIUDADES[ck],g=GUIA[ck]||{},now=ahoraCN();
+  const c=CIUDADES[ck],g=GUIA[ck]||{},now=ahoraCN(),ks=[...new Set(DIAS.map(d=>d.ck))].filter(k=>CIUDADES[k]);
   const ds=DIAS.map((d,i)=>({d,i})).filter(x=>x.d.ck===ck),H=DATA.alojamiento.filter(h=>claveCiudad(h.Ciudad)===ck);
   const Ls=lugaresCiudad(ck),n=H.reduce((s,h)=>s+noches(h),0);
   if(!FAKE) pedirClima(ck);
-  const w=WX[ck]&&WX[ck].cur,primero=ds.length?ds[0].d.iso:null,ultimo=ds.length?ds[ds.length-1].d.iso:null;
+  const primero=ds.length?ds[0].d.iso:null,ultimo=ds.length?ds[ds.length-1].d.iso:null;
   const est=!ds.length?"":ds.some(x=>x.d.iso===now.iso)?"Estáis aquí":ultimo<now.iso?"Ya pasó":
     diasEntre(now.iso,primero)===1?"Mañana":`Dentro de ${diasEntre(now.iso,primero)} días`;
-  let html=`<div class="cw" style="--c:${c.c}"><div class="hero">
-    <div class="hz ${[...c.zh].length>2?"l3":""}" aria-hidden="true">${c.zh}</div>
-    <button class="volver" data-act="volver">‹ El viaje</button>
-    <p class="hd">${ds.length?`Día ${ds[0].i+1}${ds.length>1?` al ${ds[ds.length-1].i+1}`:""}`:""}${est?`<span>${est}</span>`:""}</p>
-    <h1>${esc(c.n)}</h1>
-    <p class="hf">${rangoFechas(ds.map(x=>x.d))}${n?`, ${n} ${n===1?"noche":"noches"}`:""}</p>
-    <div class="hm">${w&&w.weather_code!=null?`<button data-clima="${ck}">${wxInfo(w.weather_code)[0]} ${Math.round(w.temperature_2m)}° ahora</button>`:""}
-      ${c.mon==="HKD"?"<span>Se paga en HKD</span>":""}</div>
-  </div><div class="pad">
-    <h2>El tiempo</h2>${tiraClima(ck)}`;
-  if(H.length){
-    html+=`<h2>Dónde dormís</h2>`+H.map(h=>{
-      const p=lugarHotel(h),am=urlAmap(p);
-      return `<div class="fila"><div><b>${esc(p.nombre)}</b>${p.dir?`<span class="zh">${esc(p.dir)}</span>`:""}
-        <span class="n">${fecha(toISO(h["Check-in"]),{weekday:"short",day:"numeric"})} a ${fecha(toISO(h["Check-out"]),{weekday:"short",day:"numeric",month:"short"})}${p.sin?". Por reservar":p.loc?". Localizador "+esc(p.loc):""}</span></div>
-        ${p.sin?"":`<div class="acc"><button class="btn sm" data-taxi-hotel="${h._row||""}" data-hk="${esc(h.Ciudad)}">Taxista</button>
-          <a class="btn sm" href="${esc(urlMapas(p))}" target="_blank" rel="noopener">Mapas</a>${am?`<a class="btn sm" href="${esc(am)}" target="_blank" rel="noopener">Amap</a>`:""}</div>`}</div>`}).join("");
-  }
-  if(ds.length) html+=`<h2>Días aquí</h2>`+ds.map(x=>filaDia(x.d,x.i,now)).join("");
-  if(Ls.some(x=>parseFloat(x.l.Lat))) html+=`<h2>Mapa</h2><div class="lmap" id="mapaV"><p class="n">Cargando mapa…</p></div>`;
-  if(Ls.length) html+=`<h2>Qué ver <small>${Ls.length} sitios</small></h2><div class="lgs">${Ls.map(x=>`<button data-lugar="${esc(x.l.ID)}">
+  let html=`<div class="pila th" style="--c:${c.c}">`+heroFoto(ck,{badge:`${rangoFechas(ds.map(x=>x.d))} · Parada ${ks.indexOf(ck)+1}`,titulo:c.n,
+      sub:`${c.zh}${n?` · ${n} ${n===1?"noche":"noches"}`:""}${est?` · ${est}`:""}`,
+      izq:`<button class="cristal" data-act="volver"><i class="fa-solid fa-arrow-left"></i>El viaje</button>`,der:pildoraClima(ck,ds.some(x=>x.d.iso===now.iso)?now.iso:primero)});
+  html+=`<div><p class="lbl"><i class="fa-solid fa-hotel"></i>Alojamiento y tiempo en ${esc(c.n)}</p><div class="dos-col">
+      <div class="pila">${H.length?H.map(h=>tarjetaHotel(h,{estado:1})).join(""):`<div class="hcard"><p class="n">Aquí no dormís: es una parada de paso.</p></div>`}</div>
+      ${tarjetaClima(ck)}</div></div>`;
+  if(Ls.some(x=>parseFloat(x.l.Lat))) html+=`<div><p class="lbl"><i class="fa-solid fa-map-location-dot"></i>Mapa de ${esc(c.n)}</p><div class="lmap" id="mapaV"><p class="n">Cargando mapa…</p></div></div>`;
+  if(ds.length) html+=`<div class="ch" style="margin:4px 2px 0"><h2 style="margin:0"><i class="fa-regular fa-calendar-check"></i>Planificación día a día</h2><span class="cuantos">${ds.length} ${ds.length===1?"día":"días"}</span></div>
+    ${ds.map(x=>htmlDia(x.i,{vivo:true})).join("")}`;
+  if(Ls.length) html+=`<section class="card"><h2><i class="fa-solid fa-camera"></i>Qué ver <small>${Ls.length} sitios</small></h2><div class="lgs">${Ls.map(x=>`<button data-lugar="${esc(x.l.ID)}">
       <span class="nn">${x.n}</span><b>${esc(x.l.Nombre)}</b><span class="zh">${esc(limpio(x.l.Chino))}</span>
-      <small>${[x.o?fecha(x.o.iso,{weekday:"short",day:"numeric"}):"Fuera de la agenda",limpio(x.l.Precio),limpio(x.l.Horario)].filter(Boolean).map(esc).join(" · ")}</small></button>`).join("")}</div>`;
-  if(g.comer) html+=`<h2>Qué comer</h2><p class="n">Toca un plato para enseñarlo en grande.</p>
-    <div class="fr" style="margin-top:8px">${g.comer.map(([es,zh,py,t])=>`<button data-frase="${zh}" data-es="${esc(es+". "+t)}" data-py="${py}"><span>${esc(es)}</span><b>${zh}</b><i>${esc(t)}</i></button>`).join("")}</div>`;
-  if(g.consejos) html+=`<h2>Consejos</h2><ul class="tips">${g.consejos.map(t=>`<li>${esc(t)}</li>`).join("")}</ul>`;
-  $("viaje").innerHTML=html+`</div></div>`;
-}
-function tiraClima(ck){
-  const w=WX[ck],g=GUIA[ck]||{},mias=DIAS.filter(d=>d.ck===ck).map(d=>d.iso);
-  const habitual=g.clima?`Lo habitual a principios de noviembre: ${g.clima[0]}° de máxima y ${g.clima[1]}° de mínima.`:"";
-  if(!w||!w.d||!w.d.time) return `<button class="fila clb" data-clima="${ck}"><span>${habitual||"Sin previsión todavía."}
-    <span class="n">La previsión llega unos 16 días antes. Tócalo para consultarla.</span></span></button>`;
-  const en=w.d.time.filter(i=>mias.includes(i)),lista=en.length?en:w.d.time.slice(0,7);
-  return `<p class="n" style="margin:0 0 8px">${en.length?"Previsión para vuestros días aquí.":"Próximos días; vuestras fechas aún quedan lejos. "+habitual}</p>
-    <button class="pv" data-clima="${ck}" aria-label="Ver la previsión completa">${lista.map(iso=>{const x=climaDia(ck,iso);
-      return `<span class="${mias.includes(iso)?"vi":""}">${fecha(iso,{weekday:"short",day:"numeric"})}<i>${x.ico}</i><b>${x.max}°</b>${x.min}°</span>`}).join("")}</button>`;
+      <small>${[x.o?fecha(x.o.iso,{weekday:"short",day:"numeric"}):"Fuera de la agenda",limpio(x.l.Precio),limpio(x.l.Horario)].filter(Boolean).map(esc).join(" · ")}</small></button>`).join("")}</div></section>`;
+  if(g.comer) html+=`<section class="card"><div class="ch"><h2 style="margin:0"><i class="fa-solid fa-bowl-food"></i>Comer en ${esc(c.n)}</h2><span class="picante">Pedir: 不要辣 · sin picante</span></div>
+    <p class="n" style="margin:-4px 0 12px">Platos típicos. Toca uno para enseñarlo en grande al camarero.</p>
+    <div class="foods">${g.comer.map(([es,zh,py,t])=>`<button class="food" data-frase="${zh}" data-es="${esc(es+". "+t)}" data-py="${py}">
+      <b>${esc(es)}</b><span class="zh">${zh}<small>${py}</small></span><p>${esc(t)}</p><span class="ver"><i class="fa-solid fa-expand"></i>Enseñar en grande</span></button>`).join("")}</div></section>`;
+  if(g.consejos) html+=`<section class="card"><h2><i class="fa-solid fa-lightbulb"></i>Consejos</h2><ul class="tips">${g.consejos.map(t=>`<li><i class="fa-solid fa-check"></i><span>${esc(t)}</span></li>`).join("")}</ul></section>`;
+  $("s-viaje").innerHTML=html+`</div>`;
 }
 
 /* ---------- Mapas interactivos (Leaflet; se carga solo cuando hay conexión) ---------- */
@@ -1268,7 +1660,7 @@ function curva(a,b){                          // los vuelos se dibujan en arco
   return out;
 }
 function dibujarMapa(map,def){
-  const oscuro=matchMedia("(prefers-color-scheme: dark)").matches,gris=oscuro?"#9AA1AA":"#636973";
+  const oscuro=document.documentElement.dataset.tema==="oscuro",gris=oscuro?"#9AA1AA":"#636973";
   L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:19,
     attribution:'© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'}).addTo(map);
   const pin=(txt,col)=>L.divIcon({className:"pin",html:`<span style="background:${col}">${txt}</span>`,iconSize:[24,24],iconAnchor:[12,12]});
@@ -1320,61 +1712,51 @@ function montarMapa(){
 /* ---------- RESERVAS ---------- */
 const claveDoc=(hoja,r)=>`${hoja}:${r._k||""}:${r.Ciudad||r.Origen||""}`;
 function botonesDoc(k,ver="Ver billete",adj="Adjuntar billete"){
-  return DOCS.has(k)?`<button class="btn sm" data-ver-doc="${esc(k)}">${ver}</button><button class="btn sm" data-quitar-doc="${esc(k)}">Quitar</button>`
-    :`<label class="btn sm">${adj}<input type="file" accept="image/*,application/pdf" data-doc="${esc(k)}" hidden></label>`;
+  return DOCS.has(k)?`<button class="btn sm" data-ver-doc="${esc(k)}"><i class="fa-regular fa-eye"></i>${ver}</button><button class="btn sm" data-quitar-doc="${esc(k)}" aria-label="Quitar"><i class="fa-solid fa-xmark"></i></button>`
+    :`<label class="btn sm"><i class="fa-solid fa-paperclip"></i>${adj}<input type="file" accept="image/*,application/pdf" data-doc="${esc(k)}" hidden></label>`;
+}
+function tarjetaTrayecto(t){
+  const vu=/vuelo/i.test(t.Tipo),c=ciudad(t.Destino),est=limpio(t.Estado),iso=toISO(t.Fecha),loc=limpio(t.Localizador),pre=num(t.Precio);
+  const horas=[limpio(t.Salida)&&"Salida "+t.Salida,limpio(t.Llegada)&&"Llegada "+t.Llegada].filter(Boolean).join(" · ");
+  return `<div class="tcard th" style="--c:${c.c}">
+    <div class="tt"><span class="pill mono">${fecha(iso,{weekday:"short",day:"numeric",month:"short"})}</span>
+      <span style="display:flex;gap:6px;align-items:center">${est?`<span class="est ${est==="Reservado"?"ok":"pend"}">${esc(est)}</span>`:""}
+      <span class="tipo ${vu?"av":"tr"}"><i class="fa-solid ${vu?"fa-plane":"fa-train"}"></i>${esc(t.Tipo)}</span></span></div>
+    <h4>${esc(t.Origen)} → ${esc(t.Destino)}</h4>
+    <div class="caja"><b><i class="fa-regular fa-clock" style="color:var(--faint)"></i> ${esc(horas)||"Horario por definir"}</b>
+      ${limpio(t["Nº vuelo/tren"])?`<span class="n">${vu?"Vuelo":"Tren"} ${esc(t["Nº vuelo/tren"])}</span>`:""}</div>
+    ${loc?`<button class="loc" data-copiar="${esc(loc)}"><i class="fa-solid fa-ticket"></i>Localizador: ${esc(loc)}<i class="fa-regular fa-copy" style="opacity:.6"></i></button>`:""}
+    ${pre!=null?`<p class="hp"><b>${eur(pre)}</b></p>`:""}${limpio(t.Notas)?`<p class="n">${esc(t.Notas)}</p>`:""}
+    <div class="pie">${botonesDoc(claveDoc("Transporte",t))}${t._row?`<button class="btn sm" data-edit="Transporte" data-row="${t._row}"><i class="fa-solid fa-pen"></i>Editar</button>`:""}</div>
+  </div>`;
 }
 function rReservas(){
-  let html=`<div class="cab"><h1>Reservas</h1>
-    <div class="seg">${[["hoteles","Hoteles"],["transporte","Transporte"],["entradas","Entradas"]].map(([k,t])=>`<button data-res="${k}" class="${resTab===k?"on":""}">${t}</button>`).join("")}</div></div><div class="pad">`;
+  const tabs=[["hoteles","Hoteles","fa-hotel"],["transporte","Transporte","fa-train-subway"],["entradas","Entradas","fa-ticket"]];
+  let html=`<div class="pila"><div class="cab"><h1><i class="fa-solid fa-ticket"></i>Reservas</h1><p>Hoteles, trayectos y entradas, con sus billetes guardados en el móvil.</p>
+    <div class="seg">${tabs.map(([k,t,i])=>`<button data-res="${k}" class="${resTab===k?"on":""}"><i class="fa-solid ${i}"></i>${t}</button>`).join("")}</div></div>`;
   if(resTab==="entradas"){
     const E=entradas(),ok=E.filter(x=>x.ok).length,ks=[...new Set(DIAS.map(d=>d.ck))].filter(k=>CIUDADES[k]);
-    html+=`<div class="prog" style="margin:0 0 6px"><div><span>Entradas compradas</span><b>${ok} de ${E.length}</b></div><div class="bar"><i style="width:${E.length?ok/E.length*100:0}%"></i></div></div>
-      <p class="n">Sitios de pago o con reserva previa, en el orden en que los visitáis. Marcadlos al comprar la entrada: se sincroniza con la hoja.</p>
-      <div class="chk ent">${E.map(x=>`<label><input type="checkbox" data-ent="${esc(x.l.ID)}" ${x.ok?"checked":""}>
-        <span><b>${esc(x.l.Nombre)}</b>${limpio(x.l.Chino)?`<span class="zh">${esc(x.l.Chino)}</span>`:""}
-          <small class="n">${esc(ciudad(x.l.Ciudad).n)}${x.o?", "+fecha(x.o.iso,{weekday:"short",day:"numeric",month:"short"}):""}${limpio(x.l.Reserva)?". "+esc(x.l.Reserva):""}</small></span>
-        <em>${esc(limpio(x.l.Precio))}</em></label>`).join("")}</div>
-      <h2>Añadir una entrada</h2>
-      ${v2()?"":`<p class="alerta">Hasta que actualices el script de la hoja, se guarda solo en este móvil.</p>`}
+    html+=`<section class="card"><h2><i class="fa-solid fa-ticket"></i>Control de entradas</h2>
+      <p class="n" style="margin:-6px 0 14px">Sitios de pago o con reserva previa, en el orden en que los visitáis. Al marcar una, se guarda en la hoja y se ve en el otro móvil.</p>
+      <div class="prog"><div><span>Progreso de compras</span><span>${ok} de ${E.length} (${E.length?Math.round(ok/E.length*100):0} %)</span></div><div class="bar"><i style="width:${E.length?ok/E.length*100:0}%"></i></div></div>
+      <div class="ent" style="margin-top:12px">${E.map(x=>`<label><input type="checkbox" data-ent="${esc(x.l.ID)}" ${x.ok?"checked":""}>
+        <span><b>${esc(x.l.Nombre)}${limpio(x.l.Chino)?`<span class="zh">${esc(x.l.Chino)}</span>`:""}</b>
+          <small>${esc(ciudad(x.l.Ciudad).n)}${x.o?" · "+fecha(x.o.iso,{weekday:"short",day:"numeric",month:"short"}):""}${limpio(x.l.Reserva)?" · "+esc(x.l.Reserva):""}</small></span>
+        <em>${esc(limpio(x.l.Precio))}</em></label>`).join("")}</div></section>
+      <section class="card" style="background:var(--red50);border-color:var(--red100)"><h2><i class="fa-solid fa-plus"></i>Añadir entrada o reserva</h2>
+      ${v2()?"":`<p class="alerta"><i class="fa-solid fa-triangle-exclamation"></i>Hasta que actualices el script de la hoja, se guarda solo en este móvil.</p>`}
       <form data-form="entrada"><label for="eC">Ciudad</label><select id="eC">${ks.map(k=>`<option value="${k}">${esc(CIUDADES[k].n)}</option>`).join("")}</select>
         <label for="eN">Qué</label><input id="eN" type="text" required placeholder="Ej.: Espectáculo de acrobacias">
         <div class="dos"><div><label for="eP">Precio</label><input id="eP" type="text" placeholder="Opcional"></div>
           <div><label for="eR">Cómo se compra</label><input id="eR" type="text" placeholder="Trip.com, taquilla…"></div></div>
-        <button class="btn">Añadir</button></form>
-      <p class="n">Lo que añadas aparece también en la guía de su ciudad.</p>`;
-    $("reservas").innerHTML=html+`</div>`;
-    return;
-  }
-  if(resTab==="hoteles"){
-    html+=DATA.alojamiento.map(h=>{
-      const n=noches(h),p=num(h["Precio total"]),c=ciudad(h.Ciudad),lg=lugarHotel(h),sin=sinHotel(h);
-      return `<article class="res" style="--dc:${c.c}">
-        <header><div><h3>${esc(h.Ciudad)} <span class="zh">${esc(c.zh)}</span></h3><p>${sin?"Hotel por reservar":esc(h.Hotel)}</p></div>
-          <span class="est ${h.Estado==="Reservado"?"ok":"pend"}">${esc(h.Estado||"")}</span></header>
-        <p class="rf">${fecha(toISO(h["Check-in"]),{weekday:"short",day:"numeric",month:"short"})} a ${fecha(toISO(h["Check-out"]),{weekday:"short",day:"numeric",month:"short"})}, ${n} ${n===1?"noche":"noches"}</p>
-        ${p!=null?`<p class="rp">${eur(p)}${n?` <span>${eur(p/n)} por noche</span>`:""}</p>`:""}
-        ${lg.dir?`<p class="zh">${esc(lg.dir)}</p>`:""}
-        ${limpio(h.Localizador)?`<p class="n">Localizador ${esc(h.Localizador)}</p>`:""}
-        ${limpio(h.Notas)?`<p class="n">${esc(h.Notas)}</p>`:""}
-        <div class="acc">${sin?"":`<button class="btn sm" data-taxi-hotel="${h._row||""}" data-hk="${esc(h.Ciudad)}">Taxista</button>
-          <a class="btn sm" href="${esc(urlMapas(lg))}" target="_blank" rel="noopener">Mapas</a>${botonesDoc(claveDoc("Alojamiento",h))}`}
-          ${h._row?`<button class="btn sm" data-edit="Alojamiento" data-row="${h._row}">Editar</button>`:""}</div>
-      </article>`}).join("");
+        <button class="btn pri"><i class="fa-solid fa-plus"></i>Añadir a la lista</button></form>
+      <p class="n">Lo que añadas aparece también en la guía de su ciudad.</p></section>`;
+  }else if(resTab==="hoteles"){
+    html+=`<div class="rgrid">${DATA.alojamiento.map(h=>tarjetaHotel(h,{estado:1,precio:1,docs:1,editar:1})).join("")}</div>`;
   }else{
-    html+=DATA.transporte.map(t=>{
-      const horas=[limpio(t.Salida)&&"Salida "+t.Salida,limpio(t.Llegada)&&"Llegada "+t.Llegada].filter(Boolean).join(", ");
-      const c=ciudad(t.Destino),est=limpio(t.Estado);
-      return `<article class="res" style="--dc:${c.c}">
-        <header><div><h3>${esc(t.Origen)} → ${esc(t.Destino)}</h3><p>${esc(t.Tipo)}, ${fecha(toISO(t.Fecha),{weekday:"long",day:"numeric",month:"long"})}</p></div>
-          ${est?`<span class="est ${est==="Reservado"?"ok":"pend"}">${esc(est)}</span>`:""}</header>
-        <p class="rf">${esc(horas)||"Horario por definir"}${limpio(t["Nº vuelo/tren"])?", "+esc(t["Nº vuelo/tren"]):""}</p>
-        ${num(t.Precio)!=null?`<p class="rp">${eur(num(t.Precio))}</p>`:""}
-        ${limpio(t.Localizador)?`<p class="n">Localizador ${esc(t.Localizador)}</p>`:""}
-        ${limpio(t.Notas)?`<p class="n">${esc(t.Notas)}</p>`:""}
-        <div class="acc">${botonesDoc(claveDoc("Transporte",t))}${t._row?`<button class="btn sm" data-edit="Transporte" data-row="${t._row}">Editar</button>`:""}</div>
-      </article>`}).join("");
+    html+=`<div class="rgrid">${DATA.transporte.map(tarjetaTrayecto).join("")}</div>`;
   }
-  $("reservas").innerHTML=html+`<p class="n">Los billetes adjuntos se guardan solo en este móvil.</p></div>`;
+  $("s-reservas").innerHTML=html+(resTab==="entradas"?"":`<p class="n" style="text-align:center"><i class="fa-solid fa-mobile-screen"></i> Los billetes adjuntos se guardan solo en este móvil y se abren sin conexión.</p>`)+`</div>`;
 }
 const CAMPOS={
   Itinerario:[["Actividades Principales","Actividades, separadas por comas","area"]],
@@ -1399,6 +1781,8 @@ function formFila(sheet,row){
 }
 
 /* ---------- GASTOS ---------- */
+const ICO_CAT={Comida:["fa-utensils","ic-amber"],Transporte:["fa-train-subway","ic-blue"],Entradas:["fa-ticket","ic-rose"],Compras:["fa-bag-shopping","ic-purple"],
+  Alojamiento:["fa-bed","ic-indigo"],Otros:["fa-receipt","ic-emerald"]};
 function rGastos(){
   const now=ahoraCN(),[p1,p2]=personas(),G=[...DATA.gastos].sort((a,b)=>String(b.Fecha).localeCompare(String(a.Fecha))||String(b.ID).localeCompare(String(a.ID)));
   const dHoy=DIAS[diaActual(now)];
@@ -1409,34 +1793,39 @@ function rGastos(){
   const barras=l=>{const mx=Math.max(...l.map(x=>x[1]),1);return l.map(([k,v])=>`<div class="bl"><span>${esc(k)}</span><div class="bar"><i style="width:${v/mx*100}%"></i></div><b>${eur(v)}</b></div>`).join("")};
   const pag1=G.filter(g=>g["Pagó"]===p1).reduce((s,g)=>s+(num(g.EUR)||0),0),pag2=G.filter(g=>g["Pagó"]===p2).reduce((s,g)=>s+(num(g.EUR)||0),0);
   const dif=(pag1-pag2)/2;
-  let html=`<div class="cab"><h1>Gastos</h1><p>${G.length?`${eur(tot)} en ${G.length} ${G.length===1?"gasto":"gastos"}`:"Apunta cada gasto en el momento, también sin conexión."}</p></div><div class="pad">
-    ${v2()?"":`<p class="alerta">Hasta que actualices el script de la hoja, los gastos se guardan solo en este móvil.</p>`}
-    <form data-form="gasto" class="gf">
+  let html=`<div class="pila"><div class="cab"><h1><i class="fa-solid fa-wallet"></i>Gastos</h1><p>${G.length?`${eur(tot)} en ${G.length} ${G.length===1?"gasto":"gastos"}`:"Apunta cada gasto en el momento, también sin conexión."}</p></div>
+    ${v2()?"":`<p class="alerta"><i class="fa-solid fa-triangle-exclamation"></i>Hasta que actualices el script de la hoja, los gastos se guardan solo en este móvil.</p>`}
+    <form data-form="gasto" class="card gf">
+      <p class="lbl" style="margin:0;color:var(--red)"><i class="fa-solid fa-plus"></i>Nuevo gasto</p>
       <div class="imp"><input id="gI" type="text" inputmode="decimal" placeholder="0" aria-label="Importe" required autocomplete="off">
         <div class="seg mini" id="gM">${["CNY","HKD","EUR"].map(m=>`<button type="button" data-mon="${m}" class="${m===gMon?"on":""}">${m}</button>`).join("")}</div></div>
       <p class="conv" id="gE">1 EUR = ${FX.CNY.toFixed(2)} CNY = ${FX.HKD.toFixed(2)} HKD</p>
       <input id="gC" type="text" placeholder="Concepto" aria-label="Concepto" autocomplete="off">
-      <div class="chips" id="gK">${CATEGORIAS.map(c=>`<button type="button" data-cat="${c}" class="${c===gCat?"on":""}">${c}</button>`).join("")}</div>
+      <div class="chips" id="gK">${CATEGORIAS.map(c=>`<button type="button" data-cat="${c}" class="${c===gCat?"on":""}"><i class="fa-solid ${ICO_CAT[c][0]}"></i> ${c}</button>`).join("")}</div>
       <div class="seg mini" id="gP">${[p1,p2].map(p=>`<button type="button" data-pag="${esc(p)}" class="${p===gPag?"on":""}">Paga ${esc(p)}</button>`).join("")}</div>
-      <button class="btn pri ancho">Añadir gasto</button>
+      <button class="btn pri ancho"><i class="fa-solid fa-plus"></i>Añadir gasto</button>
     </form>`;
   if(G.length){
-    html+=`<h2>Cuentas</h2><div class="fila col"><p>${esc(p1)} ha pagado ${eur(pag1)} y ${esc(p2)} ${eur(pag2)}.</p>
-      <p><b>${Math.abs(dif)<0.005?"Estáis en paz.":`${esc(dif>0?p2:p1)} debe ${eur(Math.abs(dif))} a ${esc(dif>0?p1:p2)}.`}</b></p></div>
-      <h2>Por categoría</h2>${barras(por(g=>g["Categoría"]))}
-      <h2>Por ciudad</h2>${barras(por(g=>g.Ciudad))}
-      <h2>Todos los gastos</h2>`;
+    html+=`<div class="kpis"><div class="kpi"><small>Total</small><b>${eur(tot)}</b></div><div class="kpi"><small>Ha pagado ${esc(p1)}</small><b>${eur(pag1)}</b></div>
+        <div class="kpi"><small>Ha pagado ${esc(p2)}</small><b>${eur(pag2)}</b></div></div>
+      <section class="card"><h2><i class="fa-solid fa-scale-balanced"></i>Cuentas</h2>
+        <p style="font-weight:800;color:var(--ink)">${Math.abs(dif)<0.005?"Estáis en paz.":`${esc(dif>0?p2:p1)} debe ${eur(Math.abs(dif))} a ${esc(dif>0?p1:p2)}.`}</p></section>
+      <section class="card"><h2><i class="fa-solid fa-chart-simple"></i>Por categoría</h2>${barras(por(g=>g["Categoría"]))}</section>
+      <section class="card"><h2><i class="fa-solid fa-map-pin"></i>Por ciudad</h2>${barras(por(g=>g.Ciudad))}</section>
+      <section class="card"><h2><i class="fa-solid fa-receipt"></i>Todos los gastos</h2>`;
     let f=null;
     G.forEach(g=>{
-      const iso=toISO(g.Fecha);
+      const iso=toISO(g.Fecha),[fa,col]=ICO_CAT[g["Categoría"]]||ICO_CAT.Otros;
       if(iso!==f){f=iso;const t=G.filter(x=>toISO(x.Fecha)===iso).reduce((s,x)=>s+(num(x.EUR)||0),0);
         html+=`<h3 class="gd"><span>${fecha(iso,{weekday:"long",day:"numeric",month:"long"})}</span><span>${eur(t)}</span></h3>`}
-      html+=`<div class="g"><div><b>${esc(limpio(g.Concepto)||g["Categoría"])}</b><span class="n">${esc(g["Categoría"])}, paga ${esc(g["Pagó"])}</span></div>
+      html+=`<div class="g"><span class="ic ${col}" style="width:34px;height:34px;border-radius:12px;font-size:13px"><i class="fa-solid ${fa}"></i></span>
+        <div><b>${esc(limpio(g.Concepto)||g["Categoría"])}</b><span class="n">${esc(g["Categoría"])} · paga ${esc(g["Pagó"])}</span></div>
         <div class="gi"><b>${dinero(num(g.Importe),g.Moneda)}</b>${g.Moneda!=="EUR"?`<span class="n">${eur(num(g.EUR))}</span>`:""}</div>
-        <button class="enl" data-borrar-gasto="${esc(g.ID)}" aria-label="Borrar gasto">Borrar</button></div>`;
+        <button class="enl" data-borrar-gasto="${esc(g.ID)}" aria-label="Borrar gasto"><i class="fa-solid fa-trash"></i></button></div>`;
     });
+    html+=`</section>`;
   }
-  $("gastos").innerHTML=html+`<p class="n">Cambio del ${fecha(FX.date,{day:"numeric",month:"long"})} (Banco Central Europeo). Cada gasto guarda su valor en euros del día que se apuntó.</p></div>`;
+  $("s-gastos").innerHTML=html+`<p class="n" style="text-align:center">Cambio del ${fecha(FX.date,{day:"numeric",month:"long"})} (Banco Central Europeo). Cada gasto guarda su valor en euros del día que se apuntó.</p></div>`;
 }
 
 /* ---------- KIT ---------- */
@@ -1445,47 +1834,57 @@ function rKit(){
   const enCasa=window.navigator.standalone||matchMedia("(display-mode: standalone)").matches;
   const est=syncEstado==="…"?"Sincronizando…":syncEstado==="sin"?"Sin conexión con la hoja: se usa la última copia guardada.":
     ts?"Última sincronización: "+new Date(ts).toLocaleString("es-ES",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"})+".":"Aún sin sincronizar.";
-  $("kit").innerHTML=`<div class="cab"><h1>Kit de viaje</h1><p>Preparativos, frases, emergencias y ajustes.</p></div><div class="pad">
-    ${enCasa?"":`<p class="alerta">Instala la app: en Safari, pulsa Compartir y luego «Añadir a pantalla de inicio». Así funciona sin conexión y no pierde datos.</p>`}
-    <h2>Preparativos <small>${hechas} de ${L.length}</small></h2>
-    <div class="chk">${L.map(c=>`<label><input type="checkbox" data-row="${c._row||""}" ${c._row?"":"disabled"} ${c.Hecho===true?"checked":""}><span>${esc(c.Tarea)}</span></label>`).join("")}</div>
-    <form data-form="tarea" class="add"><input type="text" id="addT" placeholder="Nueva tarea" aria-label="Nueva tarea" required><button class="btn">Añadir</button></form>
+  const seg=ajuste("seguro","");
+  $("s-kit").innerHTML=`<div class="pila"><div class="cab"><h1><i class="fa-solid fa-suitcase-medical"></i>Kit de viaje</h1><p>Preparativos, seguro, documentos, frases y ajustes.</p></div>
+    ${enCasa?"":`<p class="alerta"><i class="fa-solid fa-mobile-screen-button"></i>Instala la app: en Safari, pulsa Compartir y luego «Añadir a pantalla de inicio». Así funciona sin conexión y no pierde datos.</p>`}
 
-    <h2>Conversor</h2>
-    <div class="cv"><input id="cvI" type="text" inputmode="decimal" placeholder="Importe" aria-label="Importe a convertir">
-      <div id="cvO" class="n">Escribe un importe en yuanes o dólares de Hong Kong.</div></div>
+    <section class="seguro"><i class="fa-solid fa-shield-heart fondo"></i>
+      <h2><i class="fa-solid fa-shield-halved"></i>Seguro de viaje</h2><p>Asistencia y teléfonos para tenerlos a mano durante el viaje.</p>
+      ${contactos(seg)||`<p>Escribe abajo, en Emergencias, la póliza y los teléfonos del seguro: aparecerán aquí como botones para llamar.</p>`}</section>
 
-    <h2>Frases</h2><p class="n">Toca una frase para enseñarla a pantalla completa.</p>
-    ${FRASES.map(([g,fs])=>`<h3 class="fg">${g}</h3><div class="fr">${fs.map(([es,zh,py])=>`<button data-frase="${esc(zh)}" data-es="${esc(es)}" data-py="${esc(py)}"><span>${esc(es)}</span><b>${esc(zh)}</b><i>${esc(py)}</i></button>`).join("")}</div>`).join("")}
+    <section class="card"><h2><i class="fa-solid fa-truck-medical"></i>Emergencias</h2>
+      <div class="em"><a class="e1" href="tel:110"><i class="fa-solid fa-shield"></i><b>110</b>Policía (China)</a><a class="e2" href="tel:120"><i class="fa-solid fa-truck-medical"></i><b>120</b>Ambulancia (China)</a>
+        <a class="e3" href="tel:119"><i class="fa-solid fa-fire-extinguisher"></i><b>119</b>Bomberos (China)</a><a class="e4" href="tel:999"><i class="fa-solid fa-phone"></i><b>999</b>Emergencias (Hong Kong)</a></div>
+      <form data-form="seguro"><label for="segT">Seguro, embajada y otros teléfonos</label>
+        <textarea id="segT" rows="3" placeholder="Compañía, número de póliza, teléfono de asistencia, WhatsApp…">${esc(seg)}</textarea><button class="btn"><i class="fa-solid fa-floppy-disk"></i>Guardar</button></form></section>
 
-    <h2>Emergencias</h2>
-    <div class="em"><a href="tel:110"><b>110</b>Policía (China)</a><a href="tel:120"><b>120</b>Ambulancia (China)</a><a href="tel:119"><b>119</b>Bomberos (China)</a><a href="tel:999"><b>999</b>Emergencias (Hong Kong)</a></div>
-    <form data-form="seguro"><label for="segT">Seguro, embajada y otros teléfonos</label>
-      <textarea id="segT" rows="3" placeholder="Compañía, número de póliza, teléfono de asistencia…">${esc(ajuste("seguro",""))}</textarea><button class="btn">Guardar</button></form>
-    ${contactos(ajuste("seguro",""))}
+    <section class="card"><h2><i class="fa-solid fa-passport"></i>Documentos</h2>
+      <p class="n" style="margin:-6px 0 12px">Foto o PDF de pasaportes, póliza y visados. Se guardan solo en este móvil y se abren sin conexión.</p>
+      <div class="docs">${[["doc:pas1","Pasaporte de "+p1,"fa-passport"],["doc:pas2","Pasaporte de "+p2,"fa-passport"],["doc:seguro","Póliza del seguro","fa-file-shield"],
+        ["doc:visado","Visado o permiso de entrada","fa-stamp"],["doc:otro","Otro documento","fa-file"]]
+      .map(([k,t,i])=>`<div class="doc"><span><i class="fa-solid ${i}"></i>${esc(t)}</span><div class="acc">${botonesDoc(k,"Ver","Adjuntar")}</div></div>`).join("")}</div></section>
 
-    <h2>Documentos</h2>
-    <p class="n">Foto o PDF de pasaportes, póliza y visados. Se guardan solo en este móvil y se abren sin conexión.</p>
-    <div class="docs" style="margin-top:10px">${[["doc:pas1","Pasaporte de "+p1],["doc:pas2","Pasaporte de "+p2],["doc:seguro","Póliza del seguro"],["doc:visado","Visado o permiso de entrada"],["doc:otro","Otro documento"]]
-      .map(([k,t])=>`<div class="fila"><b>${esc(t)}</b><div class="acc">${botonesDoc(k,"Ver","Adjuntar")}</div></div>`).join("")}</div>
+    <section class="card"><h2><i class="fa-solid fa-list-check"></i>Preparativos <small>${hechas} de ${L.length}</small></h2>
+      <div class="bar" style="margin-bottom:8px"><i style="width:${L.length?hechas/L.length*100:0}%"></i></div>
+      <div class="chk">${L.map(c=>`<label><input type="checkbox" data-row="${c._row||""}" ${c._row?"":"disabled"} ${c.Hecho===true?"checked":""}><span>${esc(c.Tarea)}</span></label>`).join("")}</div>
+      <form data-form="tarea" class="add"><input type="text" id="addT" placeholder="Nueva tarea" aria-label="Nueva tarea" required><button class="btn pri"><i class="fa-solid fa-plus"></i>Añadir</button></form></section>
 
-    <h2>Avisos en el calendario</h2>
-    <p class="n">Pasa la agenda y los trayectos al Calendario del iPhone, con alarma antes de cada vuelo y tren. Si cambias la agenda, vuelve a exportarla.</p>
-    <button class="btn" data-act="ics">Exportar al Calendario</button>
+    <section class="card cv"><h2><i class="fa-solid fa-coins"></i>Conversor</h2>
+      <input id="cvI" type="text" inputmode="decimal" placeholder="Importe" aria-label="Importe a convertir">
+      <div id="cvO" class="n">Escribe un importe en yuanes o dólares de Hong Kong.</div></section>
 
-    <h2>Ubicación</h2>
-    <p class="n">${POS?(ciudadGPS()?`Ubicación activa: estáis en ${esc(CIUDADES[ciudadGPS()].n)}.`:"Ubicación activa: estáis lejos de las ciudades del viaje.")
-      :"Con la ubicación, la app detecta en qué ciudad y en qué sitio del plan estáis, y muestra la distancia a lo siguiente. La posición no sale del móvil."}</p>
-    ${geoActiva()?"":`<button class="btn" data-act="geo">Usar mi ubicación</button>`}
+    <section class="card"><h2><i class="fa-solid fa-language"></i>Frases</h2><p class="n" style="margin:-6px 0 0">Toca una frase para enseñarla a pantalla completa.</p>
+      ${FRASES.map(([g,fs])=>`<h3 class="fg">${g}</h3><div class="fr">${fs.map(([es,zh,py])=>`<button data-frase="${esc(zh)}" data-es="${esc(es)}" data-py="${esc(py)}"><span>${esc(es)}</span><b>${esc(zh)}</b><i>${esc(py)}</i></button>`).join("")}</div>`).join("")}</section>
 
-    <h2>Quién paga</h2>
-    <form data-form="personas" class="dos"><div><label for="pe1">Persona 1</label><input id="pe1" type="text" value="${esc(p1)}" required></div>
-      <div><label for="pe2">Persona 2</label><input id="pe2" type="text" value="${esc(p2)}" required></div><button class="btn">Guardar nombres</button></form>
-
-    <h2>Sincronización</h2>
-    <p class="n">${est}${n?` ${n} ${n===1?"cambio pendiente":"cambios pendientes"} de enviar.`:""}</p>
-    ${SERVER&&!v2()?`<p class="alerta">Falta actualizar el script de la hoja. Hasta entonces, agenda, gastos y diario se guardan solo en este móvil.</p>`:""}
-    <button class="btn" data-act="sync">Sincronizar ahora</button></div>`;
+    <section class="card"><h2><i class="fa-solid fa-gear"></i>Ajustes</h2><div class="pila">
+      <div class="ajuste"><i class="fa-regular fa-calendar-plus"></i><div><b>Avisos en el calendario</b>
+        <p class="n">Pasa la agenda y los trayectos al Calendario del iPhone, con alarma antes de cada vuelo y tren. Si cambias la agenda, vuelve a exportarla.</p>
+        <button class="btn sm" data-act="ics" style="margin-top:8px"><i class="fa-solid fa-file-export"></i>Exportar al Calendario</button></div></div>
+      <div class="ajuste"><i class="fa-solid fa-location-arrow"></i><div><b>Ubicación</b>
+        <p class="n">${POS?(ciudadGPS()?`Ubicación activa: estáis en ${esc(CIUDADES[ciudadGPS()].n)}.`:"Ubicación activa: estáis lejos de las ciudades del viaje.")
+          :"Con la ubicación, la app detecta en qué ciudad y en qué sitio del plan estáis, y muestra la distancia a lo siguiente. La posición no sale del móvil."}</p>
+        ${geoActiva()?"":`<button class="btn sm" data-act="geo" style="margin-top:8px"><i class="fa-solid fa-location-crosshairs"></i>Usar mi ubicación</button>`}</div></div>
+      <label class="ajuste" style="margin:0;cursor:pointer"><i class="fa-solid fa-moon"></i><div style="flex:1"><b style="color:var(--ink)">Tema oscuro</b>
+        <p class="n">Solo en este dispositivo. Útil de noche.</p></div><input type="checkbox" id="temaOsc" ${document.documentElement.dataset.tema==="oscuro"?"checked":""} style="width:20px;height:20px;accent-color:var(--red)"></label>
+      <div class="ajuste"><i class="fa-solid fa-user-group"></i><div style="flex:1"><b>Quién paga</b>
+        <form data-form="personas" class="dos"><div><label for="pe1">Persona 1</label><input id="pe1" type="text" value="${esc(p1)}" required></div>
+          <div><label for="pe2">Persona 2</label><input id="pe2" type="text" value="${esc(p2)}" required></div><button class="btn sm">Guardar nombres</button></form></div></div>
+      <div class="ajuste"><i class="fa-solid fa-rotate"></i><div><b>Sincronización</b>
+        <p class="n">${est}${n?` ${n} ${n===1?"cambio pendiente":"cambios pendientes"} de enviar.`:""}</p>
+        ${SERVER&&!v2()?`<p class="alerta" style="margin-top:8px"><i class="fa-solid fa-triangle-exclamation"></i>Falta actualizar el script de la hoja. Hasta entonces, agenda, gastos y diario se guardan solo en este móvil.</p>`:""}
+        <button class="btn sm" data-act="sync" style="margin-top:8px"><i class="fa-solid fa-rotate"></i>Sincronizar ahora</button></div></div>
+    </div></section>
+    <p class="n" style="text-align:center">Fotos de las ciudades: Wikimedia Commons (autoría y licencia en cada foto).</p></div>`;
 }
 
 /* Teléfonos y correos escritos en el seguro → botones para llamar, escribir o abrir WhatsApp */
@@ -1495,12 +1894,12 @@ function contactos(t){
     const wa=/whats/i.test(linea);
     (linea.match(/\+?\d[\d ().-]{7,}\d/g)||[]).forEach(x=>{
       const d=x.replace(/[^\d+]/g,""); if(d.replace(/\D/g,"").length<9||vistos.has(d)) return; vistos.add(d);
-      out+=wa?`<a class="btn sm" href="https://wa.me/${d.replace(/\D/g,"")}" target="_blank" rel="noopener">WhatsApp ${esc(x.trim())}</a>`
-        :`<a class="btn sm" href="tel:${d}">Llamar al ${esc(x.trim())}</a>`;
+      out+=wa?`<a class="btn sm" href="https://wa.me/${d.replace(/\D/g,"")}" target="_blank" rel="noopener"><i class="fa-brands fa-whatsapp"></i>${esc(x.trim())}</a>`
+        :`<a class="btn sm" href="tel:${d}"><i class="fa-solid fa-phone"></i>${esc(x.trim())}</a>`;
     });
-    (linea.match(/[\w.+-]+@[\w-]+(\.[\w-]+)+/g)||[]).forEach(m=>{if(!vistos.has(m)){vistos.add(m);out+=`<a class="btn sm" href="mailto:${esc(m)}">${esc(m)}</a>`}});
+    (linea.match(/[\w.+-]+@[\w-]+(\.[\w-]+)+/g)||[]).forEach(m=>{if(!vistos.has(m)){vistos.add(m);out+=`<a class="btn sm" href="mailto:${esc(m)}"><i class="fa-solid fa-envelope"></i>${esc(m)}</a>`}});
   });
-  return out?`<div class="acc" style="margin-top:10px">${out}</div>`:"";
+  return out?`<div class="acc">${out}</div>`:"";
 }
 
 const CONSERVAR=["gI","gC","cvI","addT","diarioT","eN","eP","eR"];
@@ -1565,9 +1964,9 @@ async function verDoc(k){
 const TABS=["hoy","viaje","reservas","gastos","kit"];
 function mostrar(t){
   tab=t;
-  document.querySelectorAll("nav button").forEach(x=>x.classList.toggle("on",x.dataset.t===t));
-  document.querySelectorAll("main>section").forEach(s=>s.classList.toggle("on",s.id===t));
-  montarMapa();
+  document.querySelectorAll("nav.abajo [data-t],.acciones [data-t]").forEach(x=>x.classList.toggle("on",x.dataset.t===t));
+  document.querySelectorAll("main>section").forEach(s=>s.classList.toggle("on",s.id==="s-"+t));
+  rCabecera();montarMapa();
 }
 function ruta(){                              // la dirección manda: #viaje/pekin abre la guía de Pekín
   const [t,s]=decodeURIComponent(location.hash.slice(1)).split("/"),T=TABS.includes(t)?t:"hoy";
@@ -1577,18 +1976,22 @@ function ruta(){                              // la dirección manda: #viaje/pek
 }
 function irA(t){if(location.hash.slice(1)===t) ruta(); else location.hash=t}
 addEventListener("hashchange",()=>{cerrarHoja();ruta()});
-document.querySelector("nav").addEventListener("click",e=>{const b=e.target.closest("button");if(b) irA(b.dataset.t)});
 
 document.addEventListener("click",async e=>{
   const q=s=>e.target.closest(s);
   let b;
+  if(b=q("[data-t]")) return irA(b.dataset.t);
+  if(b=q("[data-copiar]")){
+    try{await navigator.clipboard.writeText(b.dataset.copiar);aviso("Copiado. Pégalo en DiDi o en Amap.")}catch(err){grande(b.dataset.copiar,"Mantén pulsado para copiar")}
+    return;
+  }
   if(b=q("[data-dia]")){sel=+b.dataset.dia;selManual=sel!==diaActual(ahoraCN());rHoy();return}
   if(b=q("[data-ir]")){sel=+b.dataset.ir;selManual=true;cerrarHoja();rHoy();irA("hoy");return}
   if(b=q("[data-ciudad]")){location.hash="viaje/"+b.dataset.ciudad;return}
   if(b=q("[data-clima]")) return climaHoja(b.dataset.clima);
   if(b=q("[data-lugar]")) return detalleLugar(b.dataset.lugar);
   if(b=q("[data-taxi-lugar]")){const l=DATA.lugares.find(x=>x.ID===b.dataset.taxiLugar);if(l) taxista(lugarDe(l.Nombre));return}
-  if(b=q("[data-item]")) return detalleItem(b.dataset.item);
+  if(b=q("[data-item]")) return detalleItem(b.dataset.item,b.dataset.di!=null?+b.dataset.di:null);
   if(b=q("[data-taxi-item]")){const x=itemsDia(DIAS[sel].iso).find(i=>i.k===b.dataset.taxiItem);if(x&&x.lugar) taxista(x.lugar);return}
   if(b=q("[data-taxi-hotel]")){const h=DATA.alojamiento.find(h=>h.Ciudad===b.dataset.hk);if(h) taxista(lugarHotel(h));return}
   if(b=q("[data-editar-agenda]")) return formAgenda(b.dataset.editarAgenda);
@@ -1607,7 +2010,7 @@ document.addEventListener("click",async e=>{
     if(a==="cerrar") cerrarHoja();
     if(a==="cerrar-grande") $("grande").classList.remove("on");
     if(a==="volver") location.hash="viaje";
-    if(a==="nuevo-agenda") formAgenda(null);
+    if(a==="nuevo-agenda"){if(b.dataset.di!=null&&+b.dataset.di!==sel){sel=+b.dataset.di;selManual=true;rHoy()}formAgenda(null)}
     if(a==="sync") sincronizar(true);
     if(a==="geo"){ubicar(true);renderAll()}
     if(a==="ics") compartirArchivo(new File([exportarICS()],"viaje-china.ics",{type:"text/calendar"}));
@@ -1630,6 +2033,12 @@ function conversor(){
 }
 document.addEventListener("change",async e=>{
   const t=e.target;
+  if(t.id==="temaOsc"){
+    const o=t.checked; LS.set("china-tema",o?"oscuro":"claro");
+    if(o) document.documentElement.dataset.tema="oscuro"; else delete document.documentElement.dataset.tema;
+    document.querySelector('meta[name="theme-color"]').content=o?"#0F172A":"#FFFFFF";
+    MAPA.k=null; return;
+  }
   if(t.matches("[data-ent]")){
     mutar({action:"upsert",sheet:"Ajustes",id:"ent:"+t.dataset.ent,values:{Valor:t.checked?"1":""}});return;
   }
@@ -1689,7 +2098,8 @@ setInterval(()=>{                       // el reloj avanza: se repinta solo la p
 /* ---------- Arranque ---------- */
 rebuild();
 renderAll(true);
-if(location.hash.length>1) ruta();
+if(location.hash.length>1) ruta(); else mostrar("hoy");
+presentacion();
 sincronizar();
 pedirCambio();
 cargarDocs();
