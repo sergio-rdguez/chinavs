@@ -1,5 +1,5 @@
 /**
- * Viaje a China — puente entre la hoja de cálculo y la app (versión 2).
+ * Viaje a China — puente entre la hoja de cálculo y la app (versión 3).
  *
  * Cómo actualizarlo SIN cambiar la URL de la app:
  *   1. Extensiones → Apps Script: borra todo y pega este archivo. Guarda.
@@ -10,7 +10,7 @@
  * Ajustes, y añade columnas nuevas al final de Alojamiento y Transporte.
  */
 
-const VERSION = 2;
+const VERSION = 3;   // 3: envío de varios cambios a la vez y filas que se buscan por su clave si se han movido
 
 // Columnas que la app puede modificar en vuestras pestañas (las fórmulas no se tocan)
 const EDITABLES = {
@@ -62,84 +62,94 @@ function doGet() {
 
 function doPost(e) {
   const lock = LockService.getScriptLock();
-  lock.waitLock(20000);
+  lock.waitLock(25000);
   try {
     const p = JSON.parse(e.postData.contents);
     const ss = SpreadsheetApp.getActive();
     preparar(ss);
-
-    if (p.action === 'update') {
-      const permitidas = EDITABLES[p.sheet];
-      if (!permitidas) throw new Error('Hoja no editable: ' + p.sheet);
-      const sh = ss.getSheetByName(p.sheet);
-      comprobarFila(sh, p.row, p.key);
-      const cab = cabeceras(sh);
-      Object.keys(p.values).forEach(function (h) {
-        const c = cab.indexOf(h);
-        if (permitidas.indexOf(h) < 0 || c < 0) return;
-        sh.getRange(p.row, c + 1).setValue(p.values[h]);
+    var errores = [];
+    if (p.action === 'batch') {             // varios cambios de golpe: un error no frena a los demás
+      (p.ops || []).forEach(function (op, i) {
+        try { aplicarOp(ss, op); } catch (err) { errores.push({ i: i, error: String(err.message || err) }); }
       });
-
-    } else if (p.action === 'check') {
-      const sh = ss.getSheetByName('Checklist');
-      comprobarFila(sh, p.row, p.key);
-      sh.getRange(p.row, 2).setValue(Boolean(p.done));
-
-    } else if (p.action === 'addTask') {
-      const texto = String(p.text || '').trim();
-      if (!texto) throw new Error('Tarea vacía');
-      const sh = ss.getSheetByName('Checklist');
-      if (buscarId(sh, texto) < 0) {             // no duplica si el envío se repite
-        sh.appendRow([texto, false]);
-        sh.getRange(sh.getLastRow(), 2).insertCheckboxes();
-      }
-
-    } else if (p.action === 'upsert') {
-      const sh = hojaApp(ss, p.sheet);
-      const id = String(p.id || '').trim();
-      if (!id) throw new Error('Falta el identificador');
-      const cab = cabeceras(sh);
-      const fila = buscarId(sh, id);
-      const vals = p.values || {};
-      if (fila > 0) {
-        const rango = sh.getRange(fila, 1, 1, cab.length);
-        const actual = rango.getValues()[0];
-        cab.forEach(function (h, i) {
-          if (i > 0 && Object.prototype.hasOwnProperty.call(vals, h)) actual[i] = vals[h];
-        });
-        rango.setValues([actual]);
-      } else {
-        sh.appendRow(cab.map(function (h, i) {
-          return i === 0 ? id : (vals[h] !== undefined ? vals[h] : '');
-        }));
-      }
-
-    } else if (p.action === 'remove') {
-      const sh = hojaApp(ss, p.sheet);
-      const fila = buscarId(sh, String(p.id || ''));
-      if (fila > 0) sh.deleteRow(fila);
-
-    } else if (p.action === 'seed') {
-      if (SEMBRABLES.indexOf(p.sheet) < 0) throw new Error('Hoja no válida: ' + p.sheet);
-      const sh = hojaApp(ss, p.sheet);
-      const filas = p.rows || [];
-      if (sh.getLastRow() < 2 && filas.length) {   // solo si la pestaña está vacía
-        const cab = cabeceras(sh);
-        sh.getRange(2, 1, filas.length, cab.length).setValues(filas.map(function (r) {
-          return cab.map(function (h) { return r[h] !== undefined ? r[h] : ''; });
-        }));
-      }
-
     } else {
-      throw new Error('Acción desconocida');
+      aplicarOp(ss, p);
     }
-
     SpreadsheetApp.flush();
-    return salida(leerTodo(ss));
+    const datos = leerTodo(ss);
+    if (errores.length) datos.errores = errores;
+    return salida(datos);
   } catch (err) {
     return salida({ error: String(err.message || err) });
   } finally {
     lock.releaseLock();
+  }
+}
+
+function aplicarOp(ss, p) {
+  if (p.action === 'update') {
+    const permitidas = EDITABLES[p.sheet];
+    if (!permitidas) throw new Error('Hoja no editable: ' + p.sheet);
+    const sh = ss.getSheetByName(p.sheet);
+    const fila = filaDe(sh, p.row, p.key);
+    const cab = cabeceras(sh);
+    Object.keys(p.values).forEach(function (h) {
+      const c = cab.indexOf(h);
+      if (permitidas.indexOf(h) < 0 || c < 0) return;
+      sh.getRange(fila, c + 1).setValue(p.values[h]);
+    });
+
+  } else if (p.action === 'check') {
+    const sh = ss.getSheetByName('Checklist');
+    sh.getRange(filaDe(sh, p.row, p.key), 2).setValue(Boolean(p.done));
+
+  } else if (p.action === 'addTask') {
+    const texto = String(p.text || '').trim();
+    if (!texto) throw new Error('Tarea vacía');
+    const sh = ss.getSheetByName('Checklist');
+    if (buscarId(sh, texto) < 0) {             // no duplica si el envío se repite
+      sh.appendRow([texto, false]);
+      sh.getRange(sh.getLastRow(), 2).insertCheckboxes();
+    }
+
+  } else if (p.action === 'upsert') {
+    const sh = hojaApp(ss, p.sheet);
+    const id = String(p.id || '').trim();
+    if (!id) throw new Error('Falta el identificador');
+    const cab = cabeceras(sh);
+    const fila = buscarId(sh, id);
+    const vals = p.values || {};
+    if (fila > 0) {
+      const rango = sh.getRange(fila, 1, 1, cab.length);
+      const actual = rango.getValues()[0];
+      cab.forEach(function (h, i) {
+        if (i > 0 && Object.prototype.hasOwnProperty.call(vals, h)) actual[i] = vals[h];
+      });
+      rango.setValues([actual]);
+    } else {
+      sh.appendRow(cab.map(function (h, i) {
+        return i === 0 ? id : (vals[h] !== undefined ? vals[h] : '');
+      }));
+    }
+
+  } else if (p.action === 'remove') {
+    const sh = hojaApp(ss, p.sheet);
+    const fila = buscarId(sh, String(p.id || ''));
+    if (fila > 0) sh.deleteRow(fila);
+
+  } else if (p.action === 'seed') {
+    if (SEMBRABLES.indexOf(p.sheet) < 0) throw new Error('Hoja no válida: ' + p.sheet);
+    const sh = hojaApp(ss, p.sheet);
+    const filas = p.rows || [];
+    if (sh.getLastRow() < 2 && filas.length) {   // solo si la pestaña está vacía
+      const cab = cabeceras(sh);
+      sh.getRange(2, 1, filas.length, cab.length).setValues(filas.map(function (r) {
+        return cab.map(function (h) { return r[h] !== undefined ? r[h] : ''; });
+      }));
+    }
+
+  } else {
+    throw new Error('Acción desconocida');
   }
 }
 
@@ -251,11 +261,20 @@ function buscarId(sh, id) {
   return -1;
 }
 
-// Evita escribir en la fila equivocada si alguien ha movido filas mientras tanto
-function comprobarFila(sh, fila, clave) {
-  if (!sh || !(fila > 1) || sh.getRange(fila, 1).getDisplayValue() !== String(clave)) {
-    throw new Error('La hoja ha cambiado. Actualiza la app y vuelve a intentarlo.');
+// Fila donde escribir: la que dice la app si su clave sigue ahí; si alguien ha movido filas,
+// se busca la clave, pero solo si aparece una única vez (si no, no se sabe cuál es).
+function filaDe(sh, fila, clave) {
+  if (!sh) throw new Error('Falta la pestaña');
+  clave = String(clave);
+  if (fila > 1 && fila <= sh.getLastRow() && sh.getRange(fila, 1).getDisplayValue() === clave) return fila;
+  const ultima = sh.getLastRow();
+  if (ultima >= 2) {
+    const col = sh.getRange(2, 1, ultima - 1, 1).getDisplayValues();
+    const hay = [];
+    for (var i = 0; i < col.length; i++) if (col[i][0] === clave) hay.push(i + 2);
+    if (hay.length === 1) return hay[0];
   }
+  throw new Error('La hoja ha cambiado. Actualiza la app y vuelve a intentarlo.');
 }
 
 function salida(obj) {

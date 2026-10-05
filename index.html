@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#FFFFFF">
-<script>try{if(localStorage.getItem("china-tema")==="oscuro"){document.documentElement.dataset.tema="oscuro";document.querySelector('meta[name="theme-color"]').content="#0F172A"}}catch(e){}</script>
+<script>try{var t=localStorage.getItem("china-tema");if(t==="oscuro"||(t!=="claro"&&matchMedia("(prefers-color-scheme: dark)").matches)){document.documentElement.dataset.tema="oscuro";document.querySelector('meta[name="theme-color"]').content="#0F172A"}}catch(e){}</script>
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -56,6 +56,7 @@ button{font:inherit;color:inherit;cursor:pointer}
 :focus-visible{outline:2px solid var(--blue);outline-offset:2px}
 .fa-solid,.fa-regular,.fa-brands{line-height:1}
 .pila{display:grid;gap:16px}
+.pila>*{min-width:0}
 .n{display:block;color:var(--muted);font-size:12.5px;line-height:1.5;margin-top:2px}
 p.n{margin-top:8px}
 .zh{font-family:var(--fz);color:var(--ct)}
@@ -105,7 +106,7 @@ nav.abajo button:active{transform:scale(.94)}
 .card{background:var(--surface);border:1px solid var(--line);border-radius:16px;box-shadow:var(--sh);padding:16px}
 .card.xl{border-radius:24px}
 .card>h2:first-child,.card>.ch:first-child{margin-top:0}
-.ch{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}
+.ch{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px 10px;margin-bottom:12px}
 h2{display:flex;align-items:center;gap:8px;font-size:17px;font-weight:900;color:var(--ink);letter-spacing:-.01em;margin:4px 0 12px}
 h2 i{color:var(--ct);font-size:15px}
 h2 small,.cuantos{margin-left:auto;font-size:11px;font-weight:700;color:var(--muted);background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:3px 10px;letter-spacing:0}
@@ -142,10 +143,12 @@ label.btn{margin:0;color:var(--text);cursor:pointer}
 .alerta .enl{display:block;padding:4px 0 0;color:inherit;text-decoration:underline}
 .vacio{color:var(--muted);padding:18px 4px;font-size:13px;text-align:center}
 
-input[type=text],input[type=time],textarea,select{font:15px var(--f);width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--surface);
+input[type=text],input[type=time],textarea,select{font:16px var(--f);width:100%;min-height:44px;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--surface);
   color:var(--ink);appearance:none;-webkit-appearance:none}
 input:focus,textarea:focus,select:focus{outline:0;border-color:var(--red);box-shadow:0 0 0 3px color-mix(in srgb,var(--red) 18%,transparent)}
 textarea{resize:vertical;line-height:1.45}
+input[type=time]{display:block;text-align:left}
+input[type=time]::-webkit-date-and-time-value{text-align:left}
 label{display:block;font-size:12px;font-weight:700;color:var(--muted);margin:12px 0 5px}
 .dos{display:grid;grid-template-columns:1fr 1fr;gap:0 10px;align-items:end}
 .dos>.btn{grid-column:1/-1;margin-top:10px;justify-self:start}
@@ -153,6 +156,8 @@ form>.btn{margin-top:12px}
 .seg{display:flex;background:var(--line2);border:1px solid var(--line);border-radius:12px;padding:3px;gap:2px}
 .seg button{flex:1;border:0;background:none;border-radius:9px;padding:7px 10px;font-weight:700;font-size:12.5px;color:var(--muted);min-height:34px;display:flex;align-items:center;justify-content:center;gap:6px}
 .seg .on{background:var(--surface);color:var(--ink);box-shadow:var(--sh)}
+.seg button{min-width:0;white-space:nowrap}
+@media (max-width:400px){.seg.compacto button i{display:none}.seg.compacto button{padding:7px 4px}}
 .seg.mini{flex:none}
 .prog{background:var(--line2);border:1px solid var(--line);border-radius:12px;padding:14px}
 .prog>div:first-child{display:flex;justify-content:space-between;font-size:12px;font-weight:700;color:var(--text);margin-bottom:8px}
@@ -200,6 +205,7 @@ form>.btn{margin-top:12px}
 .ahora small{font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:.08em;color:var(--ct)}
 .ahora b{font-size:15px;font-weight:800;color:var(--ink);line-height:1.25}
 .ahora em{font-style:normal;color:var(--muted);font-size:12.5px}
+.ahora em a{color:var(--ct);font-weight:700}
 .ahora .tr{border-top:1px solid var(--cb);padding-top:12px}
 
 /* ---------- Tarjeta de un día ---------- */
@@ -223,6 +229,9 @@ form>.btn{margin-top:12px}
 .int .bs i{width:3px;height:9px;border-radius:9px;background:color-mix(in srgb,var(--faint) 45%,transparent)}
 .int .bs i.on{background:var(--ni)}
 .tl{padding:6px 14px 10px}
+.soldia{display:inline-flex;align-items:center;gap:4px;font-size:10.5px;font-weight:700;color:var(--muted);white-space:nowrap}
+.soldia i{color:#F59E0B;font-size:9px}
+.soldia i.fa-moon{color:#6366F1}
 .tl>.btn.linea{margin:8px 0 4px}
 
 /* Línea de tiempo: hora, icono pastel y texto */
@@ -255,7 +264,7 @@ form>.btn{margin-top:12px}
 
 /* ---------- Hotel ---------- */
 .hcard{background:var(--surface);border:1px solid var(--line);border-radius:24px;box-shadow:var(--sh2);padding:18px;display:flex;flex-direction:column}
-.hcard .ht{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px}
+.hcard .ht{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:6px 8px;margin-bottom:6px}
 .hcard .hc{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:900;color:var(--ct);text-transform:uppercase;letter-spacing:.06em}
 .hcard h3{font-size:16px;font-weight:900;color:var(--ink);line-height:1.3}
 .hcard .pie{margin-top:auto}
@@ -344,6 +353,10 @@ form>.btn{margin-top:12px}
 .cd:first-child{margin-top:4px}
 .cd span{font:700 15px var(--fz)}
 .lista{margin:0;padding:0;list-style:none;display:grid;gap:6px}
+.diario{display:grid}
+.diario button{display:grid;grid-template-columns:44px 1fr;gap:12px;text-align:left;background:none;border:0;border-top:1px solid var(--line2);padding:12px 2px;font-size:13.5px;line-height:1.5;white-space:pre-line;color:var(--text)}
+.diario button:first-child{border-top:0}
+.diario small{display:block;font-size:11px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;white-space:normal}
 .lista li{display:flex;gap:8px;font-size:13px;align-items:baseline}
 .lista li i{color:var(--warn);font-size:11px}
 
@@ -363,6 +376,10 @@ form>.btn{margin-top:12px}
 .lmap>.n{padding:40px 16px;text-align:center;margin:0}
 .lmap.leaflet-container{font:12px var(--f)}
 [data-tema="oscuro"] .lmap .leaflet-tile-pane{filter:invert(1) hue-rotate(180deg) brightness(.85) contrast(.9)}
+.lmap.full{position:fixed;inset:0;z-index:130;height:100dvh!important;border-radius:0;border:0}
+html:has(.lmap.full){overflow:hidden}
+.lmap.full .leaflet-top{top:var(--st)}
+.mapa-amp{display:flex;align-items:center;gap:6px;border:1px solid #CBD5E1;background:#fff;color:#0F172A;border-radius:10px;padding:7px 11px;font:800 12px var(--f);box-shadow:0 2px 7px rgba(15,23,42,.16);cursor:pointer}
 .pin span{display:grid;place-items:center;width:26px;height:26px;border-radius:50%;color:#fff;font:900 11px/1 var(--f);border:2px solid #fff;box-shadow:0 2px 6px rgba(15,23,42,.35)}
 .leaflet-tooltip.tt{font:800 10.5px var(--f);padding:3px 8px;border-radius:999px;border:1px solid #CBD5E1;color:#1E293B;box-shadow:0 2px 7px rgba(15,23,42,.16)}
 
@@ -387,10 +404,18 @@ form>.btn{margin-top:12px}
 .tips li i{flex:none;width:24px;height:24px;border-radius:8px;display:grid;place-items:center;background:var(--cs);color:var(--ct);font-size:11px;margin-top:1px}
 .picante{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--ct);background:var(--soft);border:1px solid var(--line);border-radius:999px;padding:3px 10px;white-space:nowrap}
 
+.sitios{display:grid;gap:10px}
+.temporada{background:var(--cs);border:1px solid var(--cb);border-radius:16px;padding:14px 16px;font-size:13.5px;line-height:1.55;color:var(--text)}
+.temporada .lbl{margin-bottom:6px}
+.sitio{display:grid;grid-template-columns:42px 1fr;gap:12px;align-items:start;padding:12px;background:var(--soft);border:1px solid var(--line);border-radius:14px}
+.sitio b{font-weight:800;color:var(--ink);font-size:14px}
+.sitio .zh{font-size:13px;font-weight:600}
+.sitio .acc{margin-top:8px}
+
 /* ---------- Reservas ---------- */
 .rgrid{display:grid;gap:14px}
 .tcard{background:var(--surface);border:1px solid var(--line);border-radius:16px;box-shadow:var(--sh);padding:18px;display:flex;flex-direction:column}
-.tcard .tt{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px}
+.tcard .tt{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:6px 8px;margin-bottom:8px}
 .tipo{display:inline-flex;align-items:center;gap:5px;border-radius:999px;padding:3px 10px;font-size:11px;font-weight:800}
 .tipo.av{background:#E0F2FE;color:#075985}.tipo.tr{background:#FEF3C7;color:#92400E}
 [data-tema="oscuro"] .tipo.av{background:#0C2A40;color:#7DD3FC}
@@ -433,6 +458,8 @@ form>.btn{margin-top:12px}
 .gi{text-align:right}
 .gi b{font-weight:900}
 .g .enl{color:var(--faint);padding:6px}
+.gb{background:none;border:0;padding:0;text-align:left;min-width:0;display:block}
+.gi.gb{text-align:right}
 
 /* ---------- Kit ---------- */
 .chk label{display:flex;gap:12px;align-items:flex-start;margin:0;padding:11px 4px;border-bottom:1px solid var(--line2);font-size:13.5px;font-weight:600;color:var(--text);cursor:pointer}
@@ -474,11 +501,62 @@ form>.btn{margin-top:12px}
 .ajuste{display:flex;gap:12px;align-items:flex-start}
 .ajuste>i{flex:none;width:36px;height:36px;border-radius:12px;display:grid;place-items:center;background:var(--line2);color:var(--muted)}
 
+.chk label .quitar{margin-left:auto;padding:0 4px;color:var(--faint)}
+.plegable{margin-top:12px;border:1px solid var(--line);border-radius:12px;background:var(--soft);padding:10px 12px;font-size:13px}
+.plegable summary{cursor:pointer;font-weight:800;color:var(--ink);display:flex;align-items:center;gap:8px}
+.plegable ol{margin:10px 0;padding-left:20px;display:grid;gap:6px;line-height:1.5}
+.sug{display:flex;flex-wrap:wrap;gap:6px}
+.sug button{display:inline-flex;align-items:center;gap:6px;text-align:left;border:1px dashed var(--line);background:var(--soft);border-radius:12px;padding:7px 10px;font-size:12.5px;font-weight:600;color:var(--text)}
+.sug button i{color:var(--red);font-size:11px}
+.apps{display:grid;gap:10px}
+.app{display:grid;grid-template-columns:44px 1fr;gap:12px;align-items:start;padding:12px;background:var(--soft);border:1px solid var(--line);border-radius:14px}
+.app .ai{--h:#64748B;width:44px;height:44px;border-radius:12px;display:grid;place-items:center;color:#fff;background:var(--h);font-size:18px;box-shadow:var(--sh)}
+.app b{font-weight:800;color:var(--ink);font-size:14.5px}
+.app .zh{font-size:12.5px;font-weight:600}
+.app .acc{margin-top:8px}
+.enls{display:grid;gap:8px}
+.enls a,.fci{display:grid;grid-template-columns:42px 1fr auto;gap:12px;align-items:center;padding:10px 12px;border:1px solid var(--line);background:var(--soft);border-radius:14px;text-decoration:none;color:var(--text)}
+.enls a b,.fci b{display:block;font-weight:800;color:var(--ink);font-size:13.5px}
+.enls a>i{color:var(--faint);font-size:12px}
+.fc{display:grid;gap:8px}
+.fci em{font-style:normal;font-size:11px;font-weight:800;white-space:nowrap;padding:3px 9px;border-radius:999px;background:var(--line2);color:var(--muted)}
+.fci.ya{border-color:var(--red100);background:var(--red50)}
+.fci.ya em{background:var(--red);color:#fff}
+.fci.ok{opacity:.6}
+.fci.ok em{background:#ECFDF5;color:#047857}
+[data-tema="oscuro"] .fci.ok em{background:#052E22;color:#34D399}
+@media (min-width:640px){.apps,.enls{grid-template-columns:1fr 1fr}}
+
+/* ---------- Avisos del día, mañana y cerca ---------- */
+.hero .arriba>span{display:flex;flex-wrap:wrap;gap:6px}
+.avisos{background:var(--surface);border:1px solid var(--line);border-radius:16px;box-shadow:var(--sh);padding:14px 16px}
+.avisos .lbl{margin-bottom:8px}
+.avisos ul{margin:0;padding:0;list-style:none;display:grid;gap:8px}
+.avisos li{display:flex;gap:10px;font-size:13px;line-height:1.45;align-items:flex-start}
+.avisos li>i{flex:none;width:24px;height:24px;border-radius:8px;display:grid;place-items:center;background:var(--cs);color:var(--ct);font-size:11px;margin-top:1px}
+.avisos li.rojo>i{background:var(--red50);color:var(--red7)}
+.avisos li.rojo{color:var(--red7);font-weight:600}
+.avisos .enl{padding:0 0 0 4px;font-size:12.5px}
+.manana{display:grid;grid-template-columns:38px 1fr auto;gap:12px;align-items:center;width:100%;text-align:left;background:var(--surface);border:1px solid var(--cb);border-radius:16px;padding:12px 14px;box-shadow:var(--sh)}
+.manana .ai{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;background:var(--c);color:#fff}
+.manana small{display:block;font-size:10.5px;font-weight:900;text-transform:uppercase;letter-spacing:.06em;color:var(--ct)}
+.manana b{display:block;font-size:14px;font-weight:800;color:var(--ink);line-height:1.3}
+.manana em{display:block;font-style:normal;font-size:12px;color:var(--muted)}
+.manana>i{color:var(--faint)}
+.rapidos{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.rapidos a,.rapidos button{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;min-height:64px;padding:8px 4px;border-radius:14px;
+  background:var(--surface);border:1px solid var(--line);box-shadow:var(--sh);text-decoration:none;color:var(--text);font-size:11.5px;font-weight:800}
+.rapidos i{font-size:18px;color:var(--ct)}
+.cerca{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.cerca a{display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 4px;border-radius:12px;background:var(--soft);border:1px solid var(--line);text-decoration:none;color:var(--text);font-size:11.5px;font-weight:700;text-align:center}
+.cerca a i{font-size:16px;color:var(--ct)}
+
 /* ---------- Hoja inferior ---------- */
 dialog{margin:auto auto 0;width:100%;max-width:640px;max-height:90dvh;border:1px solid var(--line);border-radius:24px 24px 0 0;padding:0;background:color-mix(in srgb,var(--surface) 96%,transparent);
   backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);color:var(--text);box-shadow:0 -10px 40px rgba(15,23,42,.25)}
 dialog[open]{animation:sube .28s cubic-bezier(.16,1,.3,1)}
 @keyframes sube{from{transform:translateY(40px);opacity:0}}
+html:has(dialog[open]){overflow:hidden}
 dialog::backdrop{background:rgba(2,6,23,.6);backdrop-filter:blur(3px)}
 #dlgB{position:relative;padding:12px 20px calc(24px + var(--sb));overflow-y:auto;max-height:90dvh}
 #dlgB::before{content:"";display:block;width:48px;height:6px;border-radius:9px;background:var(--line);margin:0 auto 10px}
@@ -502,18 +580,27 @@ dialog::backdrop{background:rgba(2,6,23,.6);backdrop-filter:blur(3px)}
 .gp{font-size:20px;color:#475569;margin-top:14px}
 .gs{font-size:16px;color:#64748B;margin-top:22px;max-width:30em}
 #grande img{max-width:100%;max-height:100%;object-fit:contain}
+.hablar{margin-top:26px;display:inline-flex;align-items:center;gap:8px;border:1px solid #CBD5E1;background:#F8FAFC;color:#0F172A;border-radius:999px;padding:10px 18px;font-weight:800;font-size:15px}
+.hablar i{color:#DC2626}
 
 /* ---------- Avisos ---------- */
 #pend{position:fixed;top:calc(var(--st) + 70px);right:12px;z-index:60;background:var(--amb50);color:var(--amb9);border:1px solid var(--amb200);font-size:11px;font-weight:800;padding:3px 10px;border-radius:999px;display:none}
-#pend.on{display:block}
+#pend.on{display:inline-flex;align-items:center;gap:5px}
 #aviso{position:fixed;left:50%;bottom:calc(100px + var(--sb));transform:translateX(-50%);z-index:150;max-width:88vw;background:#0F172A;color:#fff;padding:10px 16px;border-radius:12px;
   font-size:13px;font-weight:600;text-align:center;opacity:0;pointer-events:none;transition:opacity .2s;box-shadow:0 10px 30px -6px rgba(0,0,0,.4)}
 #aviso.on{opacity:1}
+#nueva{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(100px + var(--sb));z-index:149;display:flex;align-items:center;gap:8px;white-space:nowrap;
+  border:0;border-radius:999px;background:var(--blue);color:#fff;padding:10px 16px;font-size:13px;font-weight:600;box-shadow:0 10px 30px -6px rgba(37,99,235,.5)}
+#nueva[hidden]{display:none}
+@media (min-width:640px){#nueva{bottom:28px}}
+#aviso.con{pointer-events:auto;display:flex;align-items:center;gap:14px}
+.deshacer{border:0;background:none;color:#FCA5A5;font-weight:800;padding:4px 0;text-transform:uppercase;font-size:12px;letter-spacing:.04em}
 
 /* ---------- Presentación con cuenta atrás ---------- */
 #intro{position:fixed;inset:0;z-index:100;display:flex;align-items:center;justify-content:center;overflow:hidden;background:#B91C1C;color:#fff;text-align:center;padding:24px;
   animation:introIn .7s cubic-bezier(.22,1,.36,1) both}
 #intro::before{content:"";position:absolute;inset:0;background:radial-gradient(circle at top right,rgba(255,255,255,.2),transparent 35%),radial-gradient(circle at bottom left,rgba(127,29,29,.55),transparent 45%)}
+#intro[hidden]{display:none}
 #intro>div{position:relative}
 #intro .s{font-size:12px;font-weight:900;text-transform:uppercase;letter-spacing:.3em;color:#FEE2E2}
 #intro .p{margin-top:24px;font-size:19px;font-weight:600;color:#FEF2F2}
@@ -544,7 +631,7 @@ dialog::backdrop{background:rgba(2,6,23,.6);backdrop-filter:blur(3px)}
   #aviso{bottom:28px}
   dialog{margin:auto;border-radius:24px}
   .em{grid-template-columns:repeat(4,1fr)}
-  .kpis{grid-template-columns:repeat(3,1fr)}
+  .kpis{grid-template-columns:repeat(4,1fr)}
 }
 @media (min-width:768px){.hero{height:290px}}
 @media (min-width:1024px){
@@ -590,8 +677,9 @@ dialog::backdrop{background:rgba(2,6,23,.6);backdrop-filter:blur(3px)}
   <section id="s-kit"></section>
 </main>
 
-<div id="pend" role="status"></div>
+<button id="pend" data-act="sync" aria-live="polite"></button>
 <div id="aviso" role="status" aria-live="polite"></div>
+<button id="nueva" data-act="recargar" hidden><i class="fa-solid fa-arrows-rotate"></i>Hay una versión nueva de la app · <b>Actualizar</b></button>
 <dialog id="dlg"><div id="dlgB"></div></dialog>
 <div id="grande"></div>
 
@@ -821,9 +909,29 @@ const FRASES=[
   ["Lléveme a esta dirección","请带我去这个地址","qǐng dài wǒ qù zhège dìzhǐ"],
   ["Estación de tren","火车站","huǒchēzhàn"],["Aeropuerto","机场","jīchǎng"],["Metro","地铁站","dìtiě zhàn"],
   ["Pare aquí, por favor","请在这里停","qǐng zài zhèlǐ tíng"]]],
+ ["Comer sin sustos",[
+  ["Sin cilantro","不要香菜","bú yào xiāngcài"],["Sin glutamato","不要味精","bú yào wèijīng"],
+  ["Soy alérgico a los cacahuetes","我对花生过敏","wǒ duì huāshēng guòmǐn"],["Soy alérgico al marisco","我对海鲜过敏","wǒ duì hǎixiān guòmǐn"],
+  ["Para llevar","打包","dǎbāo"],["Agua fría, por favor","请给我冰水","qǐng gěi wǒ bīng shuǐ"]]],
+ ["Hotel",[
+  ["Tengo una reserva","我有预订","wǒ yǒu yùdìng"],["¿Puede guardarnos las maletas?","可以寄存行李吗？","kěyǐ jìcún xíngli ma?"],
+  ["¿Cuál es la contraseña del wifi?","WiFi密码是多少？","WiFi mìmǎ shì duōshao?"],["Necesito un taxi","我需要一辆出租车","wǒ xūyào yí liàng chūzūchē"]]],
+ ["Tren y metro",[
+  ["¿Qué andén?","在几号站台？","zài jǐ hào zhàntái?"],["¿Dónde está la salida?","出口在哪里？","chūkǒu zài nǎlǐ?"],
+  ["Pasaporte extranjero (puerta manual)","外国护照，人工通道","wàiguó hùzhào, réngōng tōngdào"],["¿Este tren va a…?","这趟车去……吗？","zhè tàng chē qù… ma?"]]],
  ["Urgencias",[
   ["Necesito ayuda","我需要帮助","wǒ xūyào bāngzhù"],["Necesito un médico","我需要看医生","wǒ xūyào kàn yīshēng"],
-  ["Hospital","医院","yīyuàn"],["Farmacia","药店","yàodiàn"],["Llame a la policía","请报警","qǐng bàojǐng"]]]
+  ["Hospital","医院","yīyuàn"],["Farmacia","药店","yàodiàn"],["Llame a la policía","请报警","qǐng bàojǐng"],
+  ["He perdido el pasaporte","我的护照丢了","wǒ de hùzhào diū le"],["Me duele aquí","我这里疼","wǒ zhèlǐ téng"]]],
+ ["Farmacia",[
+  ["Ibuprofeno","布洛芬","bùluòfēn"],["Paracetamol","对乙酰氨基酚（扑热息痛）","duìyǐxiān'ānjīfēn"],["Algo para la diarrea","止泻药","zhǐxiè yào"],
+  ["Suero oral","口服补液盐","kǒufú bǔyè yán"],["Antihistamínico (alergia)","抗过敏药","kàng guòmǐn yào"],["Pastillas para el mareo","晕车药","yùnchē yào"],
+  ["Tiritas","创可贴","chuàngkětiē"],["Repelente de mosquitos","驱蚊液","qūwén yè"],["Crema solar","防晒霜","fángshàishuāng"],
+  ["Me duele la cabeza","我头疼","wǒ tóu téng"],["Me duele la tripa","我肚子疼","wǒ dùzi téng"],["Tengo fiebre","我发烧了","wǒ fāshāo le"],
+  ["Tengo tos y me duele la garganta","我咳嗽，嗓子疼","wǒ késou, sǎngzi téng"],["¿Cuántas al día?","一天吃几次？","yì tiān chī jǐ cì?"]]],
+ ["Hong Kong (cantonés)",[
+  ["Hola","你好","néih hóu"],["Gracias (por un servicio)","唔該","m̀h gōi"],["Gracias (por un regalo)","多謝","dō jeh"],
+  ["¿Cuánto cuesta?","幾多錢？","géi dō chín?"],["La cuenta, por favor","埋單","màaih dāan"]],"zh-HK"]
 ];
 
 /* ---------- Guía de cada ciudad: clima habitual [máx, mín], qué comer y consejos ----------
@@ -886,6 +994,148 @@ const GUIA={
    "El Star Ferry entre Tsim Sha Tsui y Central cuesta muy poco y tiene la mejor vista de la bahía."]}
 };
 
+/* ---------- Apps para China: [nombre, chino, icono, color, para qué, iOS (id App Store), Android (paquete), acciones [texto, url]] ----------
+   Los enlaces de "Abrir" usan los esquemas propios de cada app; si no está instalada, no pasa nada. */
+const APPS=[
+ ["Alipay","支付宝","fa-wallet","#1677FF","Para pagar casi todo con vuestra Visa o Mastercard: tiendas, restaurantes, metro y taxis. Dentro tiene DiDi, el código del metro y un traductor.",
+   "333206289","com.eg.android.AlipayGphone",[["Código de pago","alipays://platformapi/startapp?appId=20000056"],["Escanear","alipays://platformapi/startapp?saId=10000007"]]],
+ ["WeChat","微信","fa-comments","#07C160","La mensajería que usa todo el mundo en China. Con WeChat Pay y los «mini programas» de restaurantes y museos. Al registraros puede pedir que otro usuario os verifique: hacedlo en casa.",
+   "414478124","com.tencent.mm",[["Abrir","weixin://"]]],
+ ["DiDi","滴滴出行","fa-taxi","#FF7A00","Taxis y coches con conductor, en inglés y con tarjeta extranjera. También funciona dentro de Alipay sin instalar nada. Pegad la dirección en chino que copia esta app.",
+   "554499054","com.sdu.didi.psnger",[]],
+ ["Amap","高德地图","fa-map-location-dot","#0091FF","El mapa bueno de China continental: transporte público, rutas a pie y nombres en chino. Desde esta app, cada sitio se abre directamente en Amap.",
+   "461703208","",[]],
+ ["Trip.com","携程","fa-suitcase-rolling","#287DFA","Trenes, vuelos, hoteles y entradas en inglés, pagando con tarjeta española. Avisa si cambia un tren.",
+   "681752345","ctrip.english",[]],
+ ["Railway 12306","铁路12306","fa-train","#3B82F6","La venta oficial de trenes, sin comisión, en inglés y con pasaporte. Algo más lío que Trip.com.",
+   "564818797","",[]],
+ ["Pleco","汉语词典","fa-book","#B91C1C","Diccionario chino sin conexión con lector de carteles y menús por la cámara.",
+   "341922306","com.pleco.chinesesystem",[]],
+ ["Google Traductor","翻译","fa-language","#4285F4","Traduce carteles y menús con la cámara. En China solo funciona con datos de la eSIM o VPN: descargad el chino para usarlo sin conexión. El Traductor de Apple también funciona allí.",
+   "414706506","com.google.android.apps.translate",[]],
+ ["MTR Mobile","港鐵","fa-train-subway","#E60012","Metro de Hong Kong: rutas, próximos trenes y salidas de cada estación.",
+   "369295276","",[]]
+];
+/* Comprar y reservar: [qué, detalle, url, icono] */
+const ENLACES=[
+ ["Entradas a la Ciudad Prohibida","Web oficial internacional. Salen 7 días antes a las 20:00 de China y se agotan en minutos.","https://intl.dpm.org.cn/","fa-landmark"],
+ ["Guerreros de Terracota","Web oficial (en chino), hasta 7 días antes. También se venden en Trip.com.","https://www.bmy.com.cn/","fa-monument"],
+ ["Trenes: 12306 oficial","En inglés y con pasaporte. Los billetes salen 15 días antes.","https://www.12306.cn/en/index.html","fa-train"],
+ ["Trenes en Trip.com","Más fácil, y permite dejar la compra programada para cuando salgan.","https://www.trip.com/trains/china/","fa-train-subway"],
+ ["Entradas y excursiones","Tianmen, Parque Forestal, río Li, espectáculos…","https://www.trip.com/things-to-do/","fa-ticket"],
+ ["Hoteles en Trip.com","Suele tener los hoteles chinos que aceptan extranjeros.","https://www.trip.com/hotels/","fa-hotel"],
+ ["Klook","Peak Tram, Ngong Ping 360 y actividades en Hong Kong.","https://www.klook.com/es/","fa-ticket-simple"],
+ ["Peak Tram (oficial)","Billetes del funicular al Pico Victoria.","https://www.thepeak.com.hk/en","fa-mountain-city"],
+ ["Tarjeta de llegada a China","Gratis, en las 72 h antes de aterrizar. Cuidado con las webs que cobran por rellenarla.","https://s.nia.gov.cn/ArrivalCardFillingPC/","fa-passport"],
+ ["eSIM: Airalo","Datos para China y Hong Kong; Google y WhatsApp funcionan sin VPN.","https://www.airalo.com/","fa-sim-card"],
+ ["eSIM: Holafly","Datos ilimitados, más cara.","https://esim.holafly.com/es/","fa-sim-card"],
+ ["Registro de Viajeros","Exteriores sabe que estáis allí si pasa algo.","https://registroviajeros.exteriores.gob.es/","fa-flag"]
+];
+/* Consejos prácticos para todo el viaje: [icono, texto] */
+const CONSEJOS_CHINA=[
+ ["fa-passport","Los españoles entran sin visado hasta 30 días (política prorrogada hasta el 31 de diciembre de 2026). En Hong Kong, hasta 90 días. Comprobadlo antes de salir."],
+ ["fa-battery-full","En los vuelos internos de China las baterías externas sin el sello 3C (CCC) se quedan en el control. Comprad una con sello allí o alquiladla en las estaciones de baterías compartidas (se pagan con Alipay)."],
+ ["fa-id-card","Llevad el pasaporte siempre encima: lo piden en trenes, hoteles, museos y parques. Es la entrada y el billete."],
+ ["fa-train","En las estaciones hay control de seguridad: llegad 45-60 min antes. Con pasaporte extranjero suele tocar la puerta manual (人工通道)."],
+ ["fa-money-bill-wave","Llevad algo de efectivo (500-1.000 CNY). Los cajeros del Bank of China o ICBC aceptan tarjetas extranjeras."],
+ ["fa-percent","Alipay cobra un 3 % en pagos con tarjeta extranjera de más de 200 CNY; por debajo, nada."],
+ ["fa-wifi","El wifi de hoteles y cafeterías es chino: Google, WhatsApp e Instagram no van. Con eSIM extranjera sí. Si usáis VPN, instaladla y probadla en casa."],
+ ["fa-plug","China usa 220 V y enchufes de dos patas planas o redondas; los españoles suelen entrar. Hong Kong usa el británico (tipo G): llevad adaptador."],
+ ["fa-bottle-water","El agua del grifo no se bebe. En los restaurantes os pondrán agua caliente o té gratis."],
+ ["fa-toilet-paper","Llevad pañuelos de papel y gel: muchos baños no tienen papel y bastantes son turcos."],
+ ["fa-hand-holding-dollar","En China no se deja propina. En Hong Kong, la cuenta suele incluir un 10 % de servicio."],
+ ["fa-scale-balanced","En los mercados se regatea: empezad por un tercio del precio que os digan."],
+ ["fa-user-secret","Si alguien muy simpático os invita a té, a una galería o a practicar inglés, declinad. Y en las estaciones, usad DiDi o la cola oficial de taxis."],
+ ["fa-fire","No llevéis mecheros en los vuelos internos."],
+ ["fa-car-side","En Hong Kong se circula por la izquierda: al cruzar, mirad primero a la derecha."]
+];
+/* Tareas que conviene tener en la lista de preparativos */
+const SUGERENCIAS=[
+ "Instalar Alipay, WeChat, DiDi y Amap y vincular la tarjeta",
+ "Comprar entradas de la Ciudad Prohibida (7 días antes, 20:00 de China)",
+ "Comprar entradas de los Guerreros de Terracota",
+ "Comprar los trenes pendientes (salen 15 días antes)",
+ "Rellenar la tarjeta de llegada online (72 h antes)",
+ "Batería externa con sello 3C para los vuelos internos",
+ "Descargar el chino en el traductor para usarlo sin conexión",
+ "Octopus en la Cartera del iPhone para Hong Kong",
+ "Adaptador de enchufe británico (tipo G) para Hong Kong",
+ "Algo de efectivo en yuanes",
+ "Apuntarse en el Registro de Viajeros de Exteriores",
+ "Avisar al banco del viaje"
+];
+/* Cuándo sale a la venta lo que hay que comprar con antelación (por nombre del lugar) */
+const VENTAS={
+ ciudadprohibida:{dias:7,hora:"20:00",url:"https://intl.dpm.org.cn/",donde:"intl.dpm.org.cn"},
+ guerrerosdeterracota:{dias:7,url:"https://www.bmy.com.cn/",donde:"bmy.com.cn o Trip.com"}
+};
+/* ---------- Sitios concretos por ciudad: [nombre, chino para buscar en el mapa, nota] ----------
+   comer: restaurantes conocidos; extras: planes opcionales que encajan en los ratos libres. */
+const DONDE={
+ pekin:{comer:[["Siji Minfu","四季民福烤鸭店","El pato laqueado más recomendado; tiene local junto a la Ciudad Prohibida. Colas largas: id pronto o coged número."],
+   ["Da Dong","大董烤鸭店","Pato laqueado más fino y más caro."],
+   ["Huguosi Xiaochi","护国寺小吃","Dulces y bocados pequineses baratos para merendar."]],
+  extras:[["Acrobacias en el Teatro Chaoyang","朝阳剧场","Espectáculo de acrobacias casi todas las tardes. Encaja la tarde libre del día 2."],
+   ["Lago Houhai","后海","Paseo al atardecer entre hutongs, bares y barquitas."]]},
+ xian:{comer:[["Jia San Guantang Baozi","贾三灌汤包子","Bollitos de caldo en el Barrio Musulmán."],
+   ["Lao Sun Jia","老孙家饭庄","El clásico para la sopa de cordero con pan (泡馍)."],
+   ["Fan Ji Roujiamo","樊记腊汁肉夹馍","El roujiamo de toda la vida, cerca de la Torre del Tambor."]],
+  extras:[["Pagoda de la Gran Oca Salvaje","大雁塔","Fuente musical por la noche y templo budista. A 20 min en metro de la muralla."]]},
+ shanghai:{comer:[["Jia Jia Tang Bao","佳家汤包","Xiaolongbao baratos y de los mejores de la ciudad."],
+   ["Yang's Dumplings","小杨生煎","Shengjianbao fritos; cuidado con el caldo, quema."],
+   ["Nanxiang Mantou Dian","南翔馒头店","Xiaolongbao en el bazar de Yuyuan. Mucha cola en la planta baja; arriba es más tranquilo."],
+   ["Lao Jishi","老吉士酒家","Cocina shanghainesa casera en la Concesión Francesa; conviene reservar."]],
+  extras:[["Acrobacias ERA","时空之旅","En el Shanghai Circus World; funciones casi a diario por la tarde-noche."],
+   ["Calle Tianzifang","田子坊","Callejuelas de tiendas y cafés en la Concesión Francesa."]]},
+ zhangjiajie:{comer:[["Calle Xibu","溪布街","Calle de restaurantes y tiendas junto a la entrada de Wulingyuan; buena para cenar tras el parque."]],
+  extras:[["Gran Cañón de Zhangjiajie","张家界大峡谷","El puente de cristal más famoso. Está a 1 h de Wulingyuan: alternativa si un día llueve en el parque."],
+   ["Espectáculo Tianmen Fox Fairy","天门狐仙","Musical al aire libre al pie de Tianmen; de temporada, comprobad si hay función."]]},
+ yangshuo:{comer:[["Xie Dajie Beer Fish","谢大姐啤酒鱼","El pescado a la cerveza más famoso, en la Calle Oeste."]],
+  extras:[["Impresión Liu Sanjie","印象·刘三姐","Espectáculo nocturno sobre el río Li, dirigido por Zhang Yimou. Funciones casi todas las noches."],
+   ["Clase de cocina","阳朔烹饪学校","Varias escuelas hacen clases de medio día con visita al mercado."]]},
+ shenzhen:{comer:[["Dian Dou De","点都德","Dim sum cantonés de cadena, fiable y bien de precio."]],
+  extras:[["Mercado electrónico de Huaqiangbei","华强北","El mayor mercado de electrónica del mundo: cargadores, baterías 3C y cacharros."]]},
+ hongkong:{comer:[["Tim Ho Wan","添好運點心專門店","Dim sum con estrella Michelin a precio de cafetería."],
+   ["Mak's Noodle","麥奀雲吞麵世家","Sopa de wonton clásica en Central."],
+   ["Kam's Roast Goose","甘牌燒鵝","Ganso asado con estrella Michelin, en Wan Chai."],
+   ["Australia Dairy Company","澳洲牛奶公司","Cha chaan teng mítico en Jordan: huevos revueltos y pudin. Mesas compartidas y prisa."],
+   ["Tai Cheong Bakery","泰昌餅家","Tartas de huevo recién hechas."]],
+  extras:[["Ngong Ping 360 y Gran Buda","昂坪360","Teleférico a la isla de Lantau. Mirad el tiempo: con niebla no se ve nada."],
+   ["Ladies' Market","女人街","Mercado callejero en Mong Kok; aquí también se regatea."]]}
+};
+/* ---------- Maleta: [grupo, [[clave, texto]]]. Lo marcado y lo añadido se guarda en la pestaña Ajustes ---------- */
+const MALETA=[
+ ["Documentos y dinero",[["pas","Pasaportes (con 6 meses de validez)"],["copias","Copias del pasaporte, en papel y en el móvil"],["tarjetas","Dos tarjetas de bancos distintos (Visa y Mastercard)"],
+   ["efectivo","Algo de efectivo"],["poliza","Póliza del seguro"],["boli","Un bolígrafo (formularios en el aeropuerto)"]]],
+ ["Electrónica",[["movil","Móvil con la eSIM instalada"],["cargadores","Cargadores y cables"],["bateria","Batería externa con sello 3C (o comprarla allí)"],
+   ["adaptador","Adaptador británico (tipo G) para Hong Kong"],["cascos","Auriculares"]]],
+ ["Ropa",[["abrigo","Chaqueta de abrigo para Pekín y Xi'an (mínimas de 3-6°)"],["capas","Capas: sudadera o forro polar"],["ligera","Ropa ligera para Shenzhen y Hong Kong (unos 25°)"],
+   ["lluvia","Chubasquero o paraguas plegable"],["calzado","Calzado cómodo y con agarre (miles de escalones)"],["gafas","Gorra y gafas de sol"]]],
+ ["Botiquín",[["dolor","Ibuprofeno o paracetamol"],["diarrea","Antidiarreico y suero oral"],["alergia","Antihistamínico"],["mareo","Pastillas para el mareo (curvas de Tianmen, barco)"],
+   ["tiritas","Tiritas y apósitos para ampollas"],["mosquitos","Repelente de mosquitos (Yangshuo)"],["solar","Crema solar"],["medicacion","Medicación personal con su receta"]]],
+ ["Para China",[["panuelos","Pañuelos de papel y gel desinfectante"],["toallitas","Toallitas húmedas"],["botella","Botella reutilizable (agua caliente gratis en todas partes)"],
+   ["mochila","Mochila de día"],["bolsa","Bolsa plegable para compras"]]]
+];
+/* Lo que pasa en cada ciudad justo en las fechas del viaje (finales de octubre y primera quincena de noviembre de 2026) */
+const TEMPORADA={
+ pekin:"Plena temporada de hojas de otoño: arces rojos y ginkgos amarillos, con Mutianyu y el Parque Jingshan en su mejor momento. Las mañanas rondan los 3-5°. La calefacción central de la ciudad no se enciende hasta el 15 de noviembre: si la habitación está fría, pedid un calefactor (取暖器).",
+ xian:"Otoño seco y suave, buen tiempo para la bici por la muralla. Los días ya son cortos: mirad abajo a qué hora anochece y no apuréis la vuelta en bici.",
+ shanghai:"Otoño templado. El 1 de noviembre es domingo: el Bund y el bazar de Yuyuan se llenan, id temprano. Los plátanos de la Concesión Francesa empiezan a amarillear.",
+ zhangjiajie:"Colores de otoño entre los pilares y mucha probabilidad de niebla; después de llover puede aparecer el «mar de nubes». Arriba hace bastante más frío que en la ciudad: capas.",
+ yangshuo:"Empieza la temporada seca: menos lluvia y cielos más limpios. El río Li va con menos agua y algunos cruceros acortan el recorrido. Hay pomelos y kumquats en los mercados.",
+ shenzhen:"El 11 de noviembre es el Día del Soltero (双十一), la mayor fiesta de compras de China: ofertas por todas partes, y tiendas y mensajería a tope.",
+ hongkong:"Noviembre es su mejor época: seco, soleado y ya sin tifones. Buen momento para una caminata corta como Dragon's Back (龍脊). La Symphony of Lights es a las 20:00 todos los días."
+};
+/* Plan B si llueve: [nombre, chino, nota] */
+const LLUVIA={
+ pekin:["Museo Nacional de China","中国国家博物馆","Enorme y gratis, junto a Tiananmen. Hay que reservar con pasaporte. Cierra los lunes.",1],
+ xian:["Museo de Historia de Shaanxi","陕西历史博物馆","De los mejores de China. Gratis con reserva previa, que se agota. Cierra los lunes.",1],
+ shanghai:["Museo de Shanghái","上海博物馆","En la Plaza del Pueblo: bronces, cerámica y caligrafía. Confirmad el horario: muchos museos chinos cierran los lunes."],
+ zhangjiajie:["Cueva del Dragón Amarillo","黄龙洞","Cueva enorme con río subterráneo, cerca de Wulingyuan."],
+ yangshuo:["Cueva de Plata","银子岩","Cueva iluminada a unos 20 km de Yangshuo."],
+ shenzhen:["Museo de Shenzhen","深圳博物馆","Gratis, en el centro cívico de Futian."],
+ hongkong:["Museo M+","M+","Cultura visual contemporánea en West Kowloon, con vistas a la bahía."]
+};
 const CATEGORIAS=["Comida","Transporte","Entradas","Compras","Alojamiento","Otros"];
 const TIPOS={visita:"Visita",comida:"Comida",traslado:"Traslado",hotel:"Hotel",libre:"Libre",vuelo:"Vuelo",tren:"Tren"};
 const FX_INICIAL={CNY:7.5259,HKD:8.8084,date:"2026-10-02"};   // unidades por 1 EUR (BCE)
@@ -977,6 +1227,7 @@ const D=s=>new Date(s+"T12:00:00");
 const isoDe=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
 const fecha=(iso,o={day:"numeric",month:"short"})=>iso?D(iso).toLocaleDateString("es-ES",o):"";
 const diasEntre=(a,b)=>Math.round((D(b)-D(a))/864e5);
+const horaAprox=v=>{const s=norm(v);return /manana|morning/.test(s)?9*60:/mediodia/.test(s)?13*60:/tarde|afternoon/.test(s)?16*60:/noche|night/.test(s)?20*60:null};
 function horaMin(v){const m=String(v??"").match(/^\s*(\d{1,2})[:.h](\d{2})/);return m?+m[1]*60+ +m[2]:null}
 const fmtMin=m=>m==null?"":`${String(Math.floor(m/60)%24).padStart(2,"0")}:${String(m%60).padStart(2,"0")}`;
 function durTxt(min){
@@ -988,12 +1239,24 @@ function durTxt(min){
 }
 function claveCiudad(c){const k=norm(c);return ALIAS_CIUDAD[k]||k}
 function ciudad(c){return CIUDADES[claveCiudad(c)]||{n:limpio(c)||"Viaje",zh:"",c:"#475569",ico:"fa-location-dot",lat:null,lon:null,mon:"CNY"}}
-const v2=()=>((SERVER&&SERVER.version)||1)>=2;
+const v2=()=>((SERVER&&SERVER.version)||1)>=2,v3=()=>((SERVER&&SERVER.version)||1)>=3;
 const partes=s=>limpio(s).split(/,\s*(?![^()]*\))/).map(x=>x.trim()).filter(Boolean);
 const sinHotel=h=>!limpio(h.Hotel)||/por reservar/i.test(h.Hotel);
 const noches=h=>{const a=toISO(h["Check-in"]),b=toISO(h["Check-out"]);return a&&b?diasEntre(a,b):(num(h.Noches)||0)};
 const ajuste=(k,def)=>{const a=DATA.ajustes.find(x=>x.ID===k);return a&&limpio(a.Valor)?a.Valor:def};
 const personas=()=>[ajuste("p1","Sergio"),ajuste("p2","Pareja")];
+
+/* Salida y puesta de sol en hora de China, para cualquier día y sitio (ecuación del amanecer, precisión de un par de minutos) */
+function sol(lat,lon,iso){
+  if(lat==null||lon==null||!iso) return null;
+  const r=Math.PI/180,[y,m,d]=iso.split("-").map(Number),jd=Date.UTC(y,m-1,d,12)/864e5+2440587.5;
+  const J=jd-2451545+.0008-lon/360,M=(357.5291+.98560028*J)%360,C=1.9148*Math.sin(M*r)+.02*Math.sin(2*M*r)+.0003*Math.sin(3*M*r);
+  const L=(M+C+282.9372)%360,Jt=2451545+J+.0053*Math.sin(M*r)-.0069*Math.sin(2*L*r),dec=Math.asin(Math.sin(L*r)*Math.sin(23.4397*r));
+  const w=Math.acos((Math.sin(-.833*r)-Math.sin(lat*r)*Math.sin(dec))/(Math.cos(lat*r)*Math.cos(dec)))/r;
+  const aMin=j=>Math.round((((j-2440587.5)*1440+480)%1440+1440)%1440);   // del día juliano a minutos en hora de China
+  return {sale:aMin(Jt-w/360),pone:aMin(Jt+w/360)};
+}
+const solDia=d=>{const c=CIUDADES[d.ck];return c?sol(c.lat,c.lon,d.iso):null};
 
 /* Hora de China (Pekín y Hong Kong comparten huso, UTC+8, sin cambio de hora) */
 function ahoraCN(){
@@ -1051,41 +1314,66 @@ function recibe(j){
     guardaCola();
   }
 }
+/* Los cambios van a una cola que se envía en orden. Si un cambio aún no ha salido, el siguiente sobre
+   la misma fila se funde con él: así, sin conexión, la cola no crece con cada toque. */
+const ENVIANDO=new Set();
 function mutar(op){
-  QUEUE.push(op); guardaCola(); rebuild(); renderAll(true); enviar();
+  const ult=[...QUEUE].reverse().find(o=>!ENVIANDO.has(o)&&o.action===op.action&&
+    (op.action==="upsert"?o.sheet===op.sheet&&o.id===op.id:op.action==="check"?o.row===op.row&&o.key===op.key:
+     op.action==="update"?o.sheet===op.sheet&&o.row===op.row&&o.key===op.key:false));
+  const i=ult?QUEUE.lastIndexOf(ult):-1;
+  if(ult&&!QUEUE.slice(i+1).some(o=>o.sheet===op.sheet&&o.action==="remove")){   // fundir solo si nada posterior lo invalida
+    if(op.values) ult.values={...ult.values,...op.values}; else Object.assign(ult,op);
+  }else QUEUE.push(op);
+  guardaCola(); rebuild(); renderAll(true); enviar();
+}
+let versionDatos=0;                           // sube con cada respuesta de la hoja tras un cambio: una lectura más antigua no la pisa
+function pedir(url,op,ms){                    // en China, sin VPN, Google no responde: mejor cortar que quedarse colgado
+  const ctl=new AbortController(),t=setTimeout(()=>ctl.abort(),ms);
+  const o=op?{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(op),signal:ctl.signal}:{signal:ctl.signal,cache:"no-store"};
+  return fetch(url,o).then(r=>r.json()).finally(()=>clearTimeout(t));
 }
 async function enviar(){
   if(flushing||!QUEUE.length) return;
-  flushing=true;
+  flushing=true; let error=false;
   try{
-    let i=0;
-    while(i<QUEUE.length){
-      const op=QUEUE[i];
-      if(SOLO_V2.has(op.action)&&!v2()){i++;continue}       // espera a que se actualice el script
+    while(true){
+      const listos=QUEUE.filter(o=>!SOLO_V2.has(o.action)||v2());       // los de la versión 2 esperan a que se actualice el script
+      if(!listos.length) break;
+      const lote=v3()?listos.slice(0,25):listos.slice(0,1);
+      lote.forEach(o=>ENVIANDO.add(o));
       let j;
-      try{
-        const r=await fetch(API,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(op)});
-        j=await r.json();
-      }catch(e){syncEstado="sin";break}
-      QUEUE.splice(i,1); guardaCola();
-      if(j&&j.error) aviso("Un cambio no se ha guardado: "+j.error);
-      else if(j&&j.itinerario){recibe(j);syncEstado=""}
+      try{j=await pedir(API,lote.length>1?{action:"batch",ops:lote}:lote[0],45000)}
+      catch(e){syncEstado="sin";break}
+      finally{lote.forEach(o=>ENVIANDO.delete(o))}
+      QUEUE=QUEUE.filter(o=>!lote.includes(o)); guardaCola();         // se quitan los enviados, aunque mientras tanto hayan entrado otros
+      const errs=j&&j.error?[j.error]:(j&&j.errores||[]).map(x=>x.error);
+      if(errs.length){error=true;aviso("Un cambio no se ha guardado: "+errs[0])}
+      if(j&&j.itinerario){versionDatos++;recibe(j);syncEstado=""}
     }
-  }finally{flushing=false; rebuild(); renderAll()}
-}
-async function sincronizar(manual){
-  syncEstado="…"; if(manual) rKit();
-  try{
-    const r=await fetch(API+"?t="+Date.now());
-    const j=await r.json();
-    if(!j||j.error||!j.itinerario) throw new Error(j&&j.error||"Respuesta no válida");
-    recibe(j); syncEstado=""; rebuild(); renderAll();
-    if(manual) aviso("Datos actualizados");
-  }catch(e){
-    syncEstado="sin"; renderAll();
-    if(manual) aviso("Sin conexión con la hoja. Se muestra la última copia.");
+  }finally{
+    flushing=false; rebuild(); renderAll();
+    if(error) setTimeout(()=>sincronizar(),500);                       // la hoja había cambiado: se trae la versión buena
   }
-  enviar();
+}
+let leyendo=null,ultIntento=0;
+function sincronizar(manual){
+  if(leyendo){if(manual) leyendo.then(()=>aviso(syncEstado?"Sin conexión con la hoja. Se muestra la última copia.":"Datos actualizados"));return leyendo}
+  syncEstado="…"; ultIntento=Date.now(); if(manual) rKit();
+  const v0=versionDatos;
+  return leyendo=(async()=>{
+    try{
+      const j=await pedir(API+"?t="+Date.now(),null,25000);
+      if(!j||j.error||!j.itinerario) throw new Error(j&&j.error||"Respuesta no válida");
+      if(versionDatos===v0&&!flushing){recibe(j);rebuild()}            // si mientras tanto se envió algo, la respuesta de ese envío es más nueva
+      syncEstado=""; renderAll();
+      if(manual) aviso("Datos actualizados");
+    }catch(e){
+      syncEstado="sin"; renderAll();
+      if(manual) aviso("Sin conexión con la hoja. Se muestra la última copia.");
+    }finally{leyendo=null}
+    enviar();
+  })();
 }
 const pendientes=()=>QUEUE.filter(o=>o.action!=="seed").length;
 
@@ -1112,6 +1400,17 @@ function lugarDe(nombre,iso){
 function urlMapas(p){
   const q=p.zh||p.dir||(p.hotel?`${p.nombre} ${p.czh||""}`:p.nombre);
   return "https://maps.apple.com/?q="+encodeURIComponent(q.trim())+(p.lat?`&sll=${p.lat},${p.lon}`:"");
+}
+function urlRuta(p){                         // en transporte público desde donde estéis
+  if(!p||p.sin) return null;
+  if(p.cn===false) return "https://www.google.com/maps/dir/?api=1&travelmode=transit&destination="+encodeURIComponent(p.lat&&!p.hotel?`${p.lat},${p.lon}`:(p.zh||p.dir||p.nombre)+(p.zh?"":" Hong Kong"));
+  if(p.lat&&!p.hotel) return `https://uri.amap.com/navigation?to=${p.lon},${p.lat},${encodeURIComponent(p.zh||p.nombre)}&mode=bus&coordinate=wgs84&callnative=1`;
+  return null;
+}
+function mapaLocal(p){                       // [url, nombre] del mapa que funciona bien en cada sitio
+  const am=urlAmap(p); if(am) return [am,"Amap"];
+  if(p.cn===false&&!p.sin){const q=p.zh||p.dir||p.nombre;return ["https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(q+(p.zh?"":" Hong Kong")),"Google Maps"]}
+  return null;
 }
 function urlAmap(p){                          // Amap (高德) es el mapa que mejor funciona en China continental
   const q=p.zh||p.dir||(p.hotel&&!p.sin?p.nombre:"");
@@ -1147,17 +1446,19 @@ function itemsDia(iso){
     const s=horaMin(t.Salida),l=horaMin(t.Llegada),soloLlegada=s==null&&l!=null;
     const extra=[!soloLlegada&&s==null&&limpio(t.Salida)?"Salida: "+t.Salida:"",s==null&&l==null&&!limpio(t.Salida)?"Hora por confirmar":"",
       limpio(t["Nº vuelo/tren"]),limpio(t.Localizador)?"Localizador "+t.Localizador:"",limpio(t.Estado)==="Pendiente"?"Por reservar":""].filter(Boolean).join(". ");
-    out.push({k:"tr:"+i,t:soloLlegada?l:s,fin:!soloLlegada&&l!=null&&l>s?l:null,
+    out.push({k:"tr:"+i,t:soloLlegada?l:s,ord:s==null&&l==null?horaAprox(t.Salida):null,fin:!soloLlegada&&l!=null&&l>s?l:null,
       titulo:(soloLlegada?"Llegada: ":"")+`${t.Tipo} ${t.Origen} → ${t.Destino}`,tipo:/vuelo/i.test(t.Tipo)?"vuelo":"tren",notas:extra,tr:t});
   });
-  return out.sort((a,b)=>(a.t??-1)-(b.t??-1));
+  const ida=out.find(x=>x.a&&x.t!=null&&/estaci[oó]n|aeropuerto/i.test(x.titulo));   // un trayecto sin hora va justo después de ir a la estación
+  out.forEach(x=>{if(x.tr&&x.t==null&&x.ord==null&&ida) x.ord=ida.t+.5});
+  return out.sort((a,b)=>(a.t??a.ord??-1)-(b.t??b.ord??-1));
 }
 function proximoTrayecto(now){
   let mejor=null;
   DATA.transporte.forEach(t=>{
-    const iso=toISO(t.Fecha),s=horaMin(t.Salida); if(!iso) return;
-    if(iso<now.iso||(iso===now.iso&&(s??1440)<=now.min)) return;
-    const falta=diasEntre(now.iso,iso)*1440+(s??720)-now.min;
+    const iso=toISO(t.Fecha),s=horaMin(t.Salida),ap=s??horaAprox(t.Salida); if(!iso) return;
+    if(iso<now.iso||(iso===now.iso&&(ap==null||ap<=now.min))) return;   // sin hora, el de hoy no se sabe si ya salió: no se anuncia
+    const falta=diasEntre(now.iso,iso)*1440+(ap??720)-now.min;
     if(!mejor||falta<mejor.falta) mejor={t,iso,s,falta};
   });
   return mejor;
@@ -1176,6 +1477,7 @@ async function pedirClima(ck){
     if(j.daily){WX[ck]={ts:Date.now(),d:j.daily,cur:j.current||null};LS.set("china-wx",WX);renderAll()}
   }catch(e){}finally{climaOcupado[ck]=0}
 }
+const curFresco=w=>w&&w.cur&&w.cur.weather_code!=null&&Date.now()-w.ts<6*3600e3?w.cur:null;   // "ahora mismo" caduca
 function climaDia(ck,iso){
   const w=WX[ck]; if(!w||!w.d||!w.d.time) return null;
   const i=w.d.time.indexOf(iso); if(i<0) return null;
@@ -1204,8 +1506,8 @@ function consejoRopa(min,max){
 function tarjetaClima(ck){
   const c=CIUDADES[ck],w=WX[ck],g=GUIA[ck]||{},mias=DIAS.filter(d=>d.ck===ck).map(d=>d.iso),hoyIso=ahoraCN().iso;
   let h=`<button class="wcard" data-clima="${ck}" aria-label="Ver la previsión de ${esc(c.n)}">`;
-  if(w&&w.d&&w.d.time){
-    const hoy=climaDia(ck,hoyIso)||climaDia(ck,w.d.time[0]),cur=w.cur&&w.cur.weather_code!=null?w.cur:null;
+  if(w&&w.d&&w.d.time&&w.d.time.includes(hoyIso)){
+    const hoy=climaDia(ck,hoyIso),cur=curFresco(w);
     const en=w.d.time.filter(i=>mias.includes(i)),sig=w.d.time.filter(i=>i>hoyIso).slice(0,2);
     const fmc=(iso,lab)=>{const x=climaDia(ck,iso);return `<span class="fmc ${mias.includes(iso)?"vi":""}"><span>${lab}</span>${mc(x.code)}<b>${x.max}°</b><small>${x.min}°</small><em>${x.pp?x.pp+" %":""}</em></span>`};
     h+=`<div class="wc"><div class="ya">
@@ -1220,7 +1522,7 @@ function tarjetaClima(ck){
   }else if(g.clima){
     h+=`<div class="wc"><div class="ya"><span class="wl"><i class="fa-solid fa-location-dot"></i>${esc(c.n)}</span>
         <span class="gr">${mc(2)}<b>${g.clima[0]}°</b><span>/ ${g.clima[1]}°</span></span>
-        <span class="cond">Lo habitual a principios de noviembre. La previsión real llega unos 16 días antes.</span></div></div>
+        <span class="cond">Lo habitual en estas fechas. ${mias.length?`La previsión real llega hacia el ${fecha((()=>{const t=D(mias[0]);t.setDate(t.getDate()-15);return isoDe(t)})(),{day:"numeric",month:"long"})}.`:"La previsión real llega unos 16 días antes."}</span></div></div>
       <span class="wnota"><i class="fa-solid fa-shirt"></i>${consejoRopa(g.clima[1],g.clima[0])}</span>`;
   }else h+=`<p class="n">Sin previsión todavía.</p>`;
   return h+`</button>`;
@@ -1228,7 +1530,7 @@ function tarjetaClima(ck){
 function climaHoja(ck){
   const c=CIUDADES[ck],w=WX[ck],g=GUIA[ck]||{},mias=new Set(DIAS.filter(d=>d.ck===ck).map(d=>d.iso));
   let h=`<div class="th" style="--c:${c.c}"><p class="dk"><i class="fa-solid fa-cloud-sun"></i>Previsión detallada</p><h3>Tiempo en ${esc(c.n)} <span class="zh">${c.zh}</span></h3>`;
-  if(w&&w.cur&&w.cur.weather_code!=null){
+  if(curFresco(w)){
     h+=`<div class="ahw">${mc(w.cur.weather_code,w.cur.is_day??1)}<b>${Math.round(w.cur.temperature_2m)}°</b><p class="n"><b>${wxInfo(w.cur.weather_code)[1]}</b><br>
       Sensación de ${Math.round(w.cur.apparent_temperature)}°. Humedad ${Math.round(w.cur.relative_humidity_2m)} %, viento ${Math.round(w.cur.wind_speed_10m)} km/h</p></div>`;
   }
@@ -1254,22 +1556,53 @@ const aEUR=(n,m)=>m==="EUR"?n:n/(FX[m]||1);
 
 /* ---------- Avisos, hoja inferior y pantalla grande ---------- */
 let avisoT;
-function aviso(t){const a=$("aviso");a.textContent=t;a.classList.add("on");clearTimeout(avisoT);avisoT=setTimeout(()=>a.classList.remove("on"),3500)}
+let avisoAccion=null;
+function aviso(t,deshacer){
+  const a=$("aviso");avisoAccion=deshacer||null;
+  a.innerHTML=esc(t)+(deshacer?`<button class="deshacer" data-act="deshacer">Deshacer</button>`:"");
+  a.classList.add("on");a.classList.toggle("con",!!deshacer);clearTimeout(avisoT);avisoT=setTimeout(()=>{a.classList.remove("on","con");avisoAccion=null},deshacer?6000:3500);
+}
 function hoja(html){
   delete $("dlgB").dataset.clima;
   $("dlgB").innerHTML=`<button class="dlg-x" data-act="cerrar" aria-label="Cerrar"><i class="fa-solid fa-xmark"></i></button>`+html;
   if(!$("dlg").open)$("dlg").showModal();$("dlgB").scrollTop=0;
 }
 const cerrarHoja=()=>{if($("dlg").open)$("dlg").close()};
-function grande(zh,sub,pinyin){
+let grandeURL=null;
+function grande(zh,sub,pinyin,lang="zh-CN"){
+  cerrarHoja();                               // la hoja va en una capa superior: si siguiera abierta, taparía la pantalla grande
+  const voz="speechSynthesis" in window;
   $("grande").innerHTML=`<button class="x" data-act="cerrar-grande" aria-label="Cerrar">Cerrar</button>
-    <div class="gz ${[...zh].length>14?"lg":""}">${esc(zh)}</div>${pinyin?`<div class="gp">${esc(pinyin)}</div>`:""}<div class="gs">${esc(sub||"")}</div>`;
+    <div class="gz ${[...zh].length>14?"lg":""}" lang="${lang==="zh-HK"?"zh-Hant-HK":"zh-Hans"}">${esc(zh)}</div>${pinyin?`<div class="gp">${esc(pinyin)}</div>`:""}<div class="gs">${esc(sub||"")}</div>
+    ${voz?`<button class="hablar" data-hablar="${esc(zh)}" data-lang="${lang}"><i class="fa-solid fa-volume-high"></i>Escuchar${lang==="zh-HK"?" en cantonés":""}</button>`:""}`;
   $("grande").classList.add("on");
+  despierto(true);
+}
+let wakeLock=null;
+async function despierto(on){                 // que el móvil no se apague mientras el taxista lee
+  try{
+    if(on&&!wakeLock&&navigator.wakeLock){wakeLock=await navigator.wakeLock.request("screen");wakeLock.addEventListener("release",()=>{wakeLock=null})}
+    if(!on&&wakeLock){await wakeLock.release();wakeLock=null}
+  }catch(e){}
+}
+function cerrarGrande(){
+  $("grande").classList.remove("on");despierto(false);
+  if(grandeURL){URL.revokeObjectURL(grandeURL);grandeURL=null}
+  if("speechSynthesis" in window) speechSynthesis.cancel();
+}
+/* Pronunciación con las voces del propio móvil (el iPhone trae chino y cantonés, también sin conexión) */
+function hablar(txt,lang){
+  const S=window.speechSynthesis; if(!S) return;
+  S.cancel();
+  const u=new SpeechSynthesisUtterance(txt.replace(/\n/g,"，"));u.lang=lang;u.rate=.85;
+  const vs=S.getVoices(),v=vs.find(v=>v.lang.replace("_","-")===lang)||vs.find(v=>v.lang.startsWith(lang==="zh-HK"?"yue":lang.slice(0,2)));
+  if(v) u.voice=v; else if(vs.length) aviso("Este móvil no tiene voz en chino. Se añade en Ajustes → Accesibilidad → Contenido leído.");
+  S.speak(u);
 }
 function taxista(p){
-  cerrarHoja();
-  if(p.zh||p.dir) grande("请带我去这里\n"+[p.zh,p.dir].filter(Boolean).join("\n"),p.nombre+". «Lléveme aquí, por favor»");
-  else grande((p.czh?p.czh+"\n":"")+p.nombre,p.hotel?"Falta la dirección en chino: añádela en Reservas para enseñársela al taxista.":p.nombre);
+  const lang=p.cn===false?"zh-HK":"zh-CN";
+  if(p.zh||p.dir) grande((lang==="zh-HK"?"請帶我去這裡":"请带我去这里")+"\n"+[p.zh,p.dir].filter(Boolean).join("\n"),p.nombre+". «Lléveme aquí, por favor»","",lang);
+  else grande((p.czh?p.czh+"\n":"")+p.nombre,p.hotel?"Falta la dirección en chino: añádela en Reservas para enseñársela al taxista.":p.nombre,"",lang);
 }
 
 /* ---------- Piezas compartidas ---------- */
@@ -1284,7 +1617,7 @@ function heroFoto(ck,{badge,titulo,sub="",hm="",izq="",der=""}){
   </div>`;
 }
 function pildoraClima(ck,iso){                 // la píldora de cristal de la foto: ahora mismo si es hoy, si no la previsión del día
-  const w=WX[ck],cur=w&&w.cur&&iso===ahoraCN().iso?w.cur:null,x=climaDia(ck,iso);
+  const w=WX[ck],cur=iso===ahoraCN().iso?curFresco(w):null,x=climaDia(ck,iso);
   if(cur&&cur.weather_code!=null) return `<button class="cristal" data-clima="${ck}">${mc(cur.weather_code,cur.is_day??1)}<b>${Math.round(cur.temperature_2m)}°</b>${x?`<span>/ ${x.min}°</span>`:""}</button>`;
   if(x) return `<button class="cristal" data-clima="${ck}">${mc(x.code)}<b>${x.max}°</b><span>/ ${x.min}°</span></button>`;
   const g=GUIA[ck]; return g&&g.clima?`<button class="cristal" data-clima="${ck}"><i class="fa-solid fa-temperature-half"></i><b>≈${g.clima[0]}°</b></button>`:"";
@@ -1315,7 +1648,7 @@ function htmlDia(i,o={}){
   const resumen=partes(d["Actividades Principales"]).join(", ")||limpio(d["Transporte del día"]);
   let h=`<article class="dcard th" style="--c:${c.c}"><header><div class="dh"><span class="dnum"><small>DÍA</small><b>${String(i+1).padStart(2,"0")}</b></span>
       <div style="min-width:0"><h3>${fecha(d.iso,{weekday:"short",day:"numeric",month:"short"})}</h3>${resumen?`<p class="dt">${esc(resumen)}</p>`:""}</div></div>
-      <div class="dbad">${items.some(x=>x.tipo==="vuelo")?`<span class="vuelo"><i class="fa-solid fa-plane"></i>VUELO</span>`:""}${intensidad(items)}</div></header>
+      <div class="dbad">${items.some(x=>x.tipo==="vuelo")?`<span class="vuelo"><i class="fa-solid fa-plane"></i>VUELO</span>`:""}${intensidad(items)}${solDia(d)?`<span class="soldia" title="Amanecer y atardecer"><i class="fa-solid fa-sun"></i>${fmtMin(solDia(d).sale)} · <i class="fa-solid fa-moon"></i>${fmtMin(solDia(d).pone)}</span>`:""}</div></header>
     <div class="tl"><div class="its">`;
   let marcado=false;
   items.forEach((x,j)=>{
@@ -1336,7 +1669,7 @@ function htmlDia(i,o={}){
   return h+`</div><button class="btn linea sm" data-act="nuevo-agenda" data-di="${i}"><i class="fa-solid fa-plus"></i>Añadir a la agenda</button></div></article>`;
 }
 function tarjetaHotel(h,o={}){
-  const c=ciudad(h.Ciudad),p=lugarHotel(h),n=noches(h),pre=num(h["Precio total"]),am=urlAmap(p),est=limpio(h.Estado);
+  const c=ciudad(h.Ciudad),p=lugarHotel(h),n=noches(h),pre=num(h["Precio total"]),am=mapaLocal(p),est=limpio(h.Estado);
   return `<div class="hcard th" style="--c:${c.c}">
     <div class="ht"><span class="hc"><i class="fa-solid fa-location-dot"></i>${esc(c.n)}</span>
       <span style="display:flex;gap:6px;align-items:center">${o.estado&&est?`<span class="est ${est==="Reservado"?"ok":"pend"}">${esc(est)}</span>`:""}
@@ -1345,7 +1678,7 @@ function tarjetaHotel(h,o={}){
     ${p.dir?`<p class="chipzh">${esc(p.dir)}</p>`:""}
     <p class="n">${n} ${n===1?"noche":"noches"}${p.loc?` · Localizador <b class="mono">${esc(p.loc)}</b>`:""}${limpio(h.Notas)?`. ${esc(h.Notas)}`:""}</p>
     ${o.precio&&pre!=null?`<p class="hp"><b>${eur(pre)}</b>${n?` · ${eur(pre/n)} por noche`:""}</p>`:""}
-    <div class="pie">${p.sin?"":`${am?`<a class="btn azul sm" href="${esc(am)}" target="_blank" rel="noopener"><i class="fa-solid fa-diamond-turn-right"></i>Abrir en Amap</a>`:""}
+    <div class="pie">${p.sin?"":`${am?`<a class="btn azul sm" href="${esc(am[0])}" target="_blank" rel="noopener"><i class="fa-solid fa-diamond-turn-right"></i>Abrir en ${am[1]}</a>`:""}
       <a class="btn sm" href="${esc(urlMapas(p))}" target="_blank" rel="noopener"><i class="fa-solid fa-map-location-dot"></i>Mapas</a>
       <button class="btn sm" data-taxi-hotel="${h._row||""}" data-hk="${esc(h.Ciudad)}"><i class="fa-solid fa-taxi"></i>Taxista</button>
       ${p.dir?`<button class="btn sm" data-copiar="${esc(p.dir)}"><i class="fa-regular fa-copy"></i>Copiar</button>`:""}
@@ -1355,6 +1688,112 @@ function tarjetaHotel(h,o={}){
 }
 
 /* ---------- HOY ---------- */
+/* ---------- Avisos del día: lo que conviene saber según trayectos, hoteles, tiempo y horarios ---------- */
+function avisosDia(i){
+  const d=DIAS[i],iso=d.iso,items=itemsDia(iso),out=[],c=ciudad(d.Ciudad);
+  const internos=t=>CIUDADES[claveCiudad(t.Origen)]&&CIUDADES[claveCiudad(t.Destino)];
+  DATA.transporte.filter(t=>toISO(t.Fecha)===iso).forEach(t=>{
+    const dest=claveCiudad(t.Destino);
+    if(/vuelo/i.test(t.Tipo)&&internos(t)) out.push(["fa-plane","Vuelo interno: estad en el aeropuerto 2 h antes. La batería externa, con sello 3C y en la mochila; nada de mecheros."]);
+    else if(/vuelo/i.test(t.Tipo)&&claveCiudad(t.Origen)==="hongkong") out.push(["fa-plane-departure","Vuelo a casa: en las estaciones de Hong Kong y Kowloon muchas aerolíneas dejan facturar antes de coger el Airport Express."]);
+    else if(/tren/i.test(t.Tipo)) out.push(["fa-train","Día de tren: el pasaporte es el billete. Llegad 45-60 min antes; hay control de seguridad y con pasaporte extranjero suele tocar la puerta manual."]);
+    if(dest==="hongkong") out.push(["fa-passport","Hoy cruzáis a Hong Kong: la frontera se pasa en West Kowloon. Allí se paga en HKD (preparad la Octopus) y Google y WhatsApp funcionan sin VPN."]);
+  });
+  const hn=hotelNoche(iso);
+  if(hn&&!sinHotel(hn)&&!limpio(hn["Dirección (chino)"])) out.push(["fa-language",`Falta la dirección en chino del hotel de esta noche (${hn.Hotel}) para el taxista.`,"rojo","reservas/hoteles"]);
+  else if(hn&&sinHotel(hn)) out.push(["fa-hotel",`El hotel de esta noche en ${hn.Ciudad} está por reservar.`,"rojo","reservas/hoteles"]);
+  const sal=hotelSalida(iso);
+  if(sal&&!sinHotel(sal)) out.push(["fa-suitcase-rolling",`Hoy dejáis el ${sal.Hotel}: revisad cargadores, enchufes y la caja fuerte.`]);
+  const pr=items.find(x=>x.t!=null);
+  if(pr&&pr.t<7.5*60) out.push(["fa-clock",`Madrugón: lo primero es a las ${fmtMin(pr.t)}. Dejad la maleta hecha la noche antes.`]);
+  if(D(iso).getDay()===1) items.forEach(x=>{if(x.lugar&&/lunes/i.test(x.lugar.horario||"")) out.push(["fa-triangle-exclamation",`${x.lugar.nombre} cierra los lunes, y está en el plan de hoy.`,"rojo"])});
+  const sinComprar=items.map(x=>x.lugar&&x.lugar.id&&DATA.lugares.find(l=>l.ID===x.lugar.id)).filter(l=>l&&limpio(l.Reserva)&&ajuste("ent:"+l.ID,"")!=="1");   // solo lo que hay que reservar antes; pagar en taquilla no avisa
+  [...new Set(sinComprar)].forEach(l=>out.push(["fa-ticket",`Entrada sin marcar como comprada: ${l.Nombre}.`,"rojo","reservas/entradas"]));
+  items.forEach(x=>{                          // ¿abre y cierra a tiempo para lo que hay planeado?
+    const l=x.lugar; if(!l||l.hotel||x.t==null||!(x.tipo==="visita"||x.tipo==="libre")) return;
+    const m=String(l.horario||"").match(/(\d{1,2})[:.](\d{2})\s*[–-]\s*(\d{1,2})[:.](\d{2})/); if(!m) return;
+    const a=+m[1]*60+ +m[2],b=+m[3]*60+ +m[4],fin=x.fin??x.t+60;
+    if(x.t<a) out.push(["fa-door-closed",`${l.nombre} abre a las ${fmtMin(a)} y el plan empieza a las ${fmtMin(x.t)}.`,"rojo"]);
+    else if(fin>b) out.push(["fa-door-closed",`${l.nombre} cierra a las ${fmtMin(b)} y el plan acaba a las ${fmtMin(fin)}.`,"rojo"]);
+  });
+  const so=solDia(d);
+  if(so&&items.some(x=>/atardecer|anochec|iluminad|symphony|noche/i.test(x.titulo+" "+(x.notas||""))&&x.t!=null&&Math.abs(x.t-so.pone)<150))
+    out.push(["fa-cloud-sun",`Hoy anochece a las ${fmtMin(so.pone)}.`]);
+  fechasClave().filter(f=>f.iso===iso&&!f.hecho).forEach(f=>out.push(["fa-bell",`${f.txt}: ${f.det}`]));
+  const w=climaDia(d.ck,iso);
+  if(w&&w.pp>=60) out.push(["fa-umbrella",`${w.pp} % de probabilidad de lluvia: chubasquero o paraguas.${LLUVIA[d.ck]?` Plan B a cubierto: ${LLUVIA[d.ck][0]}${LLUVIA[d.ck][3]&&D(iso).getDay()===1?" (pero cierra los lunes)":""}.`:""}`]);
+  if(w&&w.min<=4) out.push(["fa-temperature-low",`Mínima de ${w.min}°: abrigo para primera hora.`]);
+  return out;
+}
+function tarjetaAvisos(i,titulo){
+  const A=avisosDia(i); if(!A.length) return "";
+  return `<section class="avisos"><p class="lbl"><i class="fa-solid fa-circle-info"></i>${titulo}</p><ul>${A.map(([ic,t,tono,ir])=>`<li class="${tono||""}"><i class="fa-solid ${ic}"></i><span>${esc(t)}${ir?` <button class="enl" data-t="${ir}">Ver</button>`:""}</span></li>`).join("")}</ul></section>`;
+}
+/* Mañana, en una línea: para mirarlo antes de dormir */
+function tarjetaManana(i){
+  const d=DIAS[i]; if(!d) return "";
+  const c=ciudad(d.Ciudad),items=itemsDia(d.iso),pr=items.find(x=>x.t!=null),tr=items.find(x=>x.tr),w=climaDia(d.ck,d.iso),n=avisosDia(i).length;
+  return `<button class="manana th" style="--c:${c.c}" data-dia="${i}"><span class="ai"><i class="fa-solid fa-moon"></i></span>
+    <span><small>Mañana · ${esc(c.n)}${w?` · ${w.ico} ${w.max}°/${w.min}°`:""}</small>
+    <b>${pr?`${fmtMin(pr.t)} · ${esc(pr.titulo)}`:"Sin plan todavía"}</b>
+    <em>${tr?esc(tr.titulo)+(tr.t!=null?" a las "+fmtMin(tr.t):"")+". ":""}${n?`${n} ${n===1?"aviso":"avisos"} para el día.`:""}</em></span><i class="fa-solid fa-chevron-right"></i></button>`;
+}
+/* Accesos rápidos para el día a día allí */
+function tarjetaRapidos(ck){
+  const cn=(CIUDADES[ck]||{}).mon!=="HKD",h=hotelNoche(ahoraCN().iso);
+  const xs=[cn&&["fa-qrcode","Pagar","alipays://platformapi/startapp?appId=20000056"],cn&&["fa-expand","Escanear","alipays://platformapi/startapp?saId=10000007"],
+    ["fa-receipt","Gasto",null,"data-act=\"gasto-rapido\""],["fa-language","Frases",null,"data-t=\"kit/frases\""],
+    ["fa-pen-to-square","Pizarra",null,"data-act=\"pizarra\""],["fa-pills","Farmacia",null,"data-act=\"farmacia\""],
+    h&&["fa-person-circle-question","Perdido",null,`data-act="perdido"`],["fa-location-crosshairs","Mi sitio",null,"data-act=\"compartir-ubicacion\""]].filter(Boolean);
+  return `<div class="rapidos">${xs.map(([i,t,u,a])=>u?`<a href="${esc(u)}"><i class="fa-solid ${i}"></i>${t}</a>`:`<button ${a}><i class="fa-solid ${i}"></i>${t}</button>`).join("")}</div>`;
+}
+/* "Me he perdido": para enseñar a cualquiera por la calle */
+function perdido(){
+  const h=hotelNoche(ahoraCN().iso); if(!h) return;
+  const p=lugarHotel(h),hk=p.cn===false;
+  grande((hk?"我迷路了，請幫我回到這間酒店：":"我迷路了，请帮我回到这家酒店：")+"\n"+(p.dir||(p.sin?p.czh:h.Hotel)),
+    `«Me he perdido, ¿me ayuda a volver a este hotel?» ${p.sin?"":h.Hotel}${p.dir?"":". Falta la dirección en chino del hotel: añadidla en Reservas."}`,"",hk?"zh-HK":"zh-CN");
+}
+/* Compartir dónde estoy, con enlace de Amap (China) y de Google Maps */
+function compartirUbicacion(){
+  if(!navigator.geolocation){aviso("Este móvil no da la ubicación.");return}
+  aviso("Buscando dónde estáis…");
+  navigator.geolocation.getCurrentPosition(p=>{
+    const {latitude:la,longitude:lo}=p.coords; nuevaPos(la,lo);
+    const txt=`Estoy aquí:\nAmap: https://uri.amap.com/marker?position=${lo.toFixed(6)},${la.toFixed(6)}&name=${encodeURIComponent("Estoy aquí")}&coordinate=wgs84\nGoogle Maps: https://maps.google.com/?q=${la.toFixed(6)},${lo.toFixed(6)}`;
+    compartirTexto(txt,"Mi ubicación");
+  },()=>aviso("No se ha podido obtener la ubicación."),{enableHighAccuracy:true,timeout:15000,maximumAge:30000});
+}
+
+/* Buscar cerca con el mapa que funciona en cada sitio: Amap en China, Google Maps en Hong Kong */
+const CERCA=[["fa-utensils","Comer","餐厅","restaurants"],["fa-mug-hot","Café","咖啡","cafe"],["fa-store","Tienda 24 h","便利店","convenience store"],["fa-money-bill","Cajero","ATM取款机","ATM"],
+  ["fa-prescription-bottle-medical","Farmacia","药店","pharmacy"],["fa-restroom","Baños","公共厕所","public toilet"],["fa-train-subway","Metro","地铁站","MTR station"],["fa-hospital","Hospital","医院","hospital"]];
+function urlCerca(ck,x){
+  const c=CIUDADES[ck]||{};
+  if(c.mon==="HKD") return "https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(x[3]+" near me");
+  const cerca=POS&&ciudadGPS()===ck;
+  return "https://uri.amap.com/search?keyword="+encodeURIComponent(x[2])+(c.zh?"&city="+encodeURIComponent(c.zh):"")+
+    (cerca?`&center=${POS.lon.toFixed(5)},${POS.lat.toFixed(5)}&coordinate=wgs84`:"")+"&view=map&callnative=1";
+}
+function tarjetaCerca(ck){
+  if(!CIUDADES[ck]) return "";
+  const hk=CIUDADES[ck].mon==="HKD";
+  return `<section class="card"><h2><i class="fa-solid fa-magnifying-glass-location"></i>Cerca de aquí <small>${hk?"Google Maps":"Amap"}</small></h2>
+    <div class="cerca">${CERCA.map(x=>`<a href="${esc(urlCerca(ck,x))}" target="_blank" rel="noopener"><i class="fa-solid ${x[0]}"></i>${x[1]}</a>`).join("")}</div>
+    <p class="n">${POS&&ciudadGPS()===ck?"Busca alrededor de donde estáis.":hk?"Google Maps busca alrededor de vuestra ubicación.":"Busca en la ciudad; con la ubicación activada, alrededor de donde estáis."}</p></section>`;
+}
+/* El plan del día como texto, para mandarlo por WhatsApp o guardarlo */
+function textoDia(i){
+  const d=DIAS[i],c=ciudad(d.Ciudad),h=hotelNoche(d.iso);
+  return [`Día ${i+1} · ${c.n} · ${fecha(d.iso,{weekday:"long",day:"numeric",month:"long"})}`,
+    ...itemsDia(d.iso).map(x=>`${x.t!=null?fmtMin(x.t):"--:--"}  ${x.titulo}${x.lugar&&x.lugar.zh?` (${x.lugar.zh})`:""}`),
+    h&&!sinHotel(h)?`Noche: ${h.Hotel}${limpio(h["Dirección (chino)"])?" · "+h["Dirección (chino)"]:""}`:""].filter(Boolean).join("\n");
+}
+async function compartirTexto(txt,titulo){
+  try{if(navigator.share){await navigator.share({title:titulo,text:txt});return}}catch(e){if(e&&e.name==="AbortError") return}
+  try{await navigator.clipboard.writeText(txt);aviso("Copiado: pégalo donde quieras")}catch(e){aviso("No se ha podido compartir")}
+}
+
 function rHoy(){
   const now=ahoraCN(),hoyI=diaActual(now);
   if(sel==null||(!selManual&&hoyI>=0)) sel=hoyI>=0?hoyI:(now.iso>DIAS[DIAS.length-1].iso?DIAS.length-1:0);
@@ -1374,8 +1813,9 @@ function rHoy(){
   const cuando=esHoy?"Hoy":falta>0&&sel===0?(falta===1?"Mañana empieza":`Faltan ${falta} días`):d.iso<now.iso?"Ya pasó":"";
   let html=`<div class="pila">`+heroFoto(d.ck,{badge:`Día ${sel+1} de ${DIAS.length}${cuando?" · "+cuando:""}`,titulo:c.n,
       sub:fecha(d.iso,{weekday:"long",day:"numeric",month:"long"}),
-      hm:`<span><i class="fa-regular fa-clock"></i>China ${fmtMin(now.min)}</span><span><i class="fa-solid fa-house"></i>Madrid ${horaMadrid(now)}</span>`,
-      izq:CIUDADES[d.ck]?`<button class="cristal" data-ciudad="${d.ck}"><i class="fa-solid fa-book-open"></i>Guía</button>`:"",
+      hm:`<span><i class="fa-regular fa-clock"></i>China ${fmtMin(now.min)}</span><span><i class="fa-solid fa-house"></i>Madrid ${horaMadrid(now)}</span>${solDia(d)?`<span><i class="fa-solid fa-sun"></i>${fmtMin(solDia(d).sale)} – ${fmtMin(solDia(d).pone)}</span>`:""}`,
+      izq:(CIUDADES[d.ck]?`<button class="cristal" data-ciudad="${d.ck}"><i class="fa-solid fa-book-open"></i>Guía</button>`:"")+
+        (esHoy&&hotelNoche(d.iso)?`<button class="cristal" data-taxi-hotel="" data-hk="${esc(hotelNoche(d.iso).Ciudad)}"><i class="fa-solid fa-taxi"></i>Al hotel</button>`:""),
       der:CIUDADES[d.ck]?pildoraClima(d.ck,d.iso):""})+
     `<div class="tira" id="tira">${DIAS.map((x,i)=>`<button data-dia="${i}" class="${i===sel?"on":""}${x.iso===now.iso?" hoy":""}" style="--dc:${ciudad(x.Ciudad).c}" aria-label="Día ${i+1}, ${esc(x.Ciudad)}">
       <span>${fecha(x.iso,{weekday:"short"}).slice(0,2)}</span><b>${D(x.iso).getDate()}</b><i></i></button>`).join("")}</div>`;
@@ -1397,14 +1837,21 @@ function rHoy(){
     html+=`<div class="ahora">
       ${actual?`<div><span class="ai"><i class="fa-solid ${aqui?"fa-location-dot":"fa-play"}"></i></span><small>${aqui?"Estáis aquí":"Ahora"}</small><b>${esc(actual.titulo)}</b>${actual.fin&&actual.fin>now.min?`<em>hasta las ${fmtMin(actual.fin)}</em>`:""}</div>`
               :`<div><span class="ai"><i class="fa-solid fa-mug-hot"></i></span><small>Ahora</small><b>${sig?"Tiempo libre":"Fin del plan de hoy"}</b></div>`}
-      ${sig?`<div><span class="ai gris"><i class="fa-solid fa-forward"></i></span><small>${sig.t>now.min?`Después, en ${durTxt(sig.t-now.min)}`:`Después. Vais ${durTxt(now.min-sig.t)} por detrás del plan`}</small><b>${esc(sig.titulo)}</b><em>a las ${fmtMin(sig.t)}${dSig!=null&&dSig<150?`, a ${kmTxt(dSig)} de aquí`:""}</em></div>`:""}
+      ${sig?`<div><span class="ai gris"><i class="fa-solid fa-forward"></i></span><small>${sig.t>now.min?`Después, en ${durTxt(sig.t-now.min)}`:`Después. Vais ${durTxt(now.min-sig.t)} por detrás del plan`}</small><b>${esc(sig.titulo)}</b><em>a las ${fmtMin(sig.t)}${dSig!=null&&dSig<150?`, a ${kmTxt(dSig)} de aquí`:""}${urlRuta(sig.lugar)?` · <a href="${esc(urlRuta(sig.lugar))}" target="_blank" rel="noopener">Cómo llegar</a>`:""}</em></div>`:""}
       ${tr?`<div class="tr"><span class="ai gris"><i class="fa-solid ${/vuelo/i.test(tr.t.Tipo)?"fa-plane":"fa-train-subway"}"></i></span><small>Próximo trayecto, en ${durTxt(tr.falta)}</small><b>${esc(tr.t.Origen)} → ${esc(tr.t.Destino)}</b>
         <em>${fecha(tr.iso,{weekday:"short",day:"numeric",month:"short"})}${tr.s!=null?" a las "+fmtMin(tr.s):""}</em></div>`:""}
     </div>`;
   }
 
+  if(now.iso<DIAS[0].iso) html+=tarjetaFechasClave();          // antes de salir: qué hay que comprar y cuándo
+  if(esHoy) html+=tarjetaRapidos(gk||d.ck);
+  if(esHoy&&now.min>=18*60&&DIAS[sel+1]) html+=tarjetaManana(sel+1);
+  html+=tarjetaAvisos(sel,esHoy?"Para hoy":"Para este día");
   html+=htmlDia(sel,{vivo:true,aqui,dist});
+  html+=`<button class="enl" data-compartir-dia="${sel}" style="justify-self:center"><i class="fa-solid fa-share-nodes"></i> Compartir el plan del día</button>`;
   if(!geoActiva()) html+=`<button class="enl" data-act="geo" style="justify-self:center"><i class="fa-solid fa-location-arrow"></i> Usar mi ubicación para ajustar el plan</button>`;
+
+  if(esHoy) html+=tarjetaCerca(gk||d.ck);
 
   /* Dónde se duerme */
   const h=hotelNoche(d.iso);
@@ -1431,6 +1878,14 @@ function detalleItem(k,di){
     ${x.notas?`<p>${esc(x.notas)}</p>`:""}`;
   html+=fichaLugar(p)+`<div class="btns">`+botonesLugar(p,`data-taxi-item="${esc(k)}"`);
   if(x.a) html+=`<button class="btn" data-editar-agenda="${esc(x.a.ID)}"><i class="fa-solid fa-pen"></i>Editar</button><button class="btn peligro" data-borrar-agenda="${esc(x.a.ID)}"><i class="fa-solid fa-trash"></i>Borrar</button>`;
+  if(x.tr){                                   // el billete guardado, a un toque desde el plan
+    const k=claveDoc("Transporte",x.tr);
+    html+=DOCS.has(k)?`<button class="btn azul" data-ver-doc="${esc(k)}"><i class="fa-solid fa-ticket"></i>Ver billete</button>`:"";
+    if(/vuelo/i.test(x.tr.Tipo)&&limpio(x.tr["Nº vuelo/tren"])) html+=`<a class="btn" href="${esc(urlVuelo(x.tr["Nº vuelo/tren"]))}" target="_blank" rel="noopener"><i class="fa-solid fa-plane-circle-check"></i>Estado del vuelo</a>`;
+    if(limpio(x.tr.Localizador)) html+=`<button class="btn" data-copiar="${esc(x.tr.Localizador)}"><i class="fa-regular fa-copy"></i>Localizador ${esc(x.tr.Localizador)}</button>`;
+  }
+  if(p&&p.hotel){const h=DATA.alojamiento.find(h=>lugarHotel(h).nombre===p.nombre),k=h&&claveDoc("Alojamiento",h);
+    if(k&&DOCS.has(k)) html+=`<button class="btn" data-ver-doc="${esc(k)}"><i class="fa-solid fa-file-lines"></i>Ver reserva</button>`}
   if(x.tr&&x.tr._row) html+=`<button class="btn" data-edit="Transporte" data-row="${x.tr._row}"><i class="fa-solid fa-pen"></i>Editar trayecto</button>`;
   hoja(html+`</div>`);
 }
@@ -1445,9 +1900,10 @@ function fichaLugar(p){
 }
 function botonesLugar(p,taxi){
   if(!p||p.sin||!(p.zh||p.dir||p.hotel)) return "";
-  const am=urlAmap(p),zh=p.zh||p.dir;
-  return `${am?`<a class="btn azul" href="${esc(am)}" target="_blank" rel="noopener"><i class="fa-solid fa-diamond-turn-right"></i>Abrir en Amap</a>`:""}
+  const am=mapaLocal(p),zh=p.zh||p.dir;
+  return `${am?`<a class="btn azul" href="${esc(am[0])}" target="_blank" rel="noopener"><i class="fa-solid fa-diamond-turn-right"></i>Abrir en ${am[1]}</a>`:""}
     <a class="btn ${am?"":"azul"}" href="${esc(urlMapas(p))}" target="_blank" rel="noopener"><i class="fa-solid fa-map-location-dot"></i>Mapas</a>
+    ${urlRuta(p)?`<a class="btn" href="${esc(urlRuta(p))}" target="_blank" rel="noopener"><i class="fa-solid fa-route"></i>Cómo llegar</a>`:""}
     <button class="btn" ${taxi}><i class="fa-solid fa-taxi"></i>Taxista</button>
     ${zh?`<button class="btn" data-copiar="${esc(zh)}"><i class="fa-regular fa-copy"></i>Copiar para DiDi</button>`:""}`;
 }
@@ -1581,7 +2037,17 @@ function rViaje(){
     if(d.ck!==prev){prev=d.ck;html+=`<h3 class="cd th" style="--c:${c.c}"><i class="fa-solid ${c.ico||"fa-location-dot"}"></i>${esc(c.n)}<span>${esc(c.zh)}</span></h3>`}
     html+=filaDia(d,i,now);
   });
-  $("s-viaje").innerHTML=html+`</section></div>`;
+  html+=`</section>`;
+  const notas=DIAS.map((d,i)=>({d,i,n:DATA.diario.find(x=>toISO(x.Fecha)===d.iso)})).filter(x=>x.n&&limpio(x.n.Nota));
+  html+=`<section class="card"><div class="ch"><h2 style="margin:0"><i class="fa-solid fa-book"></i>Diario del viaje</h2>${notas.length?`<button class="btn sm" data-act="compartir-diario"><i class="fa-solid fa-share-nodes"></i>Compartir</button>`:""}</div>
+    ${notas.length?`<div class="diario">${notas.map(x=>`<button data-ir="${x.i}"><span class="dd th" style="--c:${ciudad(x.d.Ciudad).c}"><b>${D(x.d.iso).getDate()}</b><span>${fecha(x.d.iso,{month:"short"})}</span></span>
+      <span><small>Día ${x.i+1} · ${esc(ciudad(x.d.Ciudad).n)}</small>${esc(x.n.Nota)}</span></button>`).join("")}</div>`
+      :`<p class="n" style="margin:0">Aún no hay notas. Se escriben al final de la pantalla Hoy, cada día.</p>`}</section>`;
+  $("s-viaje").innerHTML=html+`</div>`;
+}
+function textoDiario(){
+  return DIAS.map((d,i)=>{const n=DATA.diario.find(x=>toISO(x.Fecha)===d.iso);
+    return n&&limpio(n.Nota)?`Día ${i+1} · ${ciudad(d.Ciudad).n} · ${fecha(d.iso,{weekday:"long",day:"numeric",month:"long"})}\n${limpio(n.Nota)}`:""}).filter(Boolean).join("\n\n");
 }
 function rangoFechas(ds){
   if(!ds.length) return "";
@@ -1619,10 +2085,22 @@ function rCiudad(ck){
   if(Ls.length) html+=`<section class="card"><h2><i class="fa-solid fa-camera"></i>Qué ver <small>${Ls.length} sitios</small></h2><div class="lgs">${Ls.map(x=>`<button data-lugar="${esc(x.l.ID)}">
       <span class="nn">${x.n}</span><b>${esc(x.l.Nombre)}</b><span class="zh">${esc(limpio(x.l.Chino))}</span>
       <small>${[x.o?fecha(x.o.iso,{weekday:"short",day:"numeric"}):"Fuera de la agenda",limpio(x.l.Precio),limpio(x.l.Horario)].filter(Boolean).map(esc).join(" · ")}</small></button>`).join("")}</div></section>`;
+  if(TEMPORADA[ck]){const so=ds.length?solDia(ds[0].d):null;
+    html+=`<section class="temporada"><p class="lbl"><i class="fa-solid fa-leaf"></i>En vuestras fechas</p><p>${esc(TEMPORADA[ck])}</p>
+      ${so?`<p class="n"><i class="fa-solid fa-sun" style="color:#F59E0B"></i> Amanece a las ${fmtMin(so.sale)} y anochece a las ${fmtMin(so.pone)} (${fecha(ds[0].d.iso,{day:"numeric",month:"short"})}).</p>`:""}</section>`}
   if(g.comer) html+=`<section class="card"><div class="ch"><h2 style="margin:0"><i class="fa-solid fa-bowl-food"></i>Comer en ${esc(c.n)}</h2><span class="picante">Pedir: 不要辣 · sin picante</span></div>
     <p class="n" style="margin:-4px 0 12px">Platos típicos. Toca uno para enseñarlo en grande al camarero.</p>
-    <div class="foods">${g.comer.map(([es,zh,py,t])=>`<button class="food" data-frase="${zh}" data-es="${esc(es+". "+t)}" data-py="${py}">
+    <div class="foods">${g.comer.map(([es,zh,py,t])=>`<button class="food" data-frase="${zh}" data-es="${esc(es+". "+t)}" data-py="${py}" data-lang="${c.mon==="HKD"?"zh-HK":"zh-CN"}">
       <b>${esc(es)}</b><span class="zh">${zh}<small>${py}</small></span><p>${esc(t)}</p><span class="ver"><i class="fa-solid fa-expand"></i>Enseñar en grande</span></button>`).join("")}</div></section>`;
+  const dn=DONDE[ck]||{},sitio=(s,ic)=>{const p={nombre:s[0],zh:s[1],cn:c.mon==="CNY",czh:c.zh},m=mapaLocal(p)||[urlMapas(p),"Mapas"];
+    return `<div class="sitio"><span class="ic ${ic[1]}"><i class="fa-solid ${ic[0]}"></i></span><div><b>${esc(s[0])}</b> <span class="zh">${esc(s[1])}</span><p class="n">${esc(s[2])}</p>
+      <div class="acc"><a class="btn sm" href="${esc(m[0])}" target="_blank" rel="noopener"><i class="fa-solid fa-diamond-turn-right"></i>${m[1]}</a>
+      <button class="btn sm" data-frase="${esc(s[1])}" data-es="${esc(s[0])}" data-lang="${c.mon==="HKD"?"zh-HK":"zh-CN"}"><i class="fa-solid fa-expand"></i>Enseñar</button></div></div></div>`};
+  if(dn.comer||dn.extras) html+=`<section class="card"><h2><i class="fa-solid fa-star"></i>Recomendados en ${esc(c.n)}</h2>
+    ${dn.comer?`<p class="lbl"><i class="fa-solid fa-utensils"></i>Dónde comer</p><div class="sitios">${dn.comer.map(s=>sitio(s,["fa-utensils","ic-amber"])).join("")}</div>`:""}
+    ${dn.extras?`<p class="lbl" style="margin-top:16px"><i class="fa-solid fa-wand-magic-sparkles"></i>Si os sobra tiempo</p><div class="sitios">${dn.extras.map(s=>sitio(s,["fa-wand-magic-sparkles","ic-purple"])).join("")}</div>`:""}
+    ${LLUVIA[ck]?`<p class="lbl" style="margin-top:16px"><i class="fa-solid fa-cloud-rain"></i>Si llueve</p><div class="sitios">${sitio(LLUVIA[ck],["fa-umbrella","ic-sky"])}</div>`:""}
+    <p class="n">Horarios y funciones cambian: confirmadlos antes de ir. Entradas de espectáculos en Trip.com o Klook.</p></section>`;
   if(g.consejos) html+=`<section class="card"><h2><i class="fa-solid fa-lightbulb"></i>Consejos</h2><ul class="tips">${g.consejos.map(t=>`<li><i class="fa-solid fa-check"></i><span>${esc(t)}</span></li>`).join("")}</ul></section>`;
   $("s-viaje").innerHTML=html+`</div>`;
 }
@@ -1701,12 +2179,25 @@ function montarMapa(){
     const ph=$("mapaV"); if(!ph||tab!=="viaje") return;
     if(MAPA.map) MAPA.map.remove();
     const el=document.createElement("div"); el.id="mapaV"; el.className="lmap on"; ph.replaceWith(el);
-    const map=L.map(el,{scrollWheelZoom:false});
-    MAPA={k,el,map,yo:null};
+    const tactil=matchMedia("(pointer:coarse)").matches;
+    const map=L.map(el,{scrollWheelZoom:false,dragging:!tactil,tap:false});   // en el móvil un dedo mueve la página; dos, el mapa
+    MAPA={k,el,map,yo:null,tactil};
+    const ctl=L.control({position:"topright"});
+    ctl.onAdd=()=>{const b=L.DomUtil.create("button","mapa-amp");b.type="button";b.innerHTML=`<i class="fa-solid fa-expand"></i><span>Ampliar</span>`;
+      L.DomEvent.disableClickPropagation(b);b.onclick=()=>ampliarMapa(!el.classList.contains("full"));return b};
+    ctl.addTo(map);
     dibujarMapa(map,def); listo();
   }).catch(()=>{
     const ph=$("mapaV"); if(ph&&ciudadSel) ph.innerHTML=`<p class="n">El mapa necesita conexión. Los sitios de abajo se abren en Mapas igualmente.</p>`;
   });
+}
+
+function ampliarMapa(on){
+  const {el,map,tactil}=MAPA; if(!el||!map) return;
+  el.classList.toggle("full",on);
+  const b=el.querySelector(".mapa-amp"); if(b) b.innerHTML=on?`<i class="fa-solid fa-compress"></i><span>Cerrar</span>`:`<i class="fa-solid fa-expand"></i><span>Ampliar</span>`;
+  if(tactil){if(on) map.dragging.enable(); else map.dragging.disable()}
+  setTimeout(()=>map.invalidateSize(),50);
 }
 
 /* ---------- RESERVAS ---------- */
@@ -1724,7 +2215,7 @@ function tarjetaTrayecto(t){
       <span class="tipo ${vu?"av":"tr"}"><i class="fa-solid ${vu?"fa-plane":"fa-train"}"></i>${esc(t.Tipo)}</span></span></div>
     <h4>${esc(t.Origen)} → ${esc(t.Destino)}</h4>
     <div class="caja"><b><i class="fa-regular fa-clock" style="color:var(--faint)"></i> ${esc(horas)||"Horario por definir"}</b>
-      ${limpio(t["Nº vuelo/tren"])?`<span class="n">${vu?"Vuelo":"Tren"} ${esc(t["Nº vuelo/tren"])}</span>`:""}</div>
+      ${limpio(t["Nº vuelo/tren"])?`<span class="n">${vu?"Vuelo":"Tren"} ${esc(t["Nº vuelo/tren"])}${vu?` · <a href="${esc(urlVuelo(t["Nº vuelo/tren"]))}" target="_blank" rel="noopener">estado del vuelo</a>`:""}</span>`:""}</div>
     ${loc?`<button class="loc" data-copiar="${esc(loc)}"><i class="fa-solid fa-ticket"></i>Localizador: ${esc(loc)}<i class="fa-regular fa-copy" style="opacity:.6"></i></button>`:""}
     ${pre!=null?`<p class="hp"><b>${eur(pre)}</b></p>`:""}${limpio(t.Notas)?`<p class="n">${esc(t.Notas)}</p>`:""}
     <div class="pie">${botonesDoc(claveDoc("Transporte",t))}${t._row?`<button class="btn sm" data-edit="Transporte" data-row="${t._row}"><i class="fa-solid fa-pen"></i>Editar</button>`:""}</div>
@@ -1733,7 +2224,7 @@ function tarjetaTrayecto(t){
 function rReservas(){
   const tabs=[["hoteles","Hoteles","fa-hotel"],["transporte","Transporte","fa-train-subway"],["entradas","Entradas","fa-ticket"]];
   let html=`<div class="pila"><div class="cab"><h1><i class="fa-solid fa-ticket"></i>Reservas</h1><p>Hoteles, trayectos y entradas, con sus billetes guardados en el móvil.</p>
-    <div class="seg">${tabs.map(([k,t,i])=>`<button data-res="${k}" class="${resTab===k?"on":""}"><i class="fa-solid ${i}"></i>${t}</button>`).join("")}</div></div>`;
+    <div class="seg compacto">${tabs.map(([k,t,i])=>`<button data-res="${k}" class="${resTab===k?"on":""}"><i class="fa-solid ${i}"></i>${t}</button>`).join("")}</div></div>`;
   if(resTab==="entradas"){
     const E=entradas(),ok=E.filter(x=>x.ok).length,ks=[...new Set(DIAS.map(d=>d.ck))].filter(k=>CIUDADES[k]);
     html+=`<section class="card"><h2><i class="fa-solid fa-ticket"></i>Control de entradas</h2>
@@ -1752,6 +2243,9 @@ function rReservas(){
         <button class="btn pri"><i class="fa-solid fa-plus"></i>Añadir a la lista</button></form>
       <p class="n">Lo que añadas aparece también en la guía de su ciudad.</p></section>`;
   }else if(resTab==="hoteles"){
+    const sinDir=DATA.alojamiento.filter(h=>!sinHotel(h)&&!limpio(h["Dirección (chino)"]));
+    if(sinDir.length&&v2()) html+=`<p class="alerta"><i class="fa-solid fa-language"></i><span>Falta la dirección en chino de ${sinDir.map(h=>esc(h.Hotel)).join(", ")}. Es lo que se enseña al taxista y lo que busca Amap.
+      En la reserva de Trip.com o Booking suele aparecer (地址 o «dirección en el idioma local»): copiadla y pegadla en <b>Editar</b>.</span></p>`;
     html+=`<div class="rgrid">${DATA.alojamiento.map(h=>tarjetaHotel(h,{estado:1,precio:1,docs:1,editar:1})).join("")}</div>`;
   }else{
     html+=`<div class="rgrid">${DATA.transporte.map(tarjetaTrayecto).join("")}</div>`;
@@ -1805,22 +2299,26 @@ function rGastos(){
       <div class="seg mini" id="gP">${[p1,p2].map(p=>`<button type="button" data-pag="${esc(p)}" class="${p===gPag?"on":""}">Paga ${esc(p)}</button>`).join("")}</div>
       <button class="btn pri ancho"><i class="fa-solid fa-plus"></i>Añadir gasto</button>
     </form>`;
+  if(!G.length) html+=tarjetaPresupuesto(G,now);
   if(G.length){
-    html+=`<div class="kpis"><div class="kpi"><small>Total</small><b>${eur(tot)}</b></div><div class="kpi"><small>Ha pagado ${esc(p1)}</small><b>${eur(pag1)}</b></div>
-        <div class="kpi"><small>Ha pagado ${esc(p2)}</small><b>${eur(pag2)}</b></div></div>
+    const hoyT=G.filter(g=>toISO(g.Fecha)===now.iso).reduce((s,g)=>s+(num(g.EUR)||0),0);
+    html+=`<div class="kpis"><div class="kpi"><small>Total</small><b>${eur(tot)}</b></div><div class="kpi"><small>Hoy</small><b>${eur(hoyT)}</b></div>
+        <div class="kpi"><small>Ha pagado ${esc(p1)}</small><b>${eur(pag1)}</b></div><div class="kpi"><small>Ha pagado ${esc(p2)}</small><b>${eur(pag2)}</b></div></div>
+      ${tarjetaPresupuesto(G,now)}
       <section class="card"><h2><i class="fa-solid fa-scale-balanced"></i>Cuentas</h2>
         <p style="font-weight:800;color:var(--ink)">${Math.abs(dif)<0.005?"Estáis en paz.":`${esc(dif>0?p2:p1)} debe ${eur(Math.abs(dif))} a ${esc(dif>0?p1:p2)}.`}</p></section>
       <section class="card"><h2><i class="fa-solid fa-chart-simple"></i>Por categoría</h2>${barras(por(g=>g["Categoría"]))}</section>
       <section class="card"><h2><i class="fa-solid fa-map-pin"></i>Por ciudad</h2>${barras(por(g=>g.Ciudad))}</section>
-      <section class="card"><h2><i class="fa-solid fa-receipt"></i>Todos los gastos</h2>`;
+      <section class="card"><div class="ch"><h2 style="margin:0"><i class="fa-solid fa-receipt"></i>Todos los gastos</h2>
+        <button class="btn sm" data-act="csv"><i class="fa-solid fa-file-csv"></i>Exportar</button></div>`;
     let f=null;
     G.forEach(g=>{
       const iso=toISO(g.Fecha),[fa,col]=ICO_CAT[g["Categoría"]]||ICO_CAT.Otros;
       if(iso!==f){f=iso;const t=G.filter(x=>toISO(x.Fecha)===iso).reduce((s,x)=>s+(num(x.EUR)||0),0);
         html+=`<h3 class="gd"><span>${fecha(iso,{weekday:"long",day:"numeric",month:"long"})}</span><span>${eur(t)}</span></h3>`}
       html+=`<div class="g"><span class="ic ${col}" style="width:34px;height:34px;border-radius:12px;font-size:13px"><i class="fa-solid ${fa}"></i></span>
-        <div><b>${esc(limpio(g.Concepto)||g["Categoría"])}</b><span class="n">${esc(g["Categoría"])} · paga ${esc(g["Pagó"])}</span></div>
-        <div class="gi"><b>${dinero(num(g.Importe),g.Moneda)}</b>${g.Moneda!=="EUR"?`<span class="n">${eur(num(g.EUR))}</span>`:""}</div>
+        <button class="gb" data-editar-gasto="${esc(g.ID)}"><b>${esc(limpio(g.Concepto)||g["Categoría"])}</b><span class="n">${esc(g["Categoría"])} · paga ${esc(g["Pagó"])}${limpio(g.Ciudad)?" · "+esc(g.Ciudad):""}</span></button>
+        <button class="gi gb" data-editar-gasto="${esc(g.ID)}"><b>${dinero(num(g.Importe),g.Moneda)}</b>${g.Moneda!=="EUR"?`<span class="n">${eur(num(g.EUR))}</span>`:""}</button>
         <button class="enl" data-borrar-gasto="${esc(g.ID)}" aria-label="Borrar gasto"><i class="fa-solid fa-trash"></i></button></div>`;
     });
     html+=`</section>`;
@@ -1828,16 +2326,113 @@ function rGastos(){
   $("s-gastos").innerHTML=html+`<p class="n" style="text-align:center">Cambio del ${fecha(FX.date,{day:"numeric",month:"long"})} (Banco Central Europeo). Cada gasto guarda su valor en euros del día que se apuntó.</p></div>`;
 }
 
-/* ---------- KIT ---------- */
-function rKit(){
-  const L=DATA.checklist,hechas=L.filter(c=>c.Hecho===true).length,[p1,p2]=personas(),ts=+LS.get("china-ts"),n=pendientes();
-  const enCasa=window.navigator.standalone||matchMedia("(display-mode: standalone)").matches;
-  const est=syncEstado==="…"?"Sincronizando…":syncEstado==="sin"?"Sin conexión con la hoja: se usa la última copia guardada.":
-    ts?"Última sincronización: "+new Date(ts).toLocaleString("es-ES",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"})+".":"Aún sin sincronizar.";
-  const seg=ajuste("seguro","");
-  $("s-kit").innerHTML=`<div class="pila"><div class="cab"><h1><i class="fa-solid fa-suitcase-medical"></i>Kit de viaje</h1><p>Preparativos, seguro, documentos, frases y ajustes.</p></div>
-    ${enCasa?"":`<p class="alerta"><i class="fa-solid fa-mobile-screen-button"></i>Instala la app: en Safari, pulsa Compartir y luego «Añadir a pantalla de inicio». Así funciona sin conexión y no pierde datos.</p>`}
+/* Presupuesto para gastos del viaje (sin hoteles ni trayectos, que ya van en Reservas) */
+function tarjetaPresupuesto(G,now){
+  const P=num(ajuste("presupuesto","")),ini=DIAS[0].iso,fin=DIAS[DIAS.length-1].iso;
+  const enViaje=G.filter(g=>{const i=toISO(g.Fecha);return i&&i>=ini&&i<=fin}),gast=enViaje.reduce((s,g)=>s+(num(g.EUR)||0),0);
+  const pasados=now.iso<ini?0:now.iso>fin?DIAS.length:diasEntre(ini,now.iso)+1,quedan=DIAS.length-pasados+(now.iso>=ini&&now.iso<=fin?1:0);
+  const form=`<form data-form="presupuesto" class="add"><input id="preI" type="text" inputmode="decimal" placeholder="Presupuesto en euros" aria-label="Presupuesto en euros" value="${P?String(P).replace(".",","):""}"><button class="btn">${P?"Cambiar":"Fijar"}</button></form>`;
+  if(!P) return `<section class="card"><h2><i class="fa-solid fa-piggy-bank"></i>Presupuesto</h2><p class="n" style="margin:-6px 0 0">Cuánto queréis gastar allí en comida, entradas, transporte y compras. La app os dirá cuánto podéis gastar al día.</p>${form}</section>`;
+  const pct=Math.min(100,gast/P*100),resto=P-gast,diario=quedan>0?resto/quedan:0,media=pasados?gast/pasados:0;
+  return `<section class="card"><h2><i class="fa-solid fa-piggy-bank"></i>Presupuesto <small>${eur(P)}</small></h2>
+    <div class="prog"><div><span>Gastado en el viaje</span><b>${eur(gast)} (${Math.round(gast/P*100)} %)</b></div><div class="bar"><i style="width:${pct}%;${resto<0?"background:var(--rojo)":""}"></i></div></div>
+    <p class="n" style="font-size:13px">${resto<0?`Os habéis pasado ${eur(-resto)}.`:quedan>0&&pasados?`Quedan ${eur(resto)}: unos <b>${eur(diario)} al día</b> para los ${quedan} días que faltan. Hasta ahora, ${eur(media)} de media.`
+      :now.iso<ini?`Son ${eur(P/DIAS.length)} al día para ${DIAS.length} días.`:`Os sobraron ${eur(resto)}.`}</p>${form}</section>`;
+}
+function formGasto(id){
+  const g=DATA.gastos.find(x=>x.ID===id); if(!g) return;
+  const [p1,p2]=personas(),pagos=[...new Set([p1,p2,g["Pagó"]].filter(Boolean))];
+  hoja(`<form data-form="editar-gasto" data-id="${esc(id)}"><p class="dk"><i class="fa-solid fa-receipt"></i>${fecha(toISO(g.Fecha),{weekday:"long",day:"numeric",month:"long"})}</p><h3>Editar gasto</h3>
+    <div class="dos"><div><label for="egI">Importe</label><input id="egI" type="text" inputmode="decimal" value="${esc(String(num(g.Importe)??"").replace(".",","))}" required></div>
+      <div><label for="egM">Moneda</label><select id="egM">${["CNY","HKD","EUR"].map(m=>`<option ${m===g.Moneda?"selected":""}>${m}</option>`).join("")}</select></div></div>
+    <label for="egC">Concepto</label><input id="egC" type="text" value="${esc(g.Concepto)}">
+    <div class="dos"><div><label for="egK">Categoría</label><select id="egK">${CATEGORIAS.map(c=>`<option ${c===g["Categoría"]?"selected":""}>${c}</option>`).join("")}</select></div>
+      <div><label for="egP">Pagó</label><select id="egP">${pagos.map(p=>`<option ${p===g["Pagó"]?"selected":""}>${esc(p)}</option>`).join("")}</select></div></div>
+    <div class="btns"><button type="button" class="btn peligro" data-borrar-gasto="${esc(id)}"><i class="fa-solid fa-trash"></i>Borrar</button>
+      <button type="button" class="btn" data-act="cerrar">Cancelar</button><button class="btn pri"><i class="fa-solid fa-check"></i>Guardar</button></div></form>`);
+}
+function exportarCSV(){
+  const q=v=>{v=String(v??"");return /[;"\n]/.test(v)?`"${v.replace(/"/g,'""')}"`:v};
+  const n=v=>v==null?"":String(Math.round(v*100)/100).replace(".",",");
+  const filas=[["Fecha","Ciudad","Concepto","Categoría","Importe","Moneda","EUR","Pagó"],
+    ...[...DATA.gastos].sort((a,b)=>String(a.Fecha).localeCompare(String(b.Fecha))).map(g=>[toISO(g.Fecha)||g.Fecha,g.Ciudad,g.Concepto,g["Categoría"],n(num(g.Importe)),g.Moneda,n(num(g.EUR)),g["Pagó"]])];
+  return "﻿"+filas.map(f=>f.map(q).join(";")).join("\r\n");
+}
 
+/* ---------- KIT ---------- */
+const IOS=/iPhone|iPad|iPod/.test(navigator.userAgent)||(navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1);
+const tienda=a=>IOS?`https://apps.apple.com/es/app/id${a[5]}`:a[6]?`https://play.google.com/store/apps/details?id=${a[6]}`:`https://play.google.com/store/search?q=${encodeURIComponent(a[0])}&c=apps`;
+const KIT_TABS=[["preparar","Preparar","fa-list-check"],["apps","Apps","fa-mobile-screen"],["frases","Frases","fa-language"],["ajustes","Ajustes","fa-gear"]];
+let kitTab="preparar";
+
+/* Fechas en que sale a la venta lo que aún falta por comprar */
+function fechasClave(){
+  const out=[],menos=(iso,n)=>{const d=D(iso);d.setDate(d.getDate()-n);return isoDe(d)};
+  if(DIAS.length) out.push({iso:menos(DIAS[0].iso,3),txt:"Tarjeta de llegada online",det:"Se puede rellenar en las 72 h antes de aterrizar. Gratis.",url:"https://s.nia.gov.cn/ArrivalCardFillingPC/",ico:"fa-passport",
+    hecho:DATA.checklist.some(c=>/tarjeta de llegada/i.test(c.Tarea)&&c.Hecho===true)});
+  const o=primeraVisita();
+  DATA.lugares.forEach(l=>{
+    const v=VENTAS[norm(l.Nombre)],vi=o[norm(l.Nombre)]; if(!v||!vi) return;
+    out.push({iso:menos(vi.iso,v.dias),hora:v.hora,txt:"Entradas: "+l.Nombre,det:`Para el ${fecha(vi.iso,{weekday:"long",day:"numeric"})}. En ${v.donde}.`,url:v.url,ico:"fa-ticket",hecho:ajuste("ent:"+l.ID,"")==="1"});
+  });
+  DATA.transporte.forEach(t=>{                // check-in online: suele abrir 24-48 h antes; el vuelo de ida sale la víspera de llegar
+    const iso=toISO(t.Fecha); if(!iso||!/vuelo/i.test(t.Tipo)) return;
+    const llegaManana=!CIUDADES[claveCiudad(t.Origen)]&&horaMin(t.Salida)==null&&(horaMin(t.Llegada)??0)<14*60,sale=llegaManana?menos(iso,1):iso;
+    out.push({iso:menos(sale,1),hasta:sale,txt:`Check-in online: ${t.Origen} → ${t.Destino}`,det:`El vuelo sale el ${fecha(sale,{weekday:"long",day:"numeric"})}. Suele abrir 24-48 h antes: elegid asientos juntos y guardad la tarjeta de embarque en el móvil.`,
+      url:limpio(t["Nº vuelo/tren"])?urlVuelo(t["Nº vuelo/tren"]):"",ico:"fa-plane-departure",hecho:false});
+  });
+  DATA.transporte.forEach(t=>{
+    const iso=toISO(t.Fecha); if(!iso||!/tren/i.test(t.Tipo)||limpio(t.Estado)==="Reservado") return;
+    out.push({iso:menos(iso,14),txt:`Tren ${t.Origen} → ${t.Destino}`,det:`Para el ${fecha(iso,{weekday:"long",day:"numeric"})}. Salen 15 días antes; cada estación abre a una hora.`,url:"https://www.12306.cn/en/index.html",ico:"fa-train",hecho:false});
+  });
+  return out.sort((a,b)=>a.iso.localeCompare(b.iso));
+}
+const urlVuelo=n=>"https://www.flightradar24.com/data/flights/"+encodeURIComponent(String(n).toLowerCase().replace(/[^a-z0-9]/g,""));
+function tarjetaFechasClave(todas){
+  const now=ahoraCN(),F=fechasClave().filter(f=>todas||!f.hecho&&(f.hasta?now.iso<=f.hasta:diasEntre(now.iso,f.iso)>=-3)&&now.iso<=DIAS[0].iso);
+  if(!F.length) return "";
+  return `<section class="card"><h2><i class="fa-regular fa-bell"></i>Fechas clave para comprar</h2><div class="fc">${F.map(f=>{
+    const d=diasEntre(now.iso,f.iso),cuando=f.hecho?"Hecho":d>1?`En ${d} días`:d===1?"Mañana":d===0?"Hoy":"Ya a la venta";
+    return `<${f.url?"a":"div"} class="fci ${f.hecho?"ok":d<=0?"ya":""}" ${f.url?`href="${esc(f.url)}" target="_blank" rel="noopener"`:""}><span class="ic ic-rose"><i class="fa-solid ${f.ico}"></i></span>
+      <span><b>${esc(f.txt)}</b><span class="n">${fecha(f.iso,{weekday:"short",day:"numeric",month:"short"})}${f.hora?` a las ${f.hora} de China (${horaEspana(f.iso,f.hora)} en España)`:""}. ${esc(f.det)}</span></span>
+      <em>${cuando}</em></${f.url?"a":"div"}>`}).join("")}</div>
+    <p class="n">Se pueden pasar al Calendario con alarma desde Kit → Ajustes.</p></section>`;
+}
+function horaEspana(iso,h){                   // China va 6 h por delante de España en horario de verano y 7 h en invierno (cambio: último domingo de octubre)
+  const d=D(iso),fin=new Date(d.getFullYear(),9,31);fin.setDate(31-fin.getDay());
+  return fmtMin((horaMin(h)-(d<fin?6:7)*60+1440)%1440);
+}
+
+function rKit(){
+  if(!KIT_TABS.some(t=>t[0]===kitTab)) kitTab="preparar";
+  const enCasa=window.navigator.standalone||matchMedia("(display-mode: standalone)").matches;
+  let html=`<div class="pila"><div class="cab"><h1><i class="fa-solid fa-suitcase-medical"></i>Kit de viaje</h1><p>Preparativos, apps chinas, dinero, frases y ajustes.</p>
+    <div class="seg compacto">${KIT_TABS.map(([k,t,i])=>`<button data-kit="${k}" class="${kitTab===k?"on":""}"><i class="fa-solid ${i}"></i>${t}</button>`).join("")}</div></div>
+    ${enCasa?"":`<p class="alerta"><i class="fa-solid fa-mobile-screen-button"></i>${IOS?"Instala la app: en Safari, pulsa Compartir y luego «Añadir a pantalla de inicio».":"Instala la app: en Chrome, menú ⋮ y «Añadir a pantalla de inicio»."} Así funciona sin conexión y no pierde datos.</p>`}`;
+  html+=kitTab==="apps"?kitApps():kitTab==="frases"?kitFrases():kitTab==="ajustes"?kitAjustes():kitPreparar();
+  $("s-kit").innerHTML=html+`<p class="n" style="text-align:center">Fotos de las ciudades: Wikimedia Commons (autoría y licencia en cada foto).</p></div>`;
+}
+/* ---------- Listas compartidas (maleta, compras): cada marca y cada elemento es una fila de Ajustes ---------- */
+function itemsLista(k){
+  const base=k==="maleta"?MALETA:[],propios=DATA.ajustes.filter(a=>String(a.ID).startsWith(`lst:${k}:`)&&limpio(a.Valor))
+    .map(a=>[String(a.ID).slice(k.length+5),a.Valor,1]);
+  return {grupos:[...base,...(propios.length?[[k==="maleta"?"Añadido por vosotros":"",propios]]:[])],todos:[...base.flatMap(g=>g[1]),...propios]};
+}
+const marcado=(k,key)=>ajuste(`chk:${k}:${key}`,"")==="1";
+function tarjetaLista(k,titulo,icono,ayuda,ph){
+  const {grupos,todos}=itemsLista(k),hechos=todos.filter(x=>marcado(k,x[0])).length;
+  return `<section class="card"><h2><i class="fa-solid ${icono}"></i>${titulo}${todos.length?` <small>${hechos} de ${todos.length}</small>`:""}</h2>
+    ${ayuda?`<p class="n" style="margin:-6px 0 8px">${ayuda}</p>`:""}
+    ${todos.length?`<div class="bar" style="margin-bottom:6px"><i style="width:${hechos/todos.length*100}%"></i></div>`:""}
+    ${grupos.map(([g,xs])=>`${g?`<p class="fg">${esc(g)}</p>`:""}<div class="chk">${xs.map(([key,t,propio])=>`<label><input type="checkbox" data-lchk="${k}|${esc(key)}" ${marcado(k,key)?"checked":""}><span>${esc(t)}</span>
+      ${propio?`<button type="button" class="enl quitar" data-lquitar="${k}|${esc(key)}" aria-label="Quitar"><i class="fa-solid fa-xmark"></i></button>`:""}</label>`).join("")}</div>`).join("")}
+    <form data-form="lista" data-k="${k}" class="add"><input type="text" id="lmT-${k}" placeholder="${ph}" aria-label="${ph}" required><button class="btn pri"><i class="fa-solid fa-plus"></i>Añadir</button></form></section>`;
+}
+
+function kitPreparar(){
+  const L=DATA.checklist,hechas=L.filter(c=>c.Hecho===true).length,[p1,p2]=personas(),seg=ajuste("seguro","");
+  const tengo=new Set(L.map(c=>norm(c.Tarea))),sug=SUGERENCIAS.filter(t=>!tengo.has(norm(t)));
+  return `${tarjetaFechasClave()}
     <section class="seguro"><i class="fa-solid fa-shield-heart fondo"></i>
       <h2><i class="fa-solid fa-shield-halved"></i>Seguro de viaje</h2><p>Asistencia y teléfonos para tenerlos a mano durante el viaje.</p>
       ${contactos(seg)||`<p>Escribe abajo, en Emergencias, la póliza y los teléfonos del seguro: aparecerán aquí como botones para llamar.</p>`}</section>
@@ -1845,6 +2440,13 @@ function rKit(){
     <section class="card"><h2><i class="fa-solid fa-truck-medical"></i>Emergencias</h2>
       <div class="em"><a class="e1" href="tel:110"><i class="fa-solid fa-shield"></i><b>110</b>Policía (China)</a><a class="e2" href="tel:120"><i class="fa-solid fa-truck-medical"></i><b>120</b>Ambulancia (China)</a>
         <a class="e3" href="tel:119"><i class="fa-solid fa-fire-extinguisher"></i><b>119</b>Bomberos (China)</a><a class="e4" href="tel:999"><i class="fa-solid fa-phone"></i><b>999</b>Emergencias (Hong Kong)</a></div>
+      <details class="plegable"><summary><i class="fa-solid fa-passport"></i>Si perdéis el pasaporte</summary><ol>
+        <li>Denuncia en la comisaría más cercana (派出所) y pedid el justificante de la denuncia (报案证明).</li>
+        <li>Llamad a la Embajada en Pekín o al Consulado en Cantón (Guangzhou), según dónde estéis, para el pasaporte provisional. Llevad fotos de carné y la copia del pasaporte.</li>
+        <li>Con el pasaporte nuevo, id a la oficina de Extranjería (出入境管理局) de la ciudad para el permiso de salida. Tarda unos días: avisad al seguro y a las reservas.</li>
+        <li>En Hong Kong, la denuncia se pone en la policía de Hong Kong y el pasaporte lo tramita el Consulado General de España allí.</li></ol>
+        <button class="btn sm" data-frase="我的护照丢了。请问最近的派出所在哪里？" data-es="He perdido el pasaporte. ¿Dónde está la comisaría más cercana?" data-py="wǒ de hùzhào diū le. qǐngwèn zuìjìn de pàichūsuǒ zài nǎlǐ?"><i class="fa-solid fa-expand"></i>Enseñar: «He perdido el pasaporte, ¿dónde está la comisaría?»</button></details>
+      <p class="n">Emergencia consular de España en China: buscad el teléfono de guardia de la Embajada en Pekín o del Consulado en Cantón (para el sur y Hong Kong) en exteriores.gob.es y apuntadlo abajo.</p>
       <form data-form="seguro"><label for="segT">Seguro, embajada y otros teléfonos</label>
         <textarea id="segT" rows="3" placeholder="Compañía, número de póliza, teléfono de asistencia, WhatsApp…">${esc(seg)}</textarea><button class="btn"><i class="fa-solid fa-floppy-disk"></i>Guardar</button></form></section>
 
@@ -1857,34 +2459,82 @@ function rKit(){
     <section class="card"><h2><i class="fa-solid fa-list-check"></i>Preparativos <small>${hechas} de ${L.length}</small></h2>
       <div class="bar" style="margin-bottom:8px"><i style="width:${L.length?hechas/L.length*100:0}%"></i></div>
       <div class="chk">${L.map(c=>`<label><input type="checkbox" data-row="${c._row||""}" ${c._row?"":"disabled"} ${c.Hecho===true?"checked":""}><span>${esc(c.Tarea)}</span></label>`).join("")}</div>
-      <form data-form="tarea" class="add"><input type="text" id="addT" placeholder="Nueva tarea" aria-label="Nueva tarea" required><button class="btn pri"><i class="fa-solid fa-plus"></i>Añadir</button></form></section>
+      <form data-form="tarea" class="add"><input type="text" id="addT" placeholder="Nueva tarea" aria-label="Nueva tarea" required><button class="btn pri"><i class="fa-solid fa-plus"></i>Añadir</button></form>
+      ${sug.length?`<p class="fg">Sugerencias para China</p><div class="sug">${sug.map(t=>`<button data-sugerencia="${esc(t)}"><i class="fa-solid fa-plus"></i>${esc(t)}</button>`).join("")}</div>`:""}</section>
 
-    <section class="card cv"><h2><i class="fa-solid fa-coins"></i>Conversor</h2>
-      <input id="cvI" type="text" inputmode="decimal" placeholder="Importe" aria-label="Importe a convertir">
-      <div id="cvO" class="n">Escribe un importe en yuanes o dólares de Hong Kong.</div></section>
+    ${tarjetaLista("maleta","Maleta","fa-suitcase","Pensada para el tiempo de noviembre en vuestras ciudades. Lo que marca uno lo ve el otro.","Añadir a la maleta")}
+    ${tarjetaLista("compras","Compras y regalos","fa-gift","Lo que queréis traer: té, seda, para quién…","Ej.: Té Longjing para mamá")}
 
-    <section class="card"><h2><i class="fa-solid fa-language"></i>Frases</h2><p class="n" style="margin:-6px 0 0">Toca una frase para enseñarla a pantalla completa.</p>
-      ${FRASES.map(([g,fs])=>`<h3 class="fg">${g}</h3><div class="fr">${fs.map(([es,zh,py])=>`<button data-frase="${esc(zh)}" data-es="${esc(es)}" data-py="${esc(py)}"><span>${esc(es)}</span><b>${esc(zh)}</b><i>${esc(py)}</i></button>`).join("")}</div>`).join("")}</section>
+    <section class="card"><h2><i class="fa-solid fa-lightbulb"></i>Antes de ir y allí</h2>
+      <ul class="tips">${CONSEJOS_CHINA.map(([i,t])=>`<li><i class="fa-solid ${i}"></i><span>${esc(t)}</span></li>`).join("")}</ul></section>`;
+}
+function kitApps(){
+  const app=a=>`<div class="app"><span class="ai" style="--h:${a[3]}"><i class="fa-solid ${a[2]}"></i></span>
+      <div><b>${esc(a[0])} <span class="zh">${esc(a[1])}</span></b><p class="n">${esc(a[4])}</p>
+      <div class="acc"><a class="btn sm" href="${esc(tienda(a))}" target="_blank" rel="noopener"><i class="fa-solid fa-download"></i>Instalar</a>
+        ${a[7].map(([t,u])=>`<a class="btn sm azul" href="${esc(u)}"><i class="fa-solid fa-arrow-up-right-from-square"></i>${esc(t)}</a>`).join("")}</div></div></div>`;
+  return `<section class="card"><h2><i class="fa-solid fa-mobile-screen"></i>Apps imprescindibles</h2>
+      <p class="n" style="margin:-6px 0 12px">Instaladlas y probadlas en casa: algunas piden verificar por SMS y eso es más fácil con vuestro número español.</p>
+      <div class="apps">${APPS.slice(0,7).map(app).join("")}</div></section>
+    <section class="card"><h2><i class="fa-solid fa-ship"></i>Hong Kong</h2><div class="apps">${app(APPS[8])}
+      <div class="app"><span class="ai" style="--h:#F59E0B"><i class="fa-solid fa-credit-card"></i></span><div><b>Octopus en la Cartera <span class="zh">八達通</span></b>
+        <p class="n">${IOS?"En la app Cartera: + → Tarjeta de transporte → Octopus, y se recarga con vuestra tarjeta.":"En Google Wallet o en la app Octopus for Tourists."} Sirve para metro, ferris, tranvía, autobuses y tiendas.</p></div></div>
+      <p class="n">Allí funcionan Google Maps, WhatsApp y las tarjetas bancarias sin problema.</p></div></section>
 
-    <section class="card"><h2><i class="fa-solid fa-gear"></i>Ajustes</h2><div class="pila">
+    <section class="card"><h2><i class="fa-solid fa-wifi"></i>Internet</h2><ul class="tips">
+      <li><i class="fa-solid fa-sim-card"></i><span>Con una <b>eSIM de viaje</b> (Airalo, Holafly…) tenéis datos al aterrizar y, al salir por una red extranjera, Google, WhatsApp e Instagram funcionan sin VPN.</span></li>
+      <li><i class="fa-solid fa-wifi"></i><span>Con el wifi del hotel no: Google y WhatsApp están bloqueados. Esta app guarda los cambios y los envía a la hoja cuando vuelve la conexión.</span></li>
+      <li><i class="fa-solid fa-shield-halved"></i><span>Si queréis VPN, instaladla y probadla antes de salir: desde China no se puede descargar.</span></li></ul></section>
+
+    <section class="card"><h2><i class="fa-solid fa-coins"></i>Dinero</h2><ul class="tips">
+      <li><i class="fa-solid fa-qrcode"></i><span>En China casi todo se paga con el <b>código QR</b> de Alipay o WeChat: o enseñáis vuestro código, o escaneáis el del comercio y escribís el importe.</span></li>
+      <li><i class="fa-solid fa-percent"></i><span>Pagos de más de 200 CNY con tarjeta extranjera: Alipay cobra un 3 %. Usad una tarjeta sin comisión por divisa.</span></li>
+      <li><i class="fa-solid fa-money-bill-wave"></i><span>Algo de efectivo para pueblos y puestos. Cajeros: Bank of China, ICBC o China Construction Bank.</span></li></ul>
+      <div class="cv" style="margin-top:14px"><label for="cvI">Conversor</label><input id="cvI" type="text" inputmode="decimal" placeholder="Importe" aria-label="Importe a convertir">
+      <div id="cvO" class="n">Escribe un importe en yuanes o dólares de Hong Kong.</div></div></section>
+
+    <section class="card"><h2><i class="fa-solid fa-cart-shopping"></i>Comprar y reservar</h2>
+      <div class="enls">${ENLACES.map(([t,d,u,i])=>`<a href="${esc(u)}" target="_blank" rel="noopener"><span class="ic ic-blue"><i class="fa-solid ${i}"></i></span>
+        <span><b>${esc(t)}</b><span class="n">${esc(d)}</span></span><i class="fa-solid fa-arrow-up-right-from-square"></i></a>`).join("")}</div>
+      <p class="n">Enlaces a las webs oficiales o a agencias conocidas; esta app no cobra ni gana nada.</p></section>`;
+}
+function kitFrases(){
+  const pz=LS.get("china-pizarra")||"";
+  return `<section class="card" id="pizarra"><h2><i class="fa-solid fa-pen-to-square"></i>Pizarra</h2>
+      <p class="n" style="margin:-6px 0 10px">Escribe en español para traducirlo, o pega chino (de un traductor, un mensaje del hotel…) para enseñarlo en grande.</p>
+      <textarea id="pzT" rows="3" placeholder="Ej.: ¿Tienen mesa para dos sin esperar?">${esc(pz)}</textarea>
+      <div class="acc" style="margin-top:10px"><button class="btn pri sm" data-act="pz-grande"><i class="fa-solid fa-expand"></i>Enseñar en grande</button>
+        <a class="btn sm" id="pzTr" href="#" target="_blank" rel="noopener"><i class="fa-solid fa-language"></i>Traducir</a>
+        <button class="btn sm" data-act="pz-borrar"><i class="fa-solid fa-eraser"></i>Borrar</button></div>
+      <p class="n">La traducción abre Google Traductor (en China necesita la eSIM o VPN). Con el Traductor de Apple descargado, pegad allí el texto y funciona sin conexión.</p></section>
+    <section class="card"><h2><i class="fa-solid fa-language"></i>Frases</h2><p class="n" style="margin:-6px 0 0">Toca una frase para enseñarla a pantalla completa y escucharla.</p>
+      ${FRASES.map(([g,fs,lang])=>`<h3 class="fg">${g}</h3><div class="fr">${fs.map(([es,zh,py])=>`<button data-frase="${esc(zh)}" data-es="${esc(es)}" data-py="${esc(py)}" data-lang="${lang||"zh-CN"}"><span>${esc(es)}</span><b>${esc(zh)}</b><i>${esc(py)}</i></button>`).join("")}</div>`).join("")}</section>`;
+}
+function kitAjustes(){
+  const [p1,p2]=personas(),ts=+LS.get("china-ts"),n=pendientes();
+  const est=syncEstado==="…"?"Sincronizando…":syncEstado==="sin"?"Sin conexión con la hoja: se usa la última copia guardada.":
+    ts?"Última sincronización: "+new Date(ts).toLocaleString("es-ES",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"})+".":"Aún sin sincronizar.";
+  return `<section class="card"><h2><i class="fa-solid fa-gear"></i>Ajustes</h2><div class="pila">
       <div class="ajuste"><i class="fa-regular fa-calendar-plus"></i><div><b>Avisos en el calendario</b>
-        <p class="n">Pasa la agenda y los trayectos al Calendario del iPhone, con alarma antes de cada vuelo y tren. Si cambias la agenda, vuelve a exportarla.</p>
+        <p class="n">Pasa la agenda, los trayectos y las fechas en que salen a la venta entradas y trenes al Calendario, con alarma. Si cambias la agenda, vuelve a exportarla.</p>
         <button class="btn sm" data-act="ics" style="margin-top:8px"><i class="fa-solid fa-file-export"></i>Exportar al Calendario</button></div></div>
       <div class="ajuste"><i class="fa-solid fa-location-arrow"></i><div><b>Ubicación</b>
         <p class="n">${POS?(ciudadGPS()?`Ubicación activa: estáis en ${esc(CIUDADES[ciudadGPS()].n)}.`:"Ubicación activa: estáis lejos de las ciudades del viaje.")
           :"Con la ubicación, la app detecta en qué ciudad y en qué sitio del plan estáis, y muestra la distancia a lo siguiente. La posición no sale del móvil."}</p>
         ${geoActiva()?"":`<button class="btn sm" data-act="geo" style="margin-top:8px"><i class="fa-solid fa-location-crosshairs"></i>Usar mi ubicación</button>`}</div></div>
-      <label class="ajuste" style="margin:0;cursor:pointer"><i class="fa-solid fa-moon"></i><div style="flex:1"><b style="color:var(--ink)">Tema oscuro</b>
-        <p class="n">Solo en este dispositivo. Útil de noche.</p></div><input type="checkbox" id="temaOsc" ${document.documentElement.dataset.tema==="oscuro"?"checked":""} style="width:20px;height:20px;accent-color:var(--red)"></label>
+      <div class="ajuste"><i class="fa-solid fa-moon"></i><div style="flex:1"><b>Tema</b>
+        <p class="n">Solo en este dispositivo. En automático sigue al móvil: oscuro de noche si así lo tenéis.</p>
+        <div class="seg" style="margin-top:8px">${[["auto","Automático"],["claro","Claro"],["oscuro","Oscuro"]].map(([k,t])=>`<button data-modo-tema="${k}" class="${(LS.get("china-tema")||"auto")===k?"on":""}">${t}</button>`).join("")}</div></div></div>
       <div class="ajuste"><i class="fa-solid fa-user-group"></i><div style="flex:1"><b>Quién paga</b>
         <form data-form="personas" class="dos"><div><label for="pe1">Persona 1</label><input id="pe1" type="text" value="${esc(p1)}" required></div>
           <div><label for="pe2">Persona 2</label><input id="pe2" type="text" value="${esc(p2)}" required></div><button class="btn sm">Guardar nombres</button></form></div></div>
       <div class="ajuste"><i class="fa-solid fa-rotate"></i><div><b>Sincronización</b>
         <p class="n">${est}${n?` ${n} ${n===1?"cambio pendiente":"cambios pendientes"} de enviar.`:""}</p>
-        ${SERVER&&!v2()?`<p class="alerta" style="margin-top:8px"><i class="fa-solid fa-triangle-exclamation"></i>Falta actualizar el script de la hoja. Hasta entonces, agenda, gastos y diario se guardan solo en este móvil.</p>`:""}
+        ${SERVER&&!v2()?`<p class="alerta" style="margin-top:8px"><i class="fa-solid fa-triangle-exclamation"></i>Falta actualizar el script de la hoja. Hasta entonces, agenda, gastos y diario se guardan solo en este móvil.</p>`
+          :SERVER&&!v3()?`<p class="alerta" style="margin-top:8px"><i class="fa-solid fa-circle-info"></i>Hay una versión nueva del script de la hoja (apps-script.gs): envía los cambios de golpe al recuperar la conexión y aguanta que se muevan filas. Se actualiza igual que la vez anterior, sin cambiar la URL.</p>`:""}
+        <p class="n">En China, la hoja de Google solo responde con datos de la eSIM o con VPN. Sin ellos, todo se guarda en el móvil y se envía después.</p>
         <button class="btn sm" data-act="sync" style="margin-top:8px"><i class="fa-solid fa-rotate"></i>Sincronizar ahora</button></div></div>
-    </div></section>
-    <p class="n" style="text-align:center">Fotos de las ciudades: Wikimedia Commons (autoría y licencia en cada foto).</p></div>`;
+    </div></section>`;
 }
 
 /* Teléfonos y correos escritos en el seguro → botones para llamar, escribir o abrir WhatsApp */
@@ -1902,7 +2552,7 @@ function contactos(t){
   return out?`<div class="acc">${out}</div>`:"";
 }
 
-const CONSERVAR=["gI","gC","cvI","addT","diarioT","eN","eP","eR"];
+const CONSERVAR=["gI","gC","cvI","addT","diarioT","eN","eP","eR","preI","pzT","lmT-maleta","lmT-compras"];
 function renderAll(forzar){
   const a=document.activeElement;
   if(!forzar&&a&&/INPUT|TEXTAREA|SELECT/.test(a.tagName)&&document.querySelector("main").contains(a)){dirty=true;return}
@@ -1911,10 +2561,32 @@ function renderAll(forzar){
   CONSERVAR.forEach(id=>{if($(id)) vals[id]=$(id).value});      // lo escrito y aún sin guardar no se pierde
   rHoy();rViaje();rReservas();rGastos();rKit();montarMapa();
   CONSERVAR.forEach(id=>{if($(id)&&vals[id]!=null&&(id!=="diarioT"||sel===selAntes)) $(id).value=vals[id]});
-  previaGasto();conversor();
-  const n=pendientes(); $("pend").textContent=n?`${n} sin enviar`:""; $("pend").classList.toggle("on",!!n);
+  previaGasto();conversor();pizarra();
+  pastilla();
   scrollTo(0,y);
 }
+
+function borrarConDeshacer(sheet,id,txt){
+  const r=DATA[TABLA[sheet]].find(x=>x.ID===id); if(!r) return;
+  const values={};Object.keys(r).forEach(k=>{if(k!=="ID"&&k[0]!=="_") values[k]=r[k]});
+  mutar({action:"remove",sheet,id});
+  aviso(txt,()=>{mutar({action:"upsert",sheet,id,values});aviso("Recuperado")});
+}
+
+function pastilla(){                         // cambios sin enviar y estado de la conexión
+  const n=pendientes(),off=navigator.onLine===false,p=$("pend");
+  p.innerHTML=n?`<i class="fa-solid ${syncEstado==="sin"||off?"fa-cloud-arrow-up":"fa-rotate"}"></i> ${n} sin enviar`:off?`<i class="fa-solid fa-plane-up"></i> Sin conexión`:"";
+  p.classList.toggle("on",!!n||off);
+  p.title=n?(syncEstado==="sin"||off?"Sin conexión con la hoja: se enviarán al recuperarla. Toca para reintentar.":"Enviando a la hoja…"):off?"La app funciona igual; los cambios se guardan y se envían luego.":"";
+}
+
+function aplicarTema(){
+  const t=LS.get("china-tema")||"auto",o=t==="oscuro"||(t==="auto"&&matchMedia("(prefers-color-scheme: dark)").matches);
+  if(o) document.documentElement.dataset.tema="oscuro"; else delete document.documentElement.dataset.tema;
+  document.querySelector('meta[name="theme-color"]').content=o?"#0F172A":"#FFFFFF";
+  MAPA.k=null;
+}
+try{matchMedia("(prefers-color-scheme: dark)").addEventListener("change",aplicarTema)}catch(e){}
 
 /* ---------- Calendario (.ics) ---------- */
 function exportarICS(){
@@ -1926,7 +2598,7 @@ function exportarICS(){
   DIAS.forEach(d=>itemsDia(d.iso).forEach(x=>{
     if(x.t==null) return;
     const fin=x.fin!=null&&x.fin>x.t?x.fin:x.t+60,p=x.lugar;
-    out.push("BEGIN:VEVENT",`UID:${x.k.replace(/[^a-z0-9]/gi,"")}-${d.iso}@viaje-china`,`DTSTAMP:${utc(d.iso,0)}`,`DTSTART:${utc(d.iso,x.t)}`,`DTEND:${utc(d.iso,fin)}`,
+    out.push("BEGIN:VEVENT",`UID:${x.k.replace(/[^a-z0-9]/gi,"")}-${d.iso}@viaje-china`,`DTSTAMP:${new Date().toISOString().replace(/[-:]/g,"").slice(0,15)}Z`,`DTSTART:${utc(d.iso,x.t)}`,`DTEND:${utc(d.iso,fin)}`,
       `SUMMARY:${t(x.titulo)}`);
     if(p) out.push(`LOCATION:${t([p.nombre,p.zh,p.dir].filter(Boolean).join(" "))}`);
     const desc=[x.notas,p&&p.reserva].filter(Boolean).join(" ");
@@ -1935,6 +2607,12 @@ function exportarICS(){
     if(al) out.push("BEGIN:VALARM","ACTION:DISPLAY",`DESCRIPTION:${t(x.titulo)}`,`TRIGGER:-PT${al}M`,"END:VALARM");
     out.push("END:VEVENT");
   }));
+  fechasClave().filter(f=>!f.hecho).forEach((f,i)=>{                  // aperturas de venta: con hora, alarma 15 min antes; sin hora, a las 9:00
+    const uid=`venta${i}-${f.iso}@viaje-china`,sum=t(f.hasta?f.txt:"Sale a la venta: "+f.txt);
+    if(f.hora){const m=horaMin(f.hora);out.push("BEGIN:VEVENT",`UID:${uid}`,`DTSTAMP:${new Date().toISOString().replace(/[-:]/g,"").slice(0,15)}Z`,`DTSTART:${utc(f.iso,m)}`,`DTEND:${utc(f.iso,m+30)}`)}
+    else{const d=D(f.iso);d.setDate(d.getDate()+1);out.push("BEGIN:VEVENT",`UID:${uid}`,`DTSTAMP:${new Date().toISOString().replace(/[-:]/g,"").slice(0,15)}Z`,`DTSTART;VALUE=DATE:${f.iso.replace(/-/g,"")}`,`DTEND;VALUE=DATE:${isoDe(d).replace(/-/g,"")}`)}
+    out.push(`SUMMARY:${sum}`,`DESCRIPTION:${t(f.det+(f.url?" "+f.url:""))}`,...(f.url?[`URL:${f.url}`]:[]),"BEGIN:VALARM","ACTION:DISPLAY",`DESCRIPTION:${sum}`,`TRIGGER:${f.hora?"-PT15M":"PT9H"}`,"END:VALARM","END:VEVENT");
+  });
   out.push("END:VCALENDAR");
   return out.join("\r\n");
 }
@@ -1954,7 +2632,8 @@ async function verDoc(k){
     const d=await bdOp("readonly",s=>s.get(k)); if(!d) return;
     const file=new File([d.blob],d.name||"billete",{type:d.type});
     if(/^image\//.test(d.type)){
-      $("grande").innerHTML=`<button class="x" data-act="cerrar-grande">Cerrar</button><img src="${URL.createObjectURL(file)}" alt="Billete guardado">`;
+      cerrarGrande();grandeURL=URL.createObjectURL(file);
+      $("grande").innerHTML=`<button class="x" data-act="cerrar-grande">Cerrar</button><img src="${grandeURL}" alt="Billete guardado">`;
       $("grande").classList.add("on");
     }else await compartirArchivo(file);
   }catch(e){aviso("No se ha podido abrir el billete.")}
@@ -1964,6 +2643,7 @@ async function verDoc(k){
 const TABS=["hoy","viaje","reservas","gastos","kit"];
 function mostrar(t){
   tab=t;
+  if(MAPA.el&&MAPA.el.classList.contains("full")) ampliarMapa(false);
   document.querySelectorAll("nav.abajo [data-t],.acciones [data-t]").forEach(x=>x.classList.toggle("on",x.dataset.t===t));
   document.querySelectorAll("main>section").forEach(s=>s.classList.toggle("on",s.id==="s-"+t));
   rCabecera();montarMapa();
@@ -1972,6 +2652,7 @@ function ruta(){                              // la dirección manda: #viaje/pek
   const [t,s]=decodeURIComponent(location.hash.slice(1)).split("/"),T=TABS.includes(t)?t:"hoy";
   if(T==="viaje"){const c=s&&CIUDADES[s]?s:null;if(c!==ciudadSel){ciudadSel=c;rViaje()}}
   if(T==="reservas"&&["hoteles","transporte","entradas"].includes(s)&&s!==resTab){resTab=s;rReservas()}
+  if(T==="kit"&&KIT_TABS.some(k=>k[0]===s)&&s!==kitTab){kitTab=s;rKit();conversor()}
   mostrar(T);scrollTo(0,0);
 }
 function irA(t){if(location.hash.slice(1)===t) ruta(); else location.hash=t}
@@ -1995,28 +2676,53 @@ document.addEventListener("click",async e=>{
   if(b=q("[data-taxi-item]")){const x=itemsDia(DIAS[sel].iso).find(i=>i.k===b.dataset.taxiItem);if(x&&x.lugar) taxista(x.lugar);return}
   if(b=q("[data-taxi-hotel]")){const h=DATA.alojamiento.find(h=>h.Ciudad===b.dataset.hk);if(h) taxista(lugarHotel(h));return}
   if(b=q("[data-editar-agenda]")) return formAgenda(b.dataset.editarAgenda);
-  if(b=q("[data-borrar-agenda]")){cerrarHoja();mutar({action:"remove",sheet:"Agenda",id:b.dataset.borrarAgenda});aviso("Plan borrado");return}
-  if(b=q("[data-borrar-gasto]")){mutar({action:"remove",sheet:"Gastos",id:b.dataset.borrarGasto});aviso("Gasto borrado");return}
+  if(b=q("[data-borrar-agenda]")){cerrarHoja();borrarConDeshacer("Agenda",b.dataset.borrarAgenda,"Plan borrado");return}
+  if(b=q("[data-editar-gasto]")) return formGasto(b.dataset.editarGasto);
+  if(b=q("[data-borrar-gasto]")){cerrarHoja();borrarConDeshacer("Gastos",b.dataset.borrarGasto,"Gasto borrado");return}
   if(b=q("[data-edit]")) return formFila(b.dataset.edit,+b.dataset.row);
+  if(b=q("[data-lquitar]")){
+    e.preventDefault();const [k,key]=b.dataset.lquitar.split("|");
+    mutar({action:"remove",sheet:"Ajustes",id:`lst:${k}:${key}`});if(marcado(k,key)) mutar({action:"remove",sheet:"Ajustes",id:`chk:${k}:${key}`});return;
+  }
+  if(b=q("[data-compartir-dia]")){const i=+b.dataset.compartirDia;compartirTexto(textoDia(i),"Plan del día "+(i+1));return}
+  if(b=q("[data-modo-tema]")){LS.set("china-tema",b.dataset.modoTema);aplicarTema();rKit();return}
+  if(b=q("[data-kit]")){kitTab=b.dataset.kit;history.replaceState(null,"","#kit/"+kitTab);rKit();conversor();return}
+  if(b=q("[data-sugerencia]")){mutar({action:"addTask",text:b.dataset.sugerencia});aviso("Añadida a preparativos");return}
   if(b=q("[data-res]")){resTab=b.dataset.res;history.replaceState(null,"","#reservas/"+resTab);rReservas();return}
   if(b=q("[data-mon]")){gMon=b.dataset.mon;$("gM").querySelectorAll("button").forEach(x=>x.classList.toggle("on",x===b));previaGasto();return}
   if(b=q("[data-cat]")){gCat=b.dataset.cat;$("gK").querySelectorAll("button").forEach(x=>x.classList.toggle("on",x===b));return}
   if(b=q("[data-pag]")){gPag=b.dataset.pag;LS.set("china-yo",gPag);$("gP").querySelectorAll("button").forEach(x=>x.classList.toggle("on",x===b));return}
-  if(b=q("[data-frase]")) return grande(b.dataset.frase,b.dataset.es,b.dataset.py);
+  if(b=q("[data-hablar]")) return hablar(b.dataset.hablar,b.dataset.lang);
+  if(b=q("[data-frase]")) return grande(b.dataset.frase,b.dataset.es,b.dataset.py,b.dataset.lang);
   if(b=q("[data-ver-doc]")) return verDoc(b.dataset.verDoc);
   if(b=q("[data-quitar-doc]")){await bdOp("readwrite",s=>s.delete(b.dataset.quitarDoc)).catch(()=>{});return cargarDocs()}
   if(b=q("[data-act]")){
     const a=b.dataset.act;
     if(a==="cerrar") cerrarHoja();
-    if(a==="cerrar-grande") $("grande").classList.remove("on");
+    if(a==="deshacer"&&avisoAccion){const f=avisoAccion;avisoAccion=null;$("aviso").classList.remove("on","con");f()}
+    if(a==="cerrar-grande") cerrarGrande();
     if(a==="volver") location.hash="viaje";
     if(a==="nuevo-agenda"){if(b.dataset.di!=null&&+b.dataset.di!==sel){sel=+b.dataset.di;selManual=true;rHoy()}formAgenda(null)}
     if(a==="sync") sincronizar(true);
     if(a==="geo"){ubicar(true);renderAll()}
+    if(a==="perdido") perdido();
+    if(a==="compartir-ubicacion") compartirUbicacion();
+    if(a==="gasto-rapido"){irA("gastos");setTimeout(()=>{scrollTo(0,0);$("gI")&&$("gI").focus()},120)}
+    if(a==="pizarra"||a==="farmacia"){kitTab="frases";irA("kit/frases");rKit();pizarra();setTimeout(()=>{const el=a==="pizarra"?$("pizarra"):[...document.querySelectorAll("#s-kit .fg")].find(x=>x.textContent==="Farmacia");if(el) el.scrollIntoView({block:"start"});if(a==="pizarra"&&$("pzT")) $("pzT").focus()},150)}
+    if(a==="pz-grande"){const t=$("pzT").value.trim();if(t) grande(t,"","",/[\u4e00-\u9fff]/.test(t)?"zh-CN":"es-ES");else aviso("Escribe algo primero")}
+    if(a==="pz-borrar"){$("pzT").value="";pizarra()}
+    if(a==="compartir-diario") compartirTexto(textoDiario(),"Diario del viaje a China");
+    if(a==="recargar") location.reload();
+    if(a==="csv") compartirArchivo(new File([exportarCSV()],"gastos-china.csv",{type:"text/csv"}));
     if(a==="ics") compartirArchivo(new File([exportarICS()],"viaje-china.ics",{type:"text/calendar"}));
   }
 });
 $("dlg").addEventListener("click",e=>{if(e.target===$("dlg")) cerrarHoja()});
+document.addEventListener("keydown",e=>{
+  if(e.key!=="Escape") return;
+  if($("grande").classList.contains("on")) cerrarGrande(); else if(MAPA.el&&MAPA.el.classList.contains("full")) ampliarMapa(false);
+});
+if("speechSynthesis" in window) speechSynthesis.getVoices();   // algunos navegadores cargan las voces tarde
 
 function previaGasto(){
   const n=num($("gI").value);
@@ -2025,19 +2731,27 @@ function previaGasto(){
 document.addEventListener("input",e=>{
   if(e.target.id==="gI") previaGasto();
   if(e.target.id==="cvI") conversor();
+  if(e.target.id==="pzT") pizarra();
 });
+function pizarra(){                          // enlace de traducción según lo escrito: chino → español, o español → chino
+  if(!$("pzT")) return;
+  const t=$("pzT").value.trim(),zh=/[\u4e00-\u9fff]/.test(t);LS.set("china-pizarra",t);
+  $("pzTr").href=`https://translate.google.com/?sl=${zh?"zh-CN":"es"}&tl=${zh?"es":"zh-CN"}&text=${encodeURIComponent(t)}&op=translate`;
+  $("pzTr").lastChild.textContent=zh?"Traducir al español":"Traducir al chino";
+}
 function conversor(){
+  if(!$("cvI")) return;
   const n=num($("cvI").value);
-  $("cvO").innerHTML=n?`<b>${dinero(n,"CNY")}</b> son ${eur(aEUR(n,"CNY"))}<br><b>${dinero(n,"HKD")}</b> son ${eur(aEUR(n,"HKD"))}<br><b>${eur(n)}</b> son ${dinero(n*FX.CNY,"CNY")} o ${dinero(n*FX.HKD,"HKD")}`
+  $("cvO").innerHTML=n?`<b>${dinero(n,"CNY")}</b> son ${eur(aEUR(n,"CNY"))}<br><b>${dinero(n,"HKD")}</b> son ${eur(aEUR(n,"HKD"))}<br><b>${eur(n)}</b> son ${dinero(n*FX.CNY,"CNY")} o ${dinero(n*FX.HKD,"HKD")}
+    <br><i class="fa-solid fa-scale-balanced"></i> Si os piden ${dinero(n,"CNY")} en un mercado: ofreced unos ${dinero(Math.max(1,Math.round(n/3)),"CNY")} y cerrad hacia ${dinero(Math.round(n/2),"CNY")}.`
     :"Escribe un importe en yuanes o dólares de Hong Kong.";
 }
 document.addEventListener("change",async e=>{
   const t=e.target;
-  if(t.id==="temaOsc"){
-    const o=t.checked; LS.set("china-tema",o?"oscuro":"claro");
-    if(o) document.documentElement.dataset.tema="oscuro"; else delete document.documentElement.dataset.tema;
-    document.querySelector('meta[name="theme-color"]').content=o?"#0F172A":"#FFFFFF";
-    MAPA.k=null; return;
+
+  if(t.matches("[data-lchk]")){
+    const [k,key]=t.dataset.lchk.split("|");
+    mutar({action:"upsert",sheet:"Ajustes",id:`chk:${k}:${key}`,values:{Valor:t.checked?"1":""}});return;
   }
   if(t.matches("[data-ent]")){
     mutar({action:"upsert",sheet:"Ajustes",id:"ent:"+t.dataset.ent,values:{Valor:t.checked?"1":""}});return;
@@ -2080,6 +2794,18 @@ document.addEventListener("submit",e=>{
     mutar({action:"upsert",sheet:"Lugares",id:"l"+Date.now().toString(36),values:{Ciudad:CIUDADES[k].n,Nombre:nombre,Chino:"","Dirección":"",Horario:"",
       Precio:$("eP").value.trim(),Reserva:$("eR").value.trim()||"Comprar antes de ir",Notas:"",Lat:"",Lon:""}});
     $("eN").value=$("eP").value=$("eR").value="";aviso("Entrada añadida");
+  }else if(tipo==="lista"){
+    const k=f.dataset.k,inp=$("lmT-"+k),t=inp.value.trim(); inp.value="";
+    if(t){mutar({action:"upsert",sheet:"Ajustes",id:`lst:${k}:${Date.now().toString(36)}`,values:{Valor:t}});aviso("Añadido")}
+  }else if(tipo==="presupuesto"){
+    const v=num($("preI").value);
+    mutar({action:"upsert",sheet:"Ajustes",id:"presupuesto",values:{Valor:v&&v>0?String(v):""}});aviso(v?"Presupuesto guardado":"Presupuesto quitado");
+  }else if(tipo==="editar-gasto"){
+    const g=DATA.gastos.find(x=>x.ID===f.dataset.id),n=num($("egI").value),m=$("egM").value; if(!g) return;
+    if(!n||n<=0){aviso("Escribe un importe");return}
+    const ant=num(g.Importe),tasa=g.Moneda===m&&ant?(num(g.EUR)||0)/ant:null;   // misma moneda: se respeta el cambio del día en que se apuntó
+    mutar({action:"upsert",sheet:"Gastos",id:g.ID,values:{Importe:n,Moneda:m,EUR:Math.round((tasa!=null?n*tasa:aEUR(n,m))*100)/100,Concepto:$("egC").value.trim(),"Categoría":$("egK").value,"Pagó":$("egP").value}});
+    cerrarHoja();aviso("Gasto actualizado");
   }else if(tipo==="seguro"){
     mutar({action:"upsert",sheet:"Ajustes",id:"seguro",values:{Valor:$("segT").value.trim()}});aviso("Datos guardados");
   }else if(tipo==="personas"){
@@ -2088,11 +2814,13 @@ document.addEventListener("submit",e=>{
   }
 });
 document.addEventListener("focusout",()=>{if(dirty) setTimeout(()=>renderAll(),80)});
-addEventListener("online",()=>sincronizar());
+addEventListener("online",()=>{pastilla();sincronizar()});
+addEventListener("offline",pastilla);
 document.addEventListener("visibilitychange",()=>{if(!document.hidden){sincronizar();pedirCambio()}});
 setInterval(()=>{                       // el reloj avanza: se repinta solo la pantalla del día
   if(tab==="hoy"){const t0=tab;tab="";repintarHoy();tab=t0}
   if(QUEUE.length) enviar();
+  if(!document.hidden&&navigator.onLine!==false&&Date.now()-(+LS.get("china-ts")||0)>5*60e3&&Date.now()-ultIntento>3*60e3) sincronizar();   // lo que cambie el otro móvil llega solo
 },30000);
 
 /* ---------- Arranque ---------- */
@@ -2105,7 +2833,13 @@ pedirCambio();
 cargarDocs();
 if(LS.get("china-geo")==="1"||PARAMS.get("pos")) ubicar(false);
 if(navigator.storage&&navigator.storage.persist) navigator.storage.persist().catch(()=>{});
-if("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(()=>{});
+if("serviceWorker" in navigator){
+  const habia=!!navigator.serviceWorker.controller;
+  navigator.serviceWorker.register("sw.js").catch(()=>{});
+  const nueva=()=>{$("nueva").hidden=false};                      // la copia nueva ya está guardada: basta con recargar
+  navigator.serviceWorker.addEventListener("controllerchange",()=>{if(habia) nueva()});
+  navigator.serviceWorker.addEventListener("message",e=>{if(e.data&&e.data.tipo==="nueva") nueva()});
+}
 
 </script>
 </body>
