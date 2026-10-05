@@ -505,6 +505,8 @@ html:has(.lmap.full){overflow:hidden}
 .plegable{margin-top:12px;border:1px solid var(--line);border-radius:12px;background:var(--soft);padding:10px 12px;font-size:13px}
 .plegable summary{cursor:pointer;font-weight:800;color:var(--ink);display:flex;align-items:center;gap:8px}
 .plegable ol{margin:10px 0;padding-left:20px;display:grid;gap:6px;line-height:1.5}
+.guardado{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:var(--muted);margin:8px 0 0}
+.guardado i{color:var(--ok);font-size:11px}
 .sug{display:flex;flex-wrap:wrap;gap:6px}
 .sug button{display:inline-flex;align-items:center;gap:6px;text-align:left;border:1px dashed var(--line);background:var(--soft);border-radius:12px;padding:7px 10px;font-size:12.5px;font-weight:600;color:var(--text)}
 .sug button i{color:var(--red);font-size:11px}
@@ -1317,7 +1319,7 @@ function recibe(j){
 /* Los cambios van a una cola que se envía en orden. Si un cambio aún no ha salido, el siguiente sobre
    la misma fila se funde con él: así, sin conexión, la cola no crece con cada toque. */
 const ENVIANDO=new Set();
-function mutar(op){
+function mutar(op,silencioso){
   const ult=[...QUEUE].reverse().find(o=>!ENVIANDO.has(o)&&o.action===op.action&&
     (op.action==="upsert"?o.sheet===op.sheet&&o.id===op.id:op.action==="check"?o.row===op.row&&o.key===op.key:
      op.action==="update"?o.sheet===op.sheet&&o.row===op.row&&o.key===op.key:false));
@@ -1325,12 +1327,15 @@ function mutar(op){
   if(ult&&!QUEUE.slice(i+1).some(o=>o.sheet===op.sheet&&o.action==="remove")){   // fundir solo si nada posterior lo invalida
     if(op.values) ult.values={...ult.values,...op.values}; else Object.assign(ult,op);
   }else QUEUE.push(op);
-  guardaCola(); rebuild(); renderAll(true); enviar();
+  guardaCola(); rebuild();
+  if(silencioso){dirty=true;pastilla()} else renderAll(true);        // en silencio, se repinta al salir del campo
+  enviar();
 }
 let versionDatos=0;                           // sube con cada respuesta de la hoja tras un cambio: una lectura más antigua no la pisa
 function pedir(url,op,ms){                    // en China, sin VPN, Google no responde: mejor cortar que quedarse colgado
   const ctl=new AbortController(),t=setTimeout(()=>ctl.abort(),ms);
-  const o=op?{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(op),signal:ctl.signal}:{signal:ctl.signal,cache:"no-store"};
+  const cuerpo=op?JSON.stringify(op):null;
+  const o=op?{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:cuerpo,signal:ctl.signal,keepalive:cuerpo.length<60000}:{signal:ctl.signal,cache:"no-store"};
   return fetch(url,o).then(r=>r.json()).finally(()=>clearTimeout(t));
 }
 async function enviar(){
@@ -1860,8 +1865,8 @@ function rHoy(){
   /* Diario */
   const nota=DATA.diario.find(x=>toISO(x.Fecha)===d.iso);
   html+=`<section class="card"><h2><i class="fa-solid fa-book"></i>Diario del día</h2>
-    <form data-form="diario"><textarea id="diarioT" rows="3" placeholder="Lo mejor de hoy, lo que no queréis olvidar…">${esc(nota?nota.Nota:"")}</textarea>
-    <button class="btn pri"><i class="fa-solid fa-floppy-disk"></i>Guardar nota</button></form></section></div>`;
+    <form data-form="diario" data-iso="${d.iso}"><textarea id="diarioT" rows="3" placeholder="Lo mejor de hoy, lo que no queréis olvidar…">${esc(nota?nota.Nota:"")}</textarea>
+    <p class="guardado"><i class="fa-solid fa-cloud"></i> Se guarda solo mientras escribís</p></form></section></div>`;
 
   $("s-hoy").innerHTML=html;
   const b=$("tira").querySelector(".on"); if(b) $("tira").scrollLeft=b.offsetLeft-$("tira").clientWidth/2+b.offsetWidth/2;
@@ -1916,7 +1921,7 @@ function detalleLugar(id){
 }
 function formAgenda(id){
   const a=id?DATA.agenda.find(x=>x.ID===id):null,d=DIAS[sel];
-  hoja(`<form data-form="agenda" data-id="${esc(id||"")}">
+  hoja(`<form data-form="agenda" data-id="${esc(id||"")}" data-iso="${d.iso}">
     <p class="dk"><i class="fa-regular fa-calendar"></i>${fecha(d.iso,{weekday:"long",day:"numeric",month:"long"})} · ${esc(d.Ciudad)}</p><h3>${a?"Editar plan":"Añadir a la agenda"}</h3>
     <div class="dos"><div><label for="aH">Empieza</label><input id="aH" type="time" value="${esc(a?fmtMin(horaMin(a.Hora)):"")}" required></div>
       <div><label for="aF">Termina</label><input id="aF" type="time" value="${esc(a?fmtMin(horaMin(a.Fin)):"")}"></div></div>
@@ -1925,7 +1930,8 @@ function formAgenda(id){
     <datalist id="lugaresL"><option value="Hotel"><option value="Hotel (salida)">${DATA.lugares.filter(l=>claveCiudad(l.Ciudad)===d.ck).map(l=>`<option value="${esc(l.Nombre)}">`).join("")}</datalist>
     <label for="aT">Tipo</label><select id="aT">${["visita","comida","traslado","hotel","libre"].map(t=>`<option value="${t}" ${a&&norm(a.Tipo)===t?"selected":""}>${TIPOS[t]}</option>`).join("")}</select>
     <label for="aN">Notas</label><textarea id="aN" rows="3">${esc(a?a.Notas:"")}</textarea>
-    <div class="btns"><button type="button" class="btn" data-act="cerrar">Cancelar</button><button class="btn pri"><i class="fa-solid fa-check"></i>Guardar</button></div></form>`);
+    ${a?`<p class="guardado"><i class="fa-solid fa-cloud"></i> Cada cambio se guarda solo</p><div class="btns"><button class="btn pri"><i class="fa-solid fa-check"></i>Listo</button></div>`
+      :`<div class="btns"><button type="button" class="btn" data-act="cerrar">Cancelar</button><button class="btn pri"><i class="fa-solid fa-check"></i>Añadir</button></div>`}</form>`);
 }
 
 /* ---------- Cabecera: cuenta atrás, fechas y pestañas de ciudades ---------- */
@@ -2271,7 +2277,8 @@ function formFila(sheet,row){
         :`<input type="text" id="f${i}" value="${esc(tipo==="num"?String(v).replace(".",","):v)}" ${tipo==="num"?'inputmode="decimal"':""}>`;
       return `<label for="f${i}">${lab}</label>${campo}`}).join("")}
     ${v2()?"":`<p class="n">La dirección en chino y el localizador se podrán guardar cuando actualices el script de la hoja.</p>`}
-    <div class="btns"><button type="button" class="btn" data-act="cerrar">Cancelar</button><button class="btn pri">Guardar</button></div></form>`);
+    <p class="guardado"><i class="fa-solid fa-cloud"></i> Cada cambio se guarda solo</p>
+    <div class="btns"><button class="btn pri"><i class="fa-solid fa-check"></i>Listo</button></div></form>`);
 }
 
 /* ---------- GASTOS ---------- */
@@ -2331,7 +2338,7 @@ function tarjetaPresupuesto(G,now){
   const P=num(ajuste("presupuesto","")),ini=DIAS[0].iso,fin=DIAS[DIAS.length-1].iso;
   const enViaje=G.filter(g=>{const i=toISO(g.Fecha);return i&&i>=ini&&i<=fin}),gast=enViaje.reduce((s,g)=>s+(num(g.EUR)||0),0);
   const pasados=now.iso<ini?0:now.iso>fin?DIAS.length:diasEntre(ini,now.iso)+1,quedan=DIAS.length-pasados+(now.iso>=ini&&now.iso<=fin?1:0);
-  const form=`<form data-form="presupuesto" class="add"><input id="preI" type="text" inputmode="decimal" placeholder="Presupuesto en euros" aria-label="Presupuesto en euros" value="${P?String(P).replace(".",","):""}"><button class="btn">${P?"Cambiar":"Fijar"}</button></form>`;
+  const form=`<form data-form="presupuesto" class="add"><input id="preI" type="text" inputmode="decimal" placeholder="Presupuesto en euros" aria-label="Presupuesto en euros" value="${P?String(P).replace(".",","):""}"></form><p class="guardado"><i class="fa-solid fa-cloud"></i> Se guarda solo</p>`;
   if(!P) return `<section class="card"><h2><i class="fa-solid fa-piggy-bank"></i>Presupuesto</h2><p class="n" style="margin:-6px 0 0">Cuánto queréis gastar allí en comida, entradas, transporte y compras. La app os dirá cuánto podéis gastar al día.</p>${form}</section>`;
   const pct=Math.min(100,gast/P*100),resto=P-gast,diario=quedan>0?resto/quedan:0,media=pasados?gast/pasados:0;
   return `<section class="card"><h2><i class="fa-solid fa-piggy-bank"></i>Presupuesto <small>${eur(P)}</small></h2>
@@ -2349,7 +2356,7 @@ function formGasto(id){
     <div class="dos"><div><label for="egK">Categoría</label><select id="egK">${CATEGORIAS.map(c=>`<option ${c===g["Categoría"]?"selected":""}>${c}</option>`).join("")}</select></div>
       <div><label for="egP">Pagó</label><select id="egP">${pagos.map(p=>`<option ${p===g["Pagó"]?"selected":""}>${esc(p)}</option>`).join("")}</select></div></div>
     <div class="btns"><button type="button" class="btn peligro" data-borrar-gasto="${esc(id)}"><i class="fa-solid fa-trash"></i>Borrar</button>
-      <button type="button" class="btn" data-act="cerrar">Cancelar</button><button class="btn pri"><i class="fa-solid fa-check"></i>Guardar</button></div></form>`);
+      <button class="btn pri"><i class="fa-solid fa-check"></i>Listo</button></div><p class="guardado"><i class="fa-solid fa-cloud"></i> Cada cambio se guarda solo</p></form>`);
 }
 function exportarCSV(){
   const q=v=>{v=String(v??"");return /[;"\n]/.test(v)?`"${v.replace(/"/g,'""')}"`:v};
@@ -2448,7 +2455,7 @@ function kitPreparar(){
         <button class="btn sm" data-frase="我的护照丢了。请问最近的派出所在哪里？" data-es="He perdido el pasaporte. ¿Dónde está la comisaría más cercana?" data-py="wǒ de hùzhào diū le. qǐngwèn zuìjìn de pàichūsuǒ zài nǎlǐ?"><i class="fa-solid fa-expand"></i>Enseñar: «He perdido el pasaporte, ¿dónde está la comisaría?»</button></details>
       <p class="n">Emergencia consular de España en China: buscad el teléfono de guardia de la Embajada en Pekín o del Consulado en Cantón (para el sur y Hong Kong) en exteriores.gob.es y apuntadlo abajo.</p>
       <form data-form="seguro"><label for="segT">Seguro, embajada y otros teléfonos</label>
-        <textarea id="segT" rows="3" placeholder="Compañía, número de póliza, teléfono de asistencia, WhatsApp…">${esc(seg)}</textarea><button class="btn"><i class="fa-solid fa-floppy-disk"></i>Guardar</button></form></section>
+        <textarea id="segT" rows="3" placeholder="Compañía, número de póliza, teléfono de asistencia, WhatsApp…">${esc(seg)}</textarea><p class="guardado"><i class="fa-solid fa-cloud"></i> Se guarda solo</p></form></section>
 
     <section class="card"><h2><i class="fa-solid fa-passport"></i>Documentos</h2>
       <p class="n" style="margin:-6px 0 12px">Foto o PDF de pasaportes, póliza y visados. Se guardan solo en este móvil y se abren sin conexión.</p>
@@ -2527,7 +2534,7 @@ function kitAjustes(){
         <div class="seg" style="margin-top:8px">${[["auto","Automático"],["claro","Claro"],["oscuro","Oscuro"]].map(([k,t])=>`<button data-modo-tema="${k}" class="${(LS.get("china-tema")||"auto")===k?"on":""}">${t}</button>`).join("")}</div></div></div>
       <div class="ajuste"><i class="fa-solid fa-user-group"></i><div style="flex:1"><b>Quién paga</b>
         <form data-form="personas" class="dos"><div><label for="pe1">Persona 1</label><input id="pe1" type="text" value="${esc(p1)}" required></div>
-          <div><label for="pe2">Persona 2</label><input id="pe2" type="text" value="${esc(p2)}" required></div><button class="btn sm">Guardar nombres</button></form></div></div>
+          <div><label for="pe2">Persona 2</label><input id="pe2" type="text" value="${esc(p2)}" required></div><p class="guardado" style="grid-column:1/-1"><i class="fa-solid fa-cloud"></i> Se guarda al salir del campo</p></form></div></div>
       <div class="ajuste"><i class="fa-solid fa-rotate"></i><div><b>Sincronización</b>
         <p class="n">${est}${n?` ${n} ${n===1?"cambio pendiente":"cambios pendientes"} de enviar.`:""}</p>
         ${SERVER&&!v2()?`<p class="alerta" style="margin-top:8px"><i class="fa-solid fa-triangle-exclamation"></i>Falta actualizar el script de la hoja. Hasta entonces, agenda, gastos y diario se guardan solo en este móvil.</p>`
@@ -2768,18 +2775,48 @@ document.addEventListener("change",async e=>{
 });
 document.addEventListener("submit",e=>{
   const f=e.target.closest("[data-form]"); if(!f) return;
-  e.preventDefault();
-  const tipo=f.dataset.form,d=DIAS[sel];
+  e.preventDefault(); guardarForm(f,false);
+});
+/* Guardado automático: lo que se escribe se guarda al parar de escribir o al salir del campo, y se sincroniza solo */
+const AUTO_ESCRIBIR=new Set(["diario","seguro"]),AUTO_CAMBIO=new Set(["personas","presupuesto","fila","editar-gasto","agenda"]);
+const pendAuto=new Map();
+function programarAuto(f){
+  clearTimeout(pendAuto.get(f)); estadoAuto(f,"Guardando…");
+  pendAuto.set(f,setTimeout(()=>{pendAuto.delete(f);guardarForm(f,true)},1200));
+}
+function vaciarAuto(){pendAuto.forEach((t,f)=>{clearTimeout(t);guardarForm(f,true)});pendAuto.clear()}
+function estadoAuto(f,txt){const s=f.querySelector(".guardado");if(s) s.innerHTML=txt}
+function guardadoOk(f){
+  estadoAuto(f,`<i class="fa-solid fa-check"></i> Guardado${navigator.onLine===false||syncEstado==="sin"?" en el móvil · se enviará al volver la conexión":" · se sincroniza solo"}`);
+}
+document.addEventListener("input",e=>{
+  const f=e.target.closest("form[data-form]"); if(!f) return;
+  if(AUTO_ESCRIBIR.has(f.dataset.form)) programarAuto(f);
+});
+document.addEventListener("change",e=>{
+  const f=e.target.closest("form[data-form]"); if(!f||!AUTO_CAMBIO.has(f.dataset.form)) return;
+  if(f.dataset.form==="agenda"&&!f.dataset.id) return;                  // un plan nuevo se guarda con su botón
+  guardarForm(f,true);
+});
+document.addEventListener("focusout",e=>{const f=e.target.closest&&e.target.closest("form[data-form]");if(f&&pendAuto.has(f)){clearTimeout(pendAuto.get(f));pendAuto.delete(f);guardarForm(f,true)}});
+addEventListener("pagehide",()=>{vaciarAuto();enviar()});
+function guardarForm(f,auto){
+  const tipo=f.dataset.form,d=DIAS[sel],ok=()=>{if(auto) guardadoOk(f)};
   if(tipo==="diario"){
-    mutar({action:"upsert",sheet:"Diario",id:"d"+d.iso.replace(/-/g,""),values:{Fecha:d.iso,Nota:$("diarioT").value.trim()}});aviso("Nota guardada");
+    const iso=f.dataset.iso||d.iso,txt=f.querySelector("textarea").value.trim(),ant=DATA.diario.find(x=>toISO(x.Fecha)===iso);
+    if(auto&&txt===limpio(ant&&ant.Nota)) return ok();
+    mutar({action:"upsert",sheet:"Diario",id:"d"+iso.replace(/-/g,""),values:{Fecha:iso,Nota:txt}},auto);ok();if(!auto) aviso("Nota guardada");
   }else if(tipo==="agenda"){
-    const id=f.dataset.id||"a"+Date.now().toString(36);
-    mutar({action:"upsert",sheet:"Agenda",id,values:{Fecha:d.iso,Hora:$("aH").value,Fin:$("aF").value,"Qué":$("aQ").value.trim(),Lugar:$("aL").value.trim(),Tipo:$("aT").value,Notas:$("aN").value.trim()}});
-    cerrarHoja();aviso("Agenda actualizada");
+    const id=f.dataset.id||"a"+Date.now().toString(36),q=f.dataset.iso||d.iso;
+    if(auto&&(!$("aH").value||!$("aQ").value.trim())) return;
+    mutar({action:"upsert",sheet:"Agenda",id,values:{Fecha:q,Hora:$("aH").value,Fin:$("aF").value,"Qué":$("aQ").value.trim(),Lugar:$("aL").value.trim(),Tipo:$("aT").value,Notas:$("aN").value.trim()}},auto);
+    if(auto) ok(); else{cerrarHoja();aviso(f.dataset.id?"Agenda actualizada":"Añadido a la agenda")}
   }else if(tipo==="fila"){
-    const sheet=f.dataset.sheet,r=DATA[sheet.toLowerCase()].find(x=>x._row===+f.dataset.row),values={};
+    const sheet=f.dataset.sheet,r=DATA[sheet.toLowerCase()].find(x=>x._row===+f.dataset.row),values={}; if(!r) return;
     camposDe(sheet).forEach(([k,,t],i)=>{const v=$("f"+i).value.trim();values[k]=t==="num"?(v===""?"":num(v)??""):v});
-    mutar({action:"update",sheet,row:r._row,key:r._k,values});cerrarHoja();aviso("Cambios guardados");
+    const cambia=Object.keys(values).some(k=>String(values[k])!==String(r[k]??""));
+    if(cambia) mutar({action:"update",sheet,row:r._row,key:r._k,values},auto);
+    if(auto) ok(); else{cerrarHoja();if(cambia) aviso("Cambios guardados")}
   }else if(tipo==="gasto"){
     const n=num($("gI").value); if(!n||n<=0){aviso("Escribe un importe");return}
     const now=ahoraCN(),dia=DIAS.find(x=>x.iso===now.iso),concepto=$("gC").value.trim();
@@ -2798,29 +2835,40 @@ document.addEventListener("submit",e=>{
     const k=f.dataset.k,inp=$("lmT-"+k),t=inp.value.trim(); inp.value="";
     if(t){mutar({action:"upsert",sheet:"Ajustes",id:`lst:${k}:${Date.now().toString(36)}`,values:{Valor:t}});aviso("Añadido")}
   }else if(tipo==="presupuesto"){
-    const v=num($("preI").value);
-    mutar({action:"upsert",sheet:"Ajustes",id:"presupuesto",values:{Valor:v&&v>0?String(v):""}});aviso(v?"Presupuesto guardado":"Presupuesto quitado");
+    const v=num($("preI").value),val=v&&v>0?String(v):"";
+    if(val===String(ajuste("presupuesto",""))) return ok();
+    mutar({action:"upsert",sheet:"Ajustes",id:"presupuesto",values:{Valor:val}},auto);ok();if(!auto) aviso(v?"Presupuesto guardado":"Presupuesto quitado");
   }else if(tipo==="editar-gasto"){
     const g=DATA.gastos.find(x=>x.ID===f.dataset.id),n=num($("egI").value),m=$("egM").value; if(!g) return;
-    if(!n||n<=0){aviso("Escribe un importe");return}
+    if(!n||n<=0){if(!auto) aviso("Escribe un importe");return}
     const ant=num(g.Importe),tasa=g.Moneda===m&&ant?(num(g.EUR)||0)/ant:null;   // misma moneda: se respeta el cambio del día en que se apuntó
-    mutar({action:"upsert",sheet:"Gastos",id:g.ID,values:{Importe:n,Moneda:m,EUR:Math.round((tasa!=null?n*tasa:aEUR(n,m))*100)/100,Concepto:$("egC").value.trim(),"Categoría":$("egK").value,"Pagó":$("egP").value}});
-    cerrarHoja();aviso("Gasto actualizado");
+    mutar({action:"upsert",sheet:"Gastos",id:g.ID,values:{Importe:n,Moneda:m,EUR:Math.round((tasa!=null?n*tasa:aEUR(n,m))*100)/100,Concepto:$("egC").value.trim(),"Categoría":$("egK").value,"Pagó":$("egP").value}},auto);
+    if(auto) ok(); else{cerrarHoja();aviso("Gasto actualizado")}
   }else if(tipo==="seguro"){
-    mutar({action:"upsert",sheet:"Ajustes",id:"seguro",values:{Valor:$("segT").value.trim()}});aviso("Datos guardados");
+    const v=$("segT").value.trim(); if(auto&&v===ajuste("seguro","")) return ok();
+    mutar({action:"upsert",sheet:"Ajustes",id:"seguro",values:{Valor:v}},auto);ok();if(!auto) aviso("Datos guardados");
   }else if(tipo==="personas"){
-    mutar({action:"upsert",sheet:"Ajustes",id:"p1",values:{Valor:$("pe1").value.trim()}});
-    mutar({action:"upsert",sheet:"Ajustes",id:"p2",values:{Valor:$("pe2").value.trim()}});aviso("Nombres guardados");
+    const antes=personas(),nuevos=[$("pe1").value.trim(),$("pe2").value.trim()];   // se leen los dos antes de guardar: cada guardado repinta el formulario
+    if(!nuevos[0]||!nuevos[1]||nuevos[0]===nuevos[1]){estadoAuto(f,"Poned dos nombres distintos");return}
+    let hubo=false;
+    nuevos.forEach((n,i)=>{
+      if(n===antes[i]) return; hubo=true;
+      mutar({action:"upsert",sheet:"Ajustes",id:"p"+(i+1),values:{Valor:n}},true);
+      DATA.gastos.filter(g=>g["Pagó"]===antes[i]).forEach(g=>mutar({action:"upsert",sheet:"Gastos",id:g.ID,values:{"Pagó":n}},true));   // las cuentas siguen cuadrando
+      if(LS.get("china-yo")===antes[i]) LS.set("china-yo",n);
+      if(gPag===antes[i]) gPag=n;
+    });
+    if(hubo){guardadoOk(f);if(!auto){aviso("Nombres guardados");renderAll(true)}}
   }
-});
+}
 document.addEventListener("focusout",()=>{if(dirty) setTimeout(()=>renderAll(),80)});
 addEventListener("online",()=>{pastilla();sincronizar()});
 addEventListener("offline",pastilla);
-document.addEventListener("visibilitychange",()=>{if(!document.hidden){sincronizar();pedirCambio()}});
+document.addEventListener("visibilitychange",()=>{if(document.hidden){vaciarAuto();enviar()}else{sincronizar();pedirCambio()}});
 setInterval(()=>{                       // el reloj avanza: se repinta solo la pantalla del día
   if(tab==="hoy"){const t0=tab;tab="";repintarHoy();tab=t0}
   if(QUEUE.length) enviar();
-  if(!document.hidden&&navigator.onLine!==false&&Date.now()-(+LS.get("china-ts")||0)>5*60e3&&Date.now()-ultIntento>3*60e3) sincronizar();   // lo que cambie el otro móvil llega solo
+  if(!document.hidden&&navigator.onLine!==false&&Date.now()-(+LS.get("china-ts")||0)>2*60e3&&Date.now()-ultIntento>2*60e3) sincronizar();   // lo que cambie el otro móvil llega solo
 },30000);
 
 /* ---------- Arranque ---------- */
