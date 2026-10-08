@@ -44,7 +44,7 @@
 :root[data-tema="oscuro"],[data-tema="oscuro"] .th{--cs:color-mix(in srgb,var(--c) 16%,var(--surface));--cb:color-mix(in srgb,var(--c) 40%,var(--surface));--ct:color-mix(in srgb,var(--c) 55%,white)}
 
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html{-webkit-text-size-adjust:100%}
+html{-webkit-text-size-adjust:100%;scroll-padding-top:calc(var(--st) + 124px)}   /* lo que se lleva a la vista no queda bajo la cabecera fija */
 body{margin:0;background:var(--bg);color:var(--text);font:15px/1.5 var(--f);-webkit-font-smoothing:antialiased;min-height:100vh;
   padding-bottom:calc(92px + var(--sb));overscroll-behavior-y:none}
 main{max-width:72rem;margin:0 auto;padding:12px}
@@ -74,6 +74,7 @@ p.n{margin-top:8px}
 .cuenta{border:0;cursor:pointer;display:inline-flex;align-items:center;gap:4px;border-radius:999px;background:var(--red50);padding:4px 10px;font-size:10px;font-weight:900;color:var(--red7);
   box-shadow:inset 0 0 0 1px var(--red100);white-space:nowrap}
 .cuenta:empty{display:none}
+.cuenta{position:relative}.cuenta::after{content:"";position:absolute;inset:-10px -4px}   /* más fácil de tocar con el dedo */
 .cuenta .vivo{width:7px;height:7px;border-radius:50%;background:#10B981;animation:late 1.6s infinite}
 @keyframes late{50%{opacity:.35}}
 .sub{font-size:12px;color:var(--muted);font-weight:500;margin-top:3px}
@@ -147,6 +148,7 @@ input[type=text],input[type=time],textarea,select{font:16px var(--f);width:100%;
   color:var(--ink);appearance:none;-webkit-appearance:none}
 input:focus,textarea:focus,select:focus{outline:0;border-color:var(--red);box-shadow:0 0 0 3px color-mix(in srgb,var(--red) 18%,transparent)}
 textarea{resize:vertical;line-height:1.45}
+select{padding-right:36px;background:var(--surface) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5l5 5 5-5' fill='none' stroke='%2394A3B8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat right 14px center}   /* sin la flecha, en el iPhone parece un campo de texto */
 input[type=time]{display:block;text-align:left}
 input[type=time]::-webkit-date-and-time-value{text-align:left}
 label{display:block;font-size:12px;font-weight:700;color:var(--muted);margin:12px 0 5px}
@@ -258,6 +260,7 @@ form>.btn{margin-top:12px}
 .it.cur .tk i{background:var(--c);box-shadow:0 0 0 4px color-mix(in srgb,var(--c) 22%,transparent)}
 .it.cur .h b{color:var(--ct)}
 .it.pas{opacity:.5}
+@media (max-width:420px){.it{grid-template-columns:12px 50px 36px 1fr;gap:0 8px}.it .ic{width:36px;height:36px;border-radius:13px;font-size:14px}.tl{padding:6px 12px 10px}}
 .now{display:grid;grid-template-columns:auto 1fr;gap:8px;align-items:center;margin:4px 0}
 .now span{font-size:10.5px;font-weight:900;color:#fff;background:var(--red);border-radius:999px;padding:2px 8px}
 .now i{height:2px;background:var(--red);border-radius:2px}
@@ -457,7 +460,7 @@ html:has(.lmap.full){overflow:hidden}
 .g b{font-weight:700;font-size:13.5px;color:var(--ink)}
 .gi{text-align:right}
 .gi b{font-weight:900}
-.g .enl{color:var(--faint);padding:6px}
+.g .enl{color:var(--faint);padding:0;min-width:40px;min-height:40px;margin-right:-8px;display:grid;place-items:center}
 .gb{background:none;border:0;padding:0;text-align:left;min-width:0;display:block}
 .gi.gb{text-align:right}
 
@@ -528,6 +531,7 @@ html:has(.lmap.full){overflow:hidden}
 .fci.ok em{background:#ECFDF5;color:#047857}
 [data-tema="oscuro"] .fci.ok em{background:#052E22;color:#34D399}
 @media (min-width:640px){.apps,.enls{grid-template-columns:1fr 1fr}}
+@media (max-width:480px){.fci{grid-template-columns:42px 1fr;gap:6px 12px}.fci em{grid-column:2;justify-self:start}}   /* en el móvil, el plazo debajo: más ancho para el texto */
 
 /* ---------- Avisos del día, mañana y cerca ---------- */
 .hero .arriba>span{display:flex;flex-wrap:wrap;gap:6px}
@@ -560,12 +564,13 @@ dialog[open]{animation:sube .28s cubic-bezier(.16,1,.3,1)}
 @keyframes sube{from{transform:translateY(40px);opacity:0}}
 html:has(dialog[open]){overflow:hidden}
 dialog::backdrop{background:rgba(2,6,23,.6);backdrop-filter:blur(3px)}
-#dlgB{position:relative;padding:12px 20px calc(24px + var(--sb));overflow-y:auto;max-height:90dvh}
+#dlgB{outline:0;position:relative;padding:12px 20px calc(24px + var(--sb));overflow-y:auto;max-height:90dvh}
 #dlgB::before{content:"";display:block;width:48px;height:6px;border-radius:9px;background:var(--line);margin:0 auto 10px}
 .dlg-x{position:absolute;top:14px;right:14px;width:34px;height:34px;border-radius:12px;border:0;background:var(--line2);color:var(--muted);display:grid;place-items:center;z-index:2}
 #dlgB h3{font-size:22px;font-weight:900;color:var(--ink);letter-spacing:-.02em;padding-right:40px;line-height:1.2}
 .dk{display:flex;align-items:center;gap:6px;color:var(--blue);font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px}
 .dh{font-size:15px;font-weight:800;color:var(--muted);margin:4px 0 10px}
+#dlgB .btns>.btn{flex:1 1 calc(50% - 4px)}   /* en la hoja, botones a dos columnas: cómodos para el pulgar */
 .lugar{margin-top:14px;padding:14px;background:var(--soft);border:1px solid var(--line);border-radius:16px}
 .zhG{font:700 32px/1.2 var(--fz);color:var(--ct);margin-bottom:6px}
 .lugar b{font-weight:800;color:var(--ink)}
@@ -586,7 +591,7 @@ dialog::backdrop{background:rgba(2,6,23,.6);backdrop-filter:blur(3px)}
 .hablar i{color:#DC2626}
 
 /* ---------- Avisos ---------- */
-#pend{position:fixed;top:calc(var(--st) + 70px);right:12px;z-index:60;background:var(--amb50);color:var(--amb9);border:1px solid var(--amb200);font-size:11px;font-weight:800;padding:3px 10px;border-radius:999px;display:none}
+#pend{position:fixed;top:calc(var(--st) + 126px);right:12px;z-index:60;background:var(--amb50);color:var(--amb9);border:1px solid var(--amb200);font-size:11px;font-weight:800;padding:3px 10px;border-radius:999px;display:none}
 #pend.on{display:inline-flex;align-items:center;gap:5px}
 #aviso{position:fixed;left:50%;bottom:calc(100px + var(--sb));transform:translateX(-50%);z-index:150;max-width:88vw;background:#0F172A;color:#fff;padding:10px 16px;border-radius:12px;
   font-size:13px;font-weight:600;text-align:center;opacity:0;pointer-events:none;transition:opacity .2s;box-shadow:0 10px 30px -6px rgba(0,0,0,.4)}
@@ -682,7 +687,7 @@ dialog::backdrop{background:rgba(2,6,23,.6);backdrop-filter:blur(3px)}
 <button id="pend" data-act="sync" aria-live="polite"></button>
 <div id="aviso" role="status" aria-live="polite"></div>
 <button id="nueva" data-act="recargar" hidden><i class="fa-solid fa-arrows-rotate"></i>Hay una versión nueva de la app · <b>Actualizar</b></button>
-<dialog id="dlg"><div id="dlgB"></div></dialog>
+<dialog id="dlg"><div id="dlgB" tabindex="-1" autofocus></div></dialog>
 <div id="grande"></div>
 
 <nav class="abajo" aria-label="Secciones">
@@ -1596,8 +1601,8 @@ function climaHoja(ck){
   }else h+=`<p class="n">Cargando la previsión… Necesita conexión.</p>`;
   if(g.clima) h+=`<p class="n">Clima habitual a principios de noviembre: máximas de unos ${g.clima[0]}° y mínimas de ${g.clima[1]}°.</p>`;
   hoja(h+`</div>`);
-  $("dlgB").dataset.clima=ck;
-  if(!FAKE) pedirClima(ck).then(()=>{if($("dlg").open&&$("dlgB").dataset.clima===ck&&WX[ck]!==w) climaHoja(ck)});
+  climaAbierta=ck;
+  if(!FAKE) pedirClima(ck).then(()=>{if($("dlg").open&&climaAbierta===ck&&WX[ck]!==w) climaHoja(ck)});
 }
 async function pedirCambio(){
   if(FX.ts&&Date.now()-FX.ts<12*3600e3) return;
@@ -1617,8 +1622,9 @@ function aviso(t,deshacer){
   a.innerHTML=esc(t)+(deshacer?`<button class="deshacer" data-act="deshacer">Deshacer</button>`:"");
   a.classList.add("on");a.classList.toggle("con",!!deshacer);clearTimeout(avisoT);avisoT=setTimeout(()=>{a.classList.remove("on","con");avisoAccion=null},deshacer?6000:3500);
 }
+let climaAbierta=null;                       // la hoja del tiempo abierta, para refrescarla cuando llegue la previsión
 function hoja(html){
-  delete $("dlgB").dataset.clima;
+  climaAbierta=null;
   $("dlgB").innerHTML=`<button class="dlg-x" data-act="cerrar" aria-label="Cerrar"><i class="fa-solid fa-xmark"></i></button>`+html;
   if(!$("dlg").open)$("dlg").showModal();$("dlgB").scrollTop=0;
 }
@@ -1708,8 +1714,8 @@ function htmlDia(i,o={}){
   let marcado=false;
   items.forEach((x,j)=>{
     const fin=x.fin??(items[j+1]&&items[j+1].t)??(x.t!=null?x.t+60:null);
-    const est=!esHoy||x.t==null?"":aqui?(x===aqui?"cur":x.t<(aqui.t??0)?"pas":""):now.min>=fin?"pas":now.min>=x.t?"cur":"";
-    const dx=esHoy&&est!=="pas"&&x!==aqui?dist(x.lugar):null,p=x.lugar,[fa,col]=icono(x);
+    const est=!esHoy||x.t==null?"":aqui?(x.k===aqui.k?"cur":x.t<(aqui.t??0)?"pas":""):now.min>=fin?"pas":now.min>=x.t?"cur":"";
+    const dx=esHoy&&est!=="pas"&&!(aqui&&x.k===aqui.k)?dist(x.lugar):null,p=x.lugar,[fa,col]=icono(x);
     if(esHoy&&!marcado&&x.t!=null&&x.t>now.min){marcado=true;h+=`<div class="now"><span>${fmtMin(now.min)}</span><i></i></div>`}
     h+=`<button class="it ${est}" data-item="${esc(x.k)}" data-di="${i}">
       <span class="tk"><i></i></span>
@@ -1737,7 +1743,7 @@ function tarjetaHotel(h,o={}){
       <a class="btn sm" href="${esc(urlMapas(p))}" target="_blank" rel="noopener"><i class="fa-solid fa-map-location-dot"></i>Mapas</a>
       <button class="btn sm" data-taxi-hotel="${h._row||""}" data-hk="${esc(h.Ciudad)}"><i class="fa-solid fa-taxi"></i>Taxista</button>
       ${p.dir?`<button class="btn sm" data-copiar="${esc(p.dir)}"><i class="fa-regular fa-copy"></i>Copiar</button>`:""}
-      ${o.docs?botonesDoc(claveDoc("Alojamiento",h)):""}`}
+      ${o.docs?botonesDoc(claveDoc("Alojamiento",h),"Ver reserva","Adjuntar reserva"):""}`}
       ${o.editar&&h._row?`<button class="btn sm" data-edit="Alojamiento" data-row="${h._row}"><i class="fa-solid fa-pen"></i>Editar</button>`:""}</div>
   </div>`;
 }
@@ -1898,7 +1904,7 @@ function rHoy(){
     </div>`;
   }
 
-  if(now.iso<DIAS[0].iso) html+=tarjetaFechasClave();          // antes de salir: qué hay que comprar y cuándo
+  if(now.iso<DIAS[0].iso) html+=tarjetaFechasClave(false,3);          // antes de salir: qué hay que comprar y cuándo
   if(esHoy) html+=tarjetaRapidos(gk||d.ck);
   if(esHoy&&now.min>=18*60&&DIAS[sel+1]) html+=tarjetaManana(sel+1);
   html+=tarjetaAvisos(sel,esHoy?"Para hoy":"Para este día");
@@ -2210,14 +2216,16 @@ function dibujarMapa(map,def){
         .bindTooltip(esc(p.t),{permanent:true,direction:izq?"left":"right",offset:[izq?-10:10,0],className:"tt"})
         .on("click",()=>{location.hash="viaje/"+p.k});
     });
-    map.fitBounds(def.pts.map(p=>[p.lat,p.lon]),{padding:[30,30]});
   }else{
     def.lin.forEach(l=>L.polyline(l,{color:def.c,weight:3,opacity:.5,interactive:false}).addTo(map));
     def.pts.forEach(p=>L.marker([p.lat,p.lon],{icon:pin(p.n[0]+(p.n.length>1?"+":""),def.c),title:p.t.join(", ")}).addTo(map)
       .bindTooltip(p.t.map(esc).join("<br>"),{direction:"top",offset:[0,-12],className:"tt"}).on("click",()=>detalleLugar(p.id)));
-    if(def.pts.length>1) map.fitBounds(def.pts.map(p=>[p.lat,p.lon]),{padding:[30,30],maxZoom:15});
-    else map.setView(def.pts[0]?[def.pts[0].lat,def.pts[0].lon]:def.centro,13);
   }
+  encuadrar(map,def);
+}
+function encuadrar(map,def){                   // todas las chinchetas a la vista
+  if(def.tipo==="viaje"||def.pts.length>1) map.fitBounds(def.pts.map(p=>[p.lat,p.lon]),{padding:[30,30],maxZoom:15});
+  else map.setView(def.pts[0]?[def.pts[0].lat,def.pts[0].lon]:def.centro,13);
 }
 function montarMapa(){
   if(tab!=="viaje"||!$("mapaV")) return;
@@ -2238,7 +2246,7 @@ function montarMapa(){
     const el=document.createElement("div"); el.id="mapaV"; el.className="lmap on"; ph.replaceWith(el);
     const tactil=matchMedia("(pointer:coarse)").matches;
     const map=L.map(el,{scrollWheelZoom:false,dragging:!tactil,tap:false});   // en el móvil un dedo mueve la página; dos, el mapa
-    MAPA={k,el,map,yo:null,tactil};
+    MAPA={k,el,map,yo:null,tactil,def};
     const ctl=L.control({position:"topright"});
     ctl.onAdd=()=>{const b=L.DomUtil.create("button","mapa-amp");b.type="button";b.innerHTML=`<i class="fa-solid fa-expand"></i><span>Ampliar</span>`;
       L.DomEvent.disableClickPropagation(b);b.onclick=()=>ampliarMapa(!el.classList.contains("full"));return b};
@@ -2254,7 +2262,7 @@ function ampliarMapa(on){
   el.classList.toggle("full",on);
   const b=el.querySelector(".mapa-amp"); if(b) b.innerHTML=on?`<i class="fa-solid fa-compress"></i><span>Cerrar</span>`:`<i class="fa-solid fa-expand"></i><span>Ampliar</span>`;
   if(tactil){if(on) map.dragging.enable(); else map.dragging.disable()}
-  setTimeout(()=>map.invalidateSize(),50);
+  setTimeout(()=>{map.invalidateSize();encuadrar(map,MAPA.def)},50);   // a pantalla completa cabe más: se reencuadra
 }
 
 /* ---------- RESERVAS ---------- */
@@ -2293,7 +2301,7 @@ function rReservas(){
           <small>${esc(ciudad(x.l.Ciudad).n)}${x.o?" · "+fecha(x.o.iso,{weekday:"short",day:"numeric",month:"short"}):""}${limpio(x.l.Reserva)?" · "+esc(x.l.Reserva):""}</small></span>
         <em>${esc(limpio(x.l.Precio))}</em></label>`).join("")}</div></section>
       <section class="card" style="background:var(--red50);border-color:var(--red100)"><h2><i class="fa-solid fa-plus"></i>Añadir entrada o reserva</h2>
-      ${v2()?"":`<p class="alerta"><i class="fa-solid fa-triangle-exclamation"></i>Hasta que actualices el script de la hoja, se guarda solo en este móvil.</p>`}
+      ${SERVER&&!v2()?`<p class="alerta"><i class="fa-solid fa-triangle-exclamation"></i>Hasta que actualices el script de la hoja, se guarda solo en este móvil.</p>`:""}
       <form data-form="entrada"><label for="eC">Ciudad</label><select id="eC">${ks.map(k=>`<option value="${k}">${esc(CIUDADES[k].n)}</option>`).join("")}</select>
         <label for="eN">Qué</label><input id="eN" type="text" required placeholder="Ej.: Espectáculo de acrobacias">
         <div class="dos"><div><label for="eP">Precio</label><input id="eP" type="text" placeholder="Opcional"></div>
@@ -2347,7 +2355,7 @@ function rGastos(){
   const pag1=G.filter(g=>g["Pagó"]===p1).reduce((s,g)=>s+(num(g.EUR)||0),0),pag2=G.filter(g=>g["Pagó"]===p2).reduce((s,g)=>s+(num(g.EUR)||0),0);
   const dif=(pag1-pag2)/2;
   let html=`<div class="pila"><div class="cab"><h1><i class="fa-solid fa-wallet"></i>Gastos</h1><p>${G.length?`${eur(tot)} en ${G.length} ${G.length===1?"gasto":"gastos"}`:"Apunta cada gasto en el momento, también sin conexión."}</p></div>
-    ${v2()?"":`<p class="alerta"><i class="fa-solid fa-triangle-exclamation"></i>Hasta que actualices el script de la hoja, los gastos se guardan solo en este móvil.</p>`}
+    ${SERVER&&!v2()?`<p class="alerta"><i class="fa-solid fa-triangle-exclamation"></i>Hasta que actualices el script de la hoja, los gastos se guardan solo en este móvil.</p>`:""}
     <form data-form="gasto" class="card gf">
       <p class="lbl" style="margin:0;color:var(--red)"><i class="fa-solid fa-plus"></i>Nuevo gasto</p>
       <div class="imp"><input id="gI" type="text" inputmode="decimal" placeholder="0" aria-label="Importe" required autocomplete="off">
@@ -2447,15 +2455,15 @@ function fechasClave(){
   return out.sort((a,b)=>a.iso.localeCompare(b.iso));
 }
 const urlVuelo=n=>"https://www.flightradar24.com/data/flights/"+encodeURIComponent(String(n).toLowerCase().replace(/[^a-z0-9]/g,""));
-function tarjetaFechasClave(todas){
+function tarjetaFechasClave(todas,max){
   const now=ahoraCN(),F=fechasClave().filter(f=>todas||!f.hecho&&(f.hasta?now.iso<=f.hasta:diasEntre(now.iso,f.iso)>=-3)&&now.iso<=DIAS[0].iso);
   if(!F.length) return "";
-  return `<section class="card"><h2><i class="fa-regular fa-bell"></i>Fechas clave para comprar</h2><div class="fc">${F.map(f=>{
+  return `<section class="card"><h2><i class="fa-regular fa-bell"></i>Fechas clave para comprar${max&&F.length>max?` <small>${F.length}</small>`:""}</h2><div class="fc">${F.slice(0,max||F.length).map(f=>{
     const d=diasEntre(now.iso,f.iso),cuando=f.hecho?"Hecho":d>1?`En ${d} días`:d===1?"Mañana":d===0?"Hoy":"Ya a la venta";
     return `<${f.url?"a":"div"} class="fci ${f.hecho?"ok":d<=0?"ya":""}" ${f.url?`href="${esc(f.url)}" target="_blank" rel="noopener"`:""}><span class="ic ic-rose"><i class="fa-solid ${f.ico}"></i></span>
       <span><b>${esc(f.txt)}</b><span class="n">${fecha(f.iso,{weekday:"short",day:"numeric",month:"short"})}${f.hora?` a las ${f.hora} de China (${horaEspana(f.iso,f.hora)} en España)`:""}. ${esc(f.det)}</span></span>
       <em>${cuando}</em></${f.url?"a":"div"}>`}).join("")}</div>
-    <p class="n">Se pueden pasar al Calendario con alarma desde Kit → Ajustes.</p></section>`;
+    ${max&&F.length>max?`<button class="btn linea sm" data-t="kit/preparar" style="margin-top:10px">Ver las ${F.length} fechas</button>`:`<p class="n">Se pueden pasar al Calendario con alarma desde Kit → Ajustes.</p>`}</section>`;
 }
 function horaEspana(iso,h){                   // China va 6 h por delante de España en horario de verano y 7 h en invierno (cambio: último domingo de octubre)
   const d=D(iso),fin=new Date(d.getFullYear(),9,31);fin.setDate(31-fin.getDay());
@@ -2673,7 +2681,12 @@ function exportarICS(){
     out.push(`SUMMARY:${sum}`,`DESCRIPTION:${t(f.det+(f.url?" "+f.url:""))}`,...(f.url?[`URL:${f.url}`]:[]),"BEGIN:VALARM","ACTION:DISPLAY",`DESCRIPTION:${sum}`,`TRIGGER:${f.hora?"-PT15M":"PT9H"}`,"END:VALARM","END:VEVENT");
   });
   out.push("END:VCALENDAR");
-  return out.join("\r\n");
+  const enc=new TextEncoder(),plegar=l=>{                              // las líneas de más de 75 bytes se parten (RFC 5545)
+    const ps=[];let cur="",n=0,lim=75;
+    for(const ch of l){const k=enc.encode(ch).length;if(n+k>lim){ps.push(cur);cur="";n=0;lim=74}cur+=ch;n+=k}
+    return [...ps,cur].join("\r\n ");
+  };
+  return out.map(plegar).join("\r\n");
 }
 async function compartirArchivo(file){
   try{
@@ -2720,7 +2733,10 @@ addEventListener("hashchange",()=>{cerrarHoja();ruta()});
 document.addEventListener("click",async e=>{
   const q=s=>e.target.closest(s);
   let b;
-  if(b=q("[data-t]")) return irA(b.dataset.t);
+  if(b=q("[data-t]")){
+    if(b.dataset.t==="hoy"&&(b.id==="cuenta"||tab==="hoy")&&selManual){sel=null;selManual=false;rHoy()}   // la píldora, o «Hoy» estando ya en Hoy, vuelve al día de hoy
+    return irA(b.dataset.t);
+  }
   if(b=q("[data-copiar]")){
     try{await navigator.clipboard.writeText(b.dataset.copiar);aviso("Copiado. Pégalo en DiDi o en Amap.")}catch(err){grande(b.dataset.copiar,"Mantén pulsado para copiar")}
     return;
@@ -2754,7 +2770,12 @@ document.addEventListener("click",async e=>{
   if(b=q("[data-hablar]")) return hablar(b.dataset.hablar,b.dataset.lang);
   if(b=q("[data-frase]")) return grande(b.dataset.frase,b.dataset.es,b.dataset.py,b.dataset.lang);
   if(b=q("[data-ver-doc]")) return verDoc(b.dataset.verDoc);
-  if(b=q("[data-quitar-doc]")){await bdOp("readwrite",s=>s.delete(b.dataset.quitarDoc)).catch(()=>{});return cargarDocs()}
+  if(b=q("[data-quitar-doc]")){                // se puede deshacer: la ✕ está al lado de «Ver» y es fácil tocarla sin querer
+    const k=b.dataset.quitarDoc,d=await bdOp("readonly",s=>s.get(k)).catch(()=>null);
+    await bdOp("readwrite",s=>s.delete(k)).catch(()=>{});cargarDocs();
+    if(d) aviso("Archivo quitado del móvil",async()=>{await bdOp("readwrite",s=>s.put(d,k)).catch(()=>{});cargarDocs()});
+    return;
+  }
   if(b=q("[data-act]")){
     const a=b.dataset.act;
     if(a==="cerrar") cerrarHoja();
@@ -2777,6 +2798,20 @@ document.addEventListener("click",async e=>{
   }
 });
 $("dlg").addEventListener("click",e=>{if(e.target===$("dlg")) cerrarHoja()});
+(()=>{                                         // la hoja se cierra arrastrándola hacia abajo, como en iOS
+  const G=$("dlg"),B=$("dlgB");let y0=null,dy=0;
+  const fin=cerrar=>{G.style.transition="transform .2s ease";G.style.transform=cerrar?"translateY(100%)":"";
+    setTimeout(()=>{if(cerrar) cerrarHoja();G.style.transition=G.style.transform=""},200)};
+  B.addEventListener("touchstart",e=>{dy=0;y0=B.scrollTop<=0&&e.touches.length===1&&!e.target.closest("input,textarea,select")?e.touches[0].clientY:null},{passive:true});
+  B.addEventListener("touchmove",e=>{
+    if(y0==null) return;
+    dy=e.touches[0].clientY-y0;
+    if(dy<0){y0=null;G.style.transform="";return}                       // hacia arriba: se desplaza el contenido
+    e.preventDefault();G.style.transform=`translateY(${dy}px)`;
+  },{passive:false});
+  B.addEventListener("touchend",()=>{if(y0==null) return;y0=null;if(dy>0) fin(dy>110)});
+  B.addEventListener("touchcancel",()=>{if(y0!=null){y0=null;fin(false)}});
+})();
 document.addEventListener("keydown",e=>{
   if(e.key!=="Escape") return;
   if($("grande").classList.contains("on")) cerrarGrande(); else if(MAPA.el&&MAPA.el.classList.contains("full")) ampliarMapa(false);
@@ -2821,7 +2856,8 @@ document.addEventListener("change",async e=>{
   }
   if(t.matches("[data-doc]")&&t.files[0]){
     const f=t.files[0];
-    try{await bdOp("readwrite",s=>s.put({name:f.name,type:f.type,blob:f},t.dataset.doc));aviso("Billete guardado en este móvil");cargarDocs()}
+    try{const datos=await f.arrayBuffer();         // en bytes: Safari en modo privado no guarda archivos (Blob) en IndexedDB
+      await bdOp("readwrite",s=>s.put({name:f.name,type:f.type,blob:datos},t.dataset.doc));aviso("Billete guardado en este móvil");cargarDocs()}
     catch(err){aviso("No se ha podido guardar el billete.")}
   }
 });
