@@ -2426,7 +2426,7 @@ let kitTab="preparar";
 function fechasClave(){
   const out=[],menos=(iso,n)=>{const d=D(iso);d.setDate(d.getDate()-n);return isoDe(d)};
   if(DIAS.length) out.push({iso:menos(DIAS[0].iso,3),txt:"Tarjeta de llegada online",det:"Se puede rellenar en las 72 h antes de aterrizar. Gratis.",url:"https://s.nia.gov.cn/ArrivalCardFillingPC/",ico:"fa-passport",
-    hecho:DATA.checklist.some(c=>/tarjeta de llegada/i.test(c.Tarea)&&c.Hecho===true)});
+    hecho:DOCS.has("doc:visado")||DATA.checklist.some(c=>/tarjeta de llegada/i.test(c.Tarea)&&c.Hecho===true)});
   const o=primeraVisita();
   DATA.lugares.forEach(l=>{
     const v=VENTAS[norm(l.Nombre)],vi=o[norm(l.Nombre)]; if(!v||!vi) return;
@@ -2508,9 +2508,9 @@ function kitPreparar(){
         <textarea id="segT" rows="3" placeholder="Compañía, número de póliza, teléfono de asistencia, WhatsApp…">${esc(seg)}</textarea><p class="guardado"><i class="fa-solid fa-cloud"></i> Se guarda solo</p></form></section>
 
     <section class="card"><h2><i class="fa-solid fa-passport"></i>Documentos</h2>
-      <p class="n" style="margin:-6px 0 12px">Foto o PDF de pasaportes, póliza y visados. Se guardan solo en este móvil y se abren sin conexión.</p>
+      <p class="n" style="margin:-6px 0 12px">Foto o PDF de pasaportes, póliza y declaración de entrada. Se guardan solo en este móvil y se abren sin conexión.</p>
       <div class="docs">${[["doc:pas1","Pasaporte de "+p1,"fa-passport"],["doc:pas2","Pasaporte de "+p2,"fa-passport"],["doc:seguro","Póliza del seguro","fa-file-shield"],
-        ["doc:visado","Visado o permiso de entrada","fa-stamp"],["doc:otro","Otro documento","fa-file"]]
+        ["doc:visado","Declaración de entrada (QR)","fa-qrcode"],["doc:otro","Otro documento","fa-file"]]
       .map(([k,t,i])=>`<div class="doc"><span><i class="fa-solid ${i}"></i>${esc(t)}</span><div class="acc">${botonesDoc(k,"Ver","Adjuntar")}</div></div>`).join("")}</div></section>
 
     <section class="card"><h2><i class="fa-solid fa-list-check"></i>Preparativos <small>${hechas} de ${L.length}</small></h2>
