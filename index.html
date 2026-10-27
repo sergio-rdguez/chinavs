@@ -1959,6 +1959,10 @@ function rHoy(){
   if(esHoy) html+=tarjetaRapidos(gk||d.ck);
   if(esHoy&&now.min>=18*60&&DIAS[sel+1]) html+=tarjetaManana(sel+1);
   html+=tarjetaAvisos(sel,esHoy?"Para hoy":"Para este día");
+  if(itemsDia(d.iso).some(x=>AUDIOGUIAS.some(([re])=>re.test(x.titulo)||re.test(x.lugar&&x.lugar.nombre||""))))   // hoy toca un sitio con audioguía: a un toque
+    html+=`<a class="card audioguia th" style="--c:${ciudad(d.Ciudad).c}" href="ciudad-prohibida/"><span class="ag-i"><i class="fa-solid fa-headphones"></i></span>
+      <span><b>Audioguía de la Ciudad Prohibida</b><span class="n">Toca para abrirla: mapa con vuestra posición y las historias de cada parada.</span></span>
+      <i class="fa-solid fa-chevron-right" style="color:var(--faint)"></i></a>`;
   html+=htmlDia(sel,{vivo:true,aqui,dist});
   html+=`<button class="enl" data-compartir-dia="${sel}" style="justify-self:center"><i class="fa-solid fa-share-nodes"></i> Compartir el plan del día</button>`;
   if(!geoActiva()) html+=`<button class="enl" data-act="geo" style="justify-self:center"><i class="fa-solid fa-location-arrow"></i> Usar mi ubicación para ajustar el plan</button>`;
