@@ -1,8 +1,11 @@
 /* Viaje a China: copia de la app para que abra sin conexión.
    Sirve primero lo guardado y se actualiza por detrás; la versión nueva aparece al abrir la app la vez siguiente. */
-const CACHE = "china-v5";
+const CACHE = "china-v6";
 const FOTOS = ["pekin", "xian", "shanghai", "zhangjiajie", "yangshuo", "shenzhen", "hongkong"].map(k => `./img/${k}.jpg`);
-const ARCHIVOS = ["./", "./index.html", "./manifest.webmanifest", "./icon-180.png", "./icon-512.png", ...FOTOS];
+const GUIA = ["./ciudad-prohibida/", "./ciudad-prohibida/index.html", "./ciudad-prohibida/guion.js"];   // audioguía de la Ciudad Prohibida
+const ARCHIVOS = ["./", "./index.html", "./manifest.webmanifest", "./icon-180.png", "./icon-512.png", ...FOTOS, ...GUIA];
+// Teselas del mapa de la audioguía: caché aparte que sobrevive a las versiones nuevas
+const TESELAS = "china-teselas", OSM = /^https:\/\/tile\.openstreetmap\.org\//;
 // Iconos y mapas se descargan ya en casa: en China estos CDN pueden ir lentos o estar bloqueados
 const FA = "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/";
 const EXTRA = [FA + "css/all.min.css", FA + "webfonts/fa-solid-900.woff2", FA + "webfonts/fa-regular-400.woff2", FA + "webfonts/fa-brands-400.woff2",
@@ -20,7 +23,7 @@ self.addEventListener("activate", e => {
   e.waitUntil(caches.keys()
     .then(async ks => {
       const nueva = await caches.open(CACHE);                         // lo ya descargado de los CDN pasa a la caché nueva
-      for (const k of ks.filter(k => k !== CACHE)) {
+      for (const k of ks.filter(k => k !== CACHE && k !== TESELAS)) {
         const vieja = await caches.open(k);
         for (const req of await vieja.keys()) if (CDN.test(req.url) && !(await nueva.match(req))) await nueva.put(req, await vieja.match(req));
         await caches.delete(k);
@@ -41,21 +44,30 @@ self.addEventListener("fetch", e => {
     }));
     return;
   }
-  if (new URL(req.url).origin !== location.origin) return;         // la hoja, el clima, el cambio y los mapas van directos
+  if (OSM.test(req.url)) {                                          // mapa de la audioguía: lo descargado vale sin conexión
+    e.respondWith(caches.open(TESELAS).then(async c => (await c.match(req.url)) || fetch(req).then(res => {
+      if (res.ok) c.put(req.url, res.clone());
+      return res;
+    })));
+    return;
+  }
+  const url = new URL(req.url);
+  if (url.origin !== location.origin) return;                       // la hoja, el clima, el cambio y los mapas van directos
   e.respondWith(caches.open(CACHE).then(async cache => {
-    const clave = req.mode === "navigate" ? "./index.html" : req;     // cualquier entrada a la app usa la misma copia
+    const guia = url.pathname.includes("/ciudad-prohibida/");
+    const clave = req.mode === "navigate" ? (guia ? "./ciudad-prohibida/index.html" : "./index.html") : req;   // cualquier entrada a la app usa la misma copia
     const guardado = await cache.match(clave);
     const red = fetch(req).then(res => {
       if (res.ok && !res.redirected) {
         cache.put(clave, res.clone());
         const firma = r => r && (r.headers.get("etag") || r.headers.get("last-modified"));
-        if (req.mode === "navigate" && guardado && firma(res) && firma(res) !== firma(guardado))   // se ha publicado una versión nueva
+        if (req.mode === "navigate" && !guia && guardado && firma(res) && firma(res) !== firma(guardado))   // se ha publicado una versión nueva
           e.waitUntil(new Promise(r => setTimeout(r, 2500))             // espera a que la página esté lista para escuchar
             .then(() => self.clients.matchAll({ type: "window", includeUncontrolled: true }))
             .then(cs => cs.forEach(c => c.postMessage({ tipo: "nueva" }))));
       }
       return res;
-    }).catch(() => guardado || cache.match("./index.html"));
+    }).catch(() => guardado || cache.match(guia ? "./ciudad-prohibida/index.html" : "./index.html"));
     return guardado || red;
   }));
 });

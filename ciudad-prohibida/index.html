@@ -1,0 +1,618 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#FFFFFF">
+<script>try{var t=localStorage.getItem("china-tema");if(t==="oscuro"||(t!=="claro"&&matchMedia("(prefers-color-scheme: dark)").matches)){document.documentElement.dataset.tema="oscuro";document.querySelector('meta[name="theme-color"]').content="#0F172A"}}catch(e){}</script>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Ciudad Prohibida">
+<meta name="format-detection" content="telephone=no">
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="apple-touch-icon" href="../icon-180.png">
+<link rel="icon" href="../icon-180.png">
+<title>Ciudad Prohibida · Audioguía</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<style>
+/* ============================================================
+   Audioguía de la Ciudad Prohibida: misma paleta que la app,
+   con el rojo y el oro de los palacios como acento (--c).
+   ============================================================ */
+:root{
+  --bg:#F1F5F9; --surface:#FFFFFF; --soft:#F8FAFC; --ink:#0F172A; --text:#1E293B; --muted:#64748B; --faint:#94A3B8;
+  --line:#E2E8F0; --line2:#F1F5F9;
+  --red:#DC2626; --red7:#B91C1C; --red50:#FEF2F2; --red100:#FEE2E2;
+  --blue:#2563EB; --ok:#059669; --warn:#B45309; --oro:#B7791F; --oro50:#FFFBEB; --oro200:#FDE68A;
+  --sh:0 1px 2px rgba(15,23,42,.05); --sh2:0 10px 35px -10px rgba(15,23,42,.15);
+  --f:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif;
+  --fz:"PingFang SC","Hiragino Sans GB","Microsoft YaHei","Noto Sans CJK SC",sans-serif;
+  --st:env(safe-area-inset-top,0px); --sb:env(safe-area-inset-bottom,0px);
+  color-scheme:light;
+}
+:root[data-tema="oscuro"]{--bg:#020617; --surface:#0F172A; --soft:#111C31; --ink:#F8FAFC; --text:#E2E8F0; --muted:#94A3B8; --faint:#64748B;
+  --line:#1E293B; --line2:#162033; --red50:#2A0F12; --red100:#3B1216; --red7:#F87171; --blue:#3B82F6; --ok:#34D399; --warn:#FBBF24;
+  --oro:#F6C453; --oro50:#2B2111; --oro200:#5C4516;
+  --sh:0 1px 2px rgba(0,0,0,.4); --sh2:0 10px 35px -10px rgba(0,0,0,.7); color-scheme:dark}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--text);font:15px/1.5 var(--f);-webkit-font-smoothing:antialiased;min-height:100vh;
+  padding-bottom:calc(150px + var(--sb))}
+h1,h2,h3,p{margin:0}
+button{font:inherit;color:inherit;cursor:pointer}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+.zh{font-family:var(--fz);color:var(--red7)}
+.n{color:var(--muted);font-size:12.5px}
+.oculto{display:none!important}
+
+/* ---------- Cabecera ---------- */
+.top{position:sticky;top:0;z-index:600;background:color-mix(in srgb,var(--surface) 90%,transparent);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--line);padding-top:var(--st)}
+.top-in{max-width:56rem;margin:0 auto;padding:10px 16px;display:flex;align-items:center;gap:12px}
+.volver{display:grid;place-items:center;width:38px;height:38px;border-radius:12px;border:1px solid var(--line);background:var(--surface);text-decoration:none;flex:none}
+.logo{width:38px;height:38px;border-radius:12px;background:var(--red);color:#fff;display:grid;place-items:center;font:900 19px/1 var(--fz);flex:none;
+  box-shadow:0 4px 10px -2px rgba(220,38,38,.35)}
+.tit{min-width:0;flex:1}
+.tit h1{font-size:16px;font-weight:900;color:var(--ink);line-height:1.1;letter-spacing:-.01em}
+.tit p{font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ico{width:38px;height:38px;border-radius:12px;border:1px solid var(--line);background:var(--surface);display:grid;place-items:center;flex:none}
+
+main{max-width:56rem;margin:0 auto;padding:12px;display:grid;gap:14px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:16px;box-shadow:var(--sh);padding:16px}
+.btn{font:700 13px var(--f);min-height:40px;padding:8px 14px;border-radius:12px;border:1px solid var(--line);background:var(--line2);color:var(--text);
+  display:inline-flex;align-items:center;justify-content:center;gap:7px;text-decoration:none;transition:transform .12s}
+.btn:active{transform:scale(.96)}
+.btn.pri{background:var(--red);border-color:var(--red);color:#fff}
+.btn.azul{background:var(--blue);border-color:var(--blue);color:#fff}
+.btn.sm{min-height:34px;padding:5px 11px;font-size:12px;border-radius:10px}
+.btns{display:flex;flex-wrap:wrap;gap:8px}
+
+/* ---------- Portada ---------- */
+.portada{position:relative;overflow:hidden;border-radius:20px;color:#fff;padding:22px 18px 18px;
+  background:linear-gradient(160deg,rgba(127,29,29,.88),rgba(69,10,10,.92)),url(../img/pekin.jpg) center/cover;box-shadow:var(--sh2)}
+.portada .eb{font-size:11px;font-weight:900;letter-spacing:.2em;text-transform:uppercase;color:#FDE68A}
+.portada h2{font-size:26px;font-weight:900;letter-spacing:-.02em;line-height:1.1;margin-top:6px}
+.portada h2 span{font-family:var(--fz);font-weight:700;color:#FDE68A;font-size:20px;margin-left:6px}
+.portada p{color:#FEE2E2;font-size:13.5px;margin-top:8px;max-width:38rem}
+.kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:14px}
+.kpis div{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);border-radius:12px;padding:8px 10px}
+.kpis b{display:block;font-size:18px;font-weight:900}
+.kpis small{font-size:11px;color:#FECACA}
+.portada .btns{margin-top:14px}
+.portada .btn{border-color:rgba(255,255,255,.3);background:rgba(255,255,255,.12);color:#fff}
+.portada .btn.pri{background:#FDE68A;border-color:#FDE68A;color:#7F1D1D}
+
+/* ---------- Mapa ---------- */
+.mapaW{position:relative;border-radius:16px;overflow:hidden;border:1px solid var(--line);box-shadow:var(--sh);background:var(--soft)}
+#mapa{height:min(46vh,420px);background:#EDE7DA}
+[data-tema="oscuro"] #mapa{background:#1A1F2B}
+[data-tema="oscuro"] .leaflet-tile-pane{filter:brightness(.72) contrast(1.1) saturate(.8)}
+.mapaB{position:absolute;right:10px;top:10px;z-index:500;display:grid;gap:8px}
+.mapaB button{width:40px;height:40px;border-radius:12px;border:1px solid var(--line);background:var(--surface);box-shadow:var(--sh2);display:grid;place-items:center}
+.mapaB button.on{background:var(--blue);border-color:var(--blue);color:#fff}
+.pinP{display:grid;place-items:center;width:26px;height:26px;border-radius:50%;background:var(--red);color:#fff;font:800 11px/1 var(--f);
+  border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.35)}
+.pinP.oido{background:#94A3B8}
+.pinP.act{background:#B7791F;transform:scale(1.25)}
+.yo{width:18px;height:18px;border-radius:50%;background:#2563EB;border:3px solid #fff;box-shadow:0 0 0 6px rgba(37,99,235,.25),0 2px 6px rgba(0,0,0,.35)}
+.leaflet-container{font:inherit}
+.leaflet-tooltip.tt{font-weight:700;font-size:11.5px;padding:3px 7px;border-radius:8px}
+
+/* ---------- Estado: GPS, siguiente parada y plan ---------- */
+.estado{display:grid;gap:8px;grid-template-columns:1fr 1fr}
+.est{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:10px 12px;box-shadow:var(--sh);min-width:0}
+.est small{display:flex;align-items:center;gap:6px;font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+.est b{display:block;font-size:14.5px;font-weight:800;color:var(--ink);margin-top:2px;line-height:1.25}
+.est span{font-size:12px;color:var(--muted)}
+.est.ancha{grid-column:1/-1}
+.punto{width:8px;height:8px;border-radius:50%;background:var(--faint)}
+.punto.ok{background:#10B981;animation:late 1.6s infinite}
+@keyframes late{50%{opacity:.35}}
+.flecha{display:inline-block;transition:transform .3s}
+.llegada{display:flex;align-items:center;gap:12px;background:var(--oro50);border:1px solid var(--oro200);border-radius:16px;padding:12px 14px}
+.llegada i.fa-location-dot{color:var(--oro);font-size:20px}
+.llegada div{flex:1;min-width:0}
+.llegada b{display:block;color:var(--ink)}
+
+/* ---------- Paradas ---------- */
+.lbl{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:800;color:var(--red7);text-transform:uppercase;letter-spacing:.06em;margin:6px 2px 0}
+.parada{background:var(--surface);border:1px solid var(--line);border-radius:16px;box-shadow:var(--sh);overflow:hidden;scroll-margin-top:calc(var(--st) + 70px)}
+.parada.act{border-color:var(--oro);box-shadow:0 0 0 2px color-mix(in srgb,var(--oro) 40%,transparent),var(--sh2)}
+.pc{width:100%;display:flex;align-items:center;gap:12px;padding:14px;border:0;background:none;text-align:left}
+.num{flex:none;width:34px;height:34px;border-radius:11px;background:var(--red50);color:var(--red7);display:grid;place-items:center;font-weight:900;font-size:14px;
+  border:1px solid var(--red100)}
+.parada.hecha .num{background:var(--line2);color:var(--muted);border-color:var(--line)}
+.parada.hecha .num::after{content:"\f00c";font:900 12px "Font Awesome 6 Free"}
+.parada.hecha .num span{display:none}
+.pc .tx{flex:1;min-width:0}
+.pc b{display:block;font-size:15.5px;font-weight:800;color:var(--ink);line-height:1.25}
+.pc .sub{display:block;font-size:12px;color:var(--muted);margin-top:2px}
+.pc .chev{color:var(--faint);transition:transform .2s}
+.parada.abierta .chev{transform:rotate(180deg)}
+.pb{display:none;padding:0 14px 14px}
+.parada.abierta .pb{display:grid;gap:12px}
+.resumen{font-size:13.5px;color:var(--text)}
+.ir{display:flex;gap:10px;background:var(--soft);border:1px solid var(--line);border-radius:12px;padding:10px 12px;font-size:13px}
+.ir i{color:var(--blue);margin-top:3px}
+.mira{margin:0;padding:0;list-style:none;display:grid;gap:6px}
+.mira li{display:flex;gap:9px;font-size:13px;align-items:flex-start}
+.mira li i{color:var(--oro);margin-top:3px;font-size:12px}
+.pistas{display:grid;gap:6px}
+.pista{display:flex;align-items:center;gap:10px;width:100%;text-align:left;border:1px solid var(--line);background:var(--soft);border-radius:12px;padding:9px 10px}
+.pista .pl{flex:none;width:32px;height:32px;border-radius:50%;background:var(--surface);border:1px solid var(--line);display:grid;place-items:center;color:var(--red)}
+.pista.sonando{border-color:var(--red);background:var(--red50)}
+.pista.sonando .pl{background:var(--red);color:#fff;border-color:var(--red)}
+.pista.oida .pl{color:var(--ok)}
+.pista .tx{flex:1;min-width:0}
+.pista b{display:block;font-size:13.5px;font-weight:700;color:var(--ink);line-height:1.3}
+.pista small{font-size:11.5px;color:var(--muted)}
+.tipo{display:inline-block;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;padding:1px 6px;border-radius:6px;margin-right:6px}
+.t-explica{background:#DBEAFE;color:#1E40AF}.t-historia{background:#FEE2E2;color:#991B1B}.t-curiosidad{background:#FEF3C7;color:#92400E}.t-leyenda{background:#EDE9FE;color:#5B21B6}
+[data-tema="oscuro"] .t-explica{background:#172554;color:#93C5FD}[data-tema="oscuro"] .t-historia{background:#3B1216;color:#FCA5A5}
+[data-tema="oscuro"] .t-curiosidad{background:#3A2A0A;color:#FCD34D}[data-tema="oscuro"] .t-leyenda{background:#2E1065;color:#C4B5FD}
+details.texto{border-top:1px dashed var(--line);padding-top:8px}
+details.texto summary{font-size:12.5px;font-weight:700;color:var(--muted);cursor:pointer;list-style:none}
+details.texto summary::-webkit-details-marker{display:none}
+details.texto h4{margin:12px 0 4px;font-size:13.5px;color:var(--ink)}
+details.texto p{font-size:14px;line-height:1.6;margin:0 0 6px}
+
+/* ---------- Reproductor fijo ---------- */
+.repro{position:fixed;left:0;right:0;bottom:0;z-index:700;background:color-mix(in srgb,var(--surface) 96%,transparent);backdrop-filter:blur(14px);
+  -webkit-backdrop-filter:blur(14px);border-top:1px solid var(--line);box-shadow:0 -6px 24px rgba(15,23,42,.14);padding:10px 14px max(12px,var(--sb))}
+.repro-in{max-width:56rem;margin:0 auto}
+.rinfo{display:flex;align-items:center;gap:10px;min-width:0;border:0;background:none;padding:0;width:100%;text-align:left}
+.rinfo .tx{flex:1;min-width:0}
+.rinfo b{display:block;font-size:14px;font-weight:800;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rinfo small{display:block;font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.barra{height:4px;border-radius:4px;background:var(--line);margin:8px 0 6px;overflow:hidden}
+.barra i{display:block;height:100%;width:0;background:var(--red);transition:width .3s}
+.ctrl{display:flex;align-items:center;justify-content:space-between;gap:6px}
+.ctrl button{border:0;background:none;width:44px;height:44px;border-radius:50%;display:grid;place-items:center;font-size:17px;color:var(--text)}
+.ctrl button:active{background:var(--line2)}
+.ctrl .play{width:56px;height:56px;background:var(--red);color:#fff;font-size:21px;box-shadow:0 6px 16px -4px rgba(220,38,38,.55)}
+.ctrl .vel{font-size:12.5px;font-weight:800;width:auto;padding:0 8px;border-radius:10px;border:1px solid var(--line)}
+.frase{font-size:12.5px;color:var(--text);line-height:1.45;max-height:2.9em;overflow:hidden;margin-top:6px;opacity:.85}
+
+/* ---------- Hoja de ajustes ---------- */
+dialog{border:0;padding:0;border-radius:20px 20px 0 0;margin:auto auto 0;width:100%;max-width:36rem;background:var(--surface);color:var(--text);
+  max-height:88vh;box-shadow:var(--sh2)}
+dialog::backdrop{background:rgba(15,23,42,.45)}
+.hoja{padding:18px 18px calc(20px + var(--sb));display:grid;gap:14px}
+.hoja h3{font-size:18px;font-weight:900;color:var(--ink);display:flex;align-items:center;justify-content:space-between}
+.hoja label{font-size:12px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+.hoja select{width:100%;font:inherit;padding:10px 12px;border-radius:12px;border:1px solid var(--line);background:var(--soft);color:var(--text);margin-top:6px}
+.fila{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.fila span{font-size:14px}
+.sw{appearance:none;-webkit-appearance:none;width:46px;height:28px;border-radius:999px;background:var(--line);position:relative;flex:none;transition:background .2s;margin:0}
+.sw::after{content:"";position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:#fff;box-shadow:var(--sh);transition:transform .2s}
+.sw:checked{background:var(--ok)}
+.sw:checked::after{transform:translateX(18px)}
+.aviso{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(160px + var(--sb));z-index:900;background:var(--ink);color:var(--surface);font-size:13px;font-weight:600;
+  padding:10px 14px;border-radius:12px;box-shadow:var(--sh2);opacity:0;pointer-events:none;transition:opacity .2s;max-width:calc(100% - 32px)}
+.aviso.on{opacity:1}
+@media (min-width:768px){#mapa{height:440px}.estado{grid-template-columns:repeat(3,1fr)}.est.ancha{grid-column:auto}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="top-in">
+    <a class="volver" href="../#viaje/pekin" aria-label="Volver a la app del viaje"><i class="fa-solid fa-arrow-left"></i></a>
+    <span class="logo" aria-hidden="true">宫</span>
+    <div class="tit"><h1>Ciudad Prohibida</h1><p id="sub">Audioguía · 故宫 · unas 3 horas</p></div>
+    <button class="ico" data-act="ajustes" aria-label="Ajustes de la audioguía"><i class="fa-solid fa-sliders"></i></button>
+  </div>
+</header>
+
+<main>
+  <section class="portada" id="portada"></section>
+  <div id="llegada"></div>
+  <div class="estado" id="estado"></div>
+  <div class="mapaW">
+    <div id="mapa" role="region" aria-label="Mapa de la visita"></div>
+    <div class="mapaB">
+      <button data-act="seguir" id="bSeguir" aria-label="Seguir mi posición"><i class="fa-solid fa-location-crosshairs"></i></button>
+      <button data-act="encuadrar" aria-label="Ver toda la ruta"><i class="fa-solid fa-expand"></i></button>
+    </div>
+  </div>
+  <p class="lbl"><i class="fa-solid fa-headphones"></i>Las paradas, de sur a norte</p>
+  <div id="paradas" style="display:grid;gap:10px"></div>
+  <p class="n" style="padding:0 4px">Mapa © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>. La posición de cada parada es aproximada (unos 20–30 m). Horarios y precios orientativos.</p>
+</main>
+
+<div class="repro" id="repro"></div>
+<dialog id="dlg"><div class="hoja" id="hoja"></div></dialog>
+<div class="aviso" id="aviso" role="status" aria-live="polite"></div>
+
+<script src="guion.js"></script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+/* ============================================================
+   RECORRIDO
+   Coordenadas en WGS-84 (las del GPS del iPhone y las de OpenStreetMap);
+   el eje central del palacio está en la longitud 116.3907.
+   [id, nombre, chino, pinyin, lat, lon, minutos, radio de aviso (m), búsqueda en Mapas, cómo llegar]
+   ============================================================ */
+const RUTA=[
+ ["intro","Antes de entrar","故宫","Gùgōng",null,null,6,0,"故宫博物院",
+  "Escuchadla mientras hacéis cola o cruzáis la plaza de Tiananmen. No hace falta estar en ningún sitio concreto."],
+ ["tiananmen","Puerta de Tiananmen","天安门","Tiān'ānmén",39.9072,116.3908,10,60,"天安门城楼",
+  "Situaos frente a la puerta, junto a los puentes de mármol del foso, mirando al norte: el retrato de Mao queda encima de la puerta central."],
+ ["duanmen","Puerta Duanmen","端门","Duānmén",39.9100,116.3907,6,45,"端门 北京",
+  "Cruzad Tiananmen por debajo y seguid recto hacia el norte unos 200 metros por el patio largo. La siguiente puerta, casi idéntica, es Duanmen."],
+ ["wumen","Puerta Meridiana","午门","Wǔmén",39.9120,116.3907,10,45,"故宫 午门",
+  "Pasada Duanmen, seguid recto hasta la explanada en forma de U. Aquí está el control de entradas con el pasaporte."],
+ ["taihemen","Río de las Aguas Doradas y Puerta de la Armonía Suprema","太和门","Tàihémén",39.9140,116.3907,10,45,"故宫 太和门",
+  "Al salir de los túneles de la Puerta Meridiana veréis el gran patio con el río curvo y sus cinco puentes. Cruzadlos y deteneos ante la puerta con los dos leones de bronce."],
+ ["taihedian","Salón de la Armonía Suprema","太和殿","Tàihédiàn",39.9156,116.3907,18,60,"故宫 太和殿",
+  "Cruzad la Puerta de la Armonía Suprema: delante se abre la explanada más grande del palacio. Subid hasta el pie de la triple terraza de mármol."],
+ ["zhonghe_baohe","Salones de la Armonía Central y Preservada","保和殿","Bǎohédiàn",39.9171,116.3907,12,45,"故宫 保和殿",
+  "Rodead el gran salón por cualquiera de los lados y seguid por la terraza hacia el norte: primero el pequeño salón cuadrado, después el tercero. Acabad detrás, junto a la rampa de mármol tallado."],
+ ["jiulongbi","Muro de los Nueve Dragones","九龙壁","Jiǔlóngbì",39.9163,116.3937,8,40,"故宫 九龙壁",
+  "Bajad de la terraza hacia el este, salid por la puerta lateral del patio y seguid las señales de «Treasure Gallery» unos 300 metros. El muro de cerámica está frente a la taquilla de la Galería del Tesoro."],
+ ["tesoro","Galería del Tesoro y Palacio de la Longevidad Tranquila","珍宝馆","Zhēnbǎoguǎn",39.9180,116.3937,22,55,"故宫 珍宝馆",
+  "Comprad la entrada extra (unos 10 yuanes) junto al Muro de los Nueve Dragones y entrad. El recorrido avanza hacia el norte por los palacios de retiro de Qianlong."],
+ ["pozo_zhen","Pozo de la concubina Zhen","珍妃井","Zhēnfēi jǐng",39.9206,116.3940,6,35,"故宫 珍妃井",
+  "Al final del recorrido del Tesoro, casi en el extremo norte del sector, hay un pequeño patio con un pozo cubierto por una losa. Ese es."],
+ ["relojes","Salón de los Relojes","钟表馆","Zhōngbiǎoguǎn",39.9178,116.3924,18,40,"故宫 钟表馆",
+  "Salid del sector del Tesoro hacia el oeste y bajad unos 300 metros hacia el sur por el callejón. El Salón de los Relojes (Fengxiandian) tiene taquilla propia, unos 10 yuanes."],
+ ["qianqinggong","Puerta y Palacio de la Pureza Celestial","乾清宫","Qiánqīnggōng",39.9188,116.3907,12,45,"故宫 乾清宫",
+  "Volved al eje central por la puerta de Jingyun, hacia el oeste. Os encontraréis frente a la Puerta de la Pureza Celestial: entrad y deteneos ante el palacio."],
+ ["jiaotai_kunning","Salón de la Unión y Palacio de la Tranquilidad Terrenal","坤宁宫","Kūnnínggōng",39.9199,116.3907,10,40,"故宫 坤宁宫",
+  "Seguid hacia el norte por el eje: el pequeño salón cuadrado es el de la Unión; justo detrás está el Palacio de la Tranquilidad Terrenal."],
+ ["yangxindian","Salón del Cultivo Mental","养心殿","Yǎngxīndiàn",39.9186,116.3885,12,40,"故宫 养心殿",
+  "Volved un poco hacia el sur y salid del patio del Palacio de la Pureza Celestial por la puerta del oeste. El Salón del Cultivo Mental queda a unos 150 metros, hacia el suroeste."],
+ ["palacios_oeste","Seis Palacios del Oeste","储秀宫","Chǔxiùgōng",39.9198,116.3882,14,50,"故宫 储秀宫",
+  "Desde el Salón del Cultivo Mental, subid hacia el norte por el callejón largo. Los patios a ambos lados son los seis palacios de las concubinas; buscad el Palacio de la Elegancia Acumulada."],
+ ["jardin","Jardín Imperial","御花园","Yùhuāyuán",39.9207,116.3907,14,55,"故宫 御花园",
+  "Desde los palacios del oeste, id hacia el este y el norte hasta el jardín, detrás del Palacio de la Tranquilidad Terrenal."],
+ ["shenwumen","Puerta del Poderío Divino","神武门","Shénwǔmén",39.9218,116.3907,8,50,"故宫 神武门",
+  "Salid del jardín hacia el norte y cruzad la Puerta del Poderío Divino. Ya fuera, poneos junto al foso y mirad hacia las esquinas de la muralla."],
+ ["jingshan","Colina de Carbón (Parque Jingshan)","景山","Jǐngshān",39.9240,116.3907,18,70,"景山公园 万春亭",
+  "Cruzad la calle por el paso subterráneo hasta la puerta sur del Parque Jingshan (unos 2 yuanes) y subid hasta el pabellón más alto, el del centro."]
+];
+// Muralla y foso, para que el mapa sirva aunque no carguen las teselas
+const MURALLA=[[39.9125,116.3863],[39.9125,116.3951],[39.9212,116.3951],[39.9212,116.3863]];
+const FOSO=[[39.9120,116.3858],[39.9120,116.3956],[39.9217,116.3956],[39.9217,116.3858]];
+const ZONA=[[39.905,116.383],[39.926,116.398]];      // lo que se descarga para usar sin conexión
+
+const G=window.GUION||{};
+const P=RUTA.map(([id,nombre,zh,py,lat,lon,min,radio,am,ir],i)=>{
+  const g=G[id]||{};
+  return {i,id,nombre,zh,py,lat,lon,min,radio,am,ir,resumen:g.resumen||"",mira:g.mira||[],pistas:(g.pistas||[]).map(p=>({...p,pal:palabras(p.texto)}))};
+});
+function palabras(t){return String(t||"").trim().split(/\s+/).filter(Boolean).length}
+
+/* ---------- Utilidades ---------- */
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const LS={get(k,d){try{const v=localStorage.getItem(k);return v==null?d:JSON.parse(v)}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+const PARAMS=new URLSearchParams(location.search);
+function distM(a,b,c,d){const R=6371000,r=x=>x*Math.PI/180,dl=r(c-a),dn=r(d-b);
+  const h=Math.sin(dl/2)**2+Math.cos(r(a))*Math.cos(r(c))*Math.sin(dn/2)**2;return 2*R*Math.asin(Math.sqrt(h))}
+function rumbo(a,b,c,d){const r=x=>x*Math.PI/180,y=Math.sin(r(d-b))*Math.cos(r(c)),x=Math.cos(r(a))*Math.sin(r(c))-Math.sin(r(a))*Math.cos(r(c))*Math.cos(r(d-b));
+  return (Math.atan2(y,x)*180/Math.PI+360)%360}
+const PUNTOS=["norte","noreste","este","sureste","sur","suroeste","oeste","noroeste"];
+const cardinal=g=>PUNTOS[Math.round(g/45)%8];
+const fmtM=m=>m<1000?`${Math.round(m/5)*5} m`:`${(m/1000).toFixed(1).replace(".",",")} km`;
+const fmtDur=min=>{min=Math.round(min);return min<60?`${min} min`:`${Math.floor(min/60)} h${min%60?" "+String(min%60).padStart(2,"0"):""}`};
+const hora=ms=>new Date(ms).toLocaleTimeString("es-ES",{hour:"2-digit",minute:"2-digit"});
+let avisoT;
+function aviso(t){const a=$("aviso");a.textContent=t;a.classList.add("on");clearTimeout(avisoT);avisoT=setTimeout(()=>a.classList.remove("on"),2800)}
+const urlMapas=p=>`https://maps.apple.com/?q=${encodeURIComponent(p.am)}${p.lat?`&sll=${p.lat},${p.lon}`:""}`;
+const urlAPie=p=>`https://maps.apple.com/?daddr=${encodeURIComponent(p.am)}&dirflg=w`;
+
+/* ---------- Estado guardado ---------- */
+const E=Object.assign({oidas:{},inicio:null,auto:true,vel:1,voz:"",p:0,k:0},LS.get("cp-guia",{}));
+const guardar=()=>LS.set("cp-guia",E);
+const oida=(i,k)=>!!E.oidas[P[i].id+"/"+k];
+const paradaOida=i=>P[i].pistas.length>0&&P[i].pistas.every((_,k)=>oida(i,k));
+const minPista=p=>p.pal/150/(E.vel||1);              // la voz del iPhone lee unas 150 palabras por minuto
+const minAudio=i=>P[i].pistas.reduce((s,p)=>s+minPista(p),0);
+
+/* ============================================================
+   VOZ: la síntesis del propio iPhone, en español, sin conexión.
+   Se lee frase a frase: así se puede pausar, volver atrás
+   y no se corta en textos largos.
+   ============================================================ */
+const S=window.speechSynthesis;
+let VOCES=[],sonando=false,frases=[],fi=0,turno=0,desbloqueado=false;
+function cargarVoces(){
+  if(!S) return;
+  VOCES=S.getVoices().filter(v=>/^es/i.test(v.lang));
+  if(!E.voz||!VOCES.some(v=>v.voiceURI===E.voz)){const m=mejorVoz();if(m) E.voz=m.voiceURI}
+}
+function mejorVoz(){                       // primero las voces mejoradas de España, después cualquier español
+  const pt=v=>(/es[-_]ES/i.test(v.lang)?10:0)+(/premium|mejorad|enhanced|siri/i.test(v.name)?6:0)+(/m[oó]nica|jorge|marisol|paulina/i.test(v.name)?2:0)+(v.localService?1:0);
+  return [...VOCES].sort((a,b)=>pt(b)-pt(a))[0];
+}
+if(S){cargarVoces();S.onvoiceschanged=cargarVoces}
+function trocear(t){                        // frases de hasta ~240 caracteres
+  const fr=String(t).replace(/\s+/g," ").match(/[^.!?…]+[.!?…]+[»"”)]*\s*|[^.!?…]+$/g)||[t],out=[];
+  for(const f of fr){const s=f.trim();if(!s) continue;
+    if(out.length&&(out[out.length-1].length+s.length<140)) out[out.length-1]+=" "+s; else out.push(s)}
+  return out;
+}
+function textoPista(i,k){
+  const p=P[i],x=p.pistas[k];if(!x) return "";
+  let t=(k===0?`${p.nombre}. `:"")+`${x.t}. ${x.texto}`;
+  if(k===p.pistas.length-1){const s=P[i+1];
+    t+=s?` Aquí termina esta parada. La siguiente es ${s.nombre}. ${s.ir}`:" Aquí termina la audioguía. Gracias por la compañía, y buen viaje."}
+  return t;
+}
+function cargar(i,k,desde=0){E.p=i;E.k=k;guardar();frases=trocear(textoPista(i,k));fi=Math.min(desde,frases.length-1)}
+function hablar(){
+  if(!S){aviso("Este navegador no puede leer en voz alta.");return}
+  const mio=++turno;S.cancel();
+  if(!frases.length) return parar();
+  sonando=true;bloqueo(true);
+  const u=new SpeechSynthesisUtterance(frases[fi]);
+  const v=VOCES.find(v=>v.voiceURI===E.voz);if(v){u.voice=v;u.lang=v.lang}else u.lang="es-ES";
+  u.rate=E.vel||1;u.pitch=1;
+  u.onend=()=>{if(mio!==turno) return;siguienteFrase()};
+  u.onerror=e=>{if(mio!==turno||e.error==="interrupted"||e.error==="canceled") return;siguienteFrase()};
+  window._u=u;                               // Safari olvida a veces los enunciados que nadie retiene
+  setTimeout(()=>{if(mio===turno) S.speak(u)},S.speaking?120:0);
+  pintarRepro();
+}
+function siguienteFrase(){
+  if(fi<frases.length-1){fi++;return hablar()}
+  E.oidas[P[E.p].id+"/"+E.k]=1;guardar();
+  if(E.k<P[E.p].pistas.length-1){cargar(E.p,E.k+1);return hablar()}
+  parar();pintarParadas();pintarEstado();pintarMapa();       // al acabar una parada se espera a llegar a la siguiente
+}
+function parar(){turno++;if(S) S.cancel();sonando=false;bloqueo(false);pintarRepro()}
+function play(i,k){
+  desbloqueado=true;
+  if(i!=null){cargar(i,k||0);abrir(i,false)}
+  else if(!frases.length) cargar(E.p,E.k);
+  hablar();pintarParadas();
+}
+function alternar(){sonando?parar():play()}
+function saltarFrase(d){if(!frases.length) cargar(E.p,E.k);fi=Math.max(0,Math.min(frases.length-1,fi+d));sonando?hablar():pintarRepro()}
+function saltarPista(d){
+  let i=E.p,k=E.k+d;
+  if(k<0){if(i>0){i--;k=P[i].pistas.length-1}else k=0}
+  else if(k>=P[i].pistas.length){if(i<P.length-1){i++;k=0}else k=P[i].pistas.length-1}
+  cargar(i,k);if(sonando) hablar();else pintarRepro();pintarParadas();
+}
+// La pantalla no se apaga mientras suena: con el iPhone bloqueado Safari corta la voz
+let wake=null;
+async function bloqueo(on){
+  try{
+    if(on&&!wake&&navigator.wakeLock){wake=await navigator.wakeLock.request("screen");wake.addEventListener("release",()=>{wake=null})}
+    if(!on&&wake){await wake.release();wake=null}
+  }catch(e){}
+}
+document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible"&&sonando) bloqueo(true)});
+
+/* ============================================================
+   GPS
+   ============================================================ */
+let POS=null,vigia=null,seguir=true,llegadaI=null;
+function ubicar(){
+  const f=PARAMS.get("pos");                // ?pos=39.9156,116.3907 para probar sin estar allí
+  if(f){const [a,b]=f.split(",").map(Number);return nuevaPos({latitude:a,longitude:b,accuracy:5})}
+  if(!navigator.geolocation){aviso("Este móvil no da la ubicación.");return}
+  if(vigia!=null) return;
+  vigia=navigator.geolocation.watchPosition(p=>{LS.set("cp-geo",1);nuevaPos(p.coords)},e=>{
+    navigator.geolocation.clearWatch(vigia);vigia=null;
+    aviso(e.code===1?"Ubicación denegada: actívala en Ajustes › Privacidad › Localización › Safari.":"No se ha podido obtener la ubicación.");
+    pintarEstado();
+  },{enableHighAccuracy:true,maximumAge:5000,timeout:30000});
+  pintarEstado();
+}
+function nuevaPos(c){
+  POS={lat:c.latitude,lon:c.longitude,acc:c.accuracy||0,t:Date.now()};
+  if(POS.acc<=70){
+    const cerca=P.filter(p=>p.lat).map(p=>({p,d:distM(POS.lat,POS.lon,p.lat,p.lon)})).filter(x=>x.d<=x.p.radio).sort((a,b)=>a.d-b.d)[0];
+    if(cerca&&cerca.p.i!==llegadaI) llegar(cerca.p.i);
+  }
+  pintarEstado();pintarYo();
+}
+function llegar(i){
+  llegadaI=i;
+  if(sonando&&E.p===i) return;
+  if(!paradaOida(i)&&E.auto&&desbloqueado&&!sonando){aviso(`Habéis llegado: ${P[i].nombre}`);play(i,0);return}
+  if(!(sonando&&E.p===i)) $("llegada").innerHTML=`<div class="llegada"><i class="fa-solid fa-location-dot"></i><div><small class="n">Habéis llegado a</small><b>${esc(P[i].nombre)}</b></div>
+    <button class="btn pri sm" data-play="${i}"><i class="fa-solid fa-play"></i>Escuchar</button><button class="btn sm" data-act="cerrar-llegada" aria-label="Cerrar"><i class="fa-solid fa-xmark"></i></button></div>`;
+  if(navigator.vibrate) navigator.vibrate(200);
+}
+
+/* ============================================================
+   MAPA (Leaflet + OpenStreetMap, que va en WGS-84 como el GPS)
+   ============================================================ */
+let MAPA=null,PINES=[],YO=null,YOacc=null;
+function montarMapa(){
+  if(!window.L){$("mapa").innerHTML=`<p class="n" style="padding:16px">El mapa no ha cargado (sin conexión). La guía y el GPS funcionan igual.</p>`;return}
+  const oscuro=document.documentElement.dataset.tema==="oscuro";
+  MAPA=L.map("mapa",{zoomControl:false,attributionControl:false,maxZoom:19}).fitBounds([[39.9068,116.3860],[39.9245,116.3955]]);
+  L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:19,maxNativeZoom:19}).addTo(MAPA);
+  L.polygon(FOSO,{color:"#60A5FA",weight:5,opacity:.35,fill:false,interactive:false}).addTo(MAPA);
+  L.polygon(MURALLA,{color:oscuro?"#F87171":"#B91C1C",weight:2,dashArray:"6 6",fillColor:"#DC2626",fillOpacity:.04,interactive:false}).addTo(MAPA);
+  L.polyline(P.filter(p=>p.lat).map(p=>[p.lat,p.lon]),{color:"#B7791F",weight:4,opacity:.75,dashArray:"2 8",lineCap:"round",interactive:false}).addTo(MAPA);
+  PINES=P.map(p=>p.lat?L.marker([p.lat,p.lon],{icon:icono(p),title:p.nombre}).addTo(MAPA)
+    .bindTooltip(esc(p.nombre),{direction:"top",offset:[0,-14],className:"tt"}).on("click",()=>abrir(p.i,true)):null);
+  MAPA.on("dragstart",()=>{seguir=false;$("bSeguir").classList.remove("on")});
+}
+function icono(p){
+  const c=p.i===E.p?"act":paradaOida(p.i)?"oido":"";
+  return L.divIcon({className:"",html:`<span class="pinP ${c}">${p.i}</span>`,iconSize:[26,26],iconAnchor:[13,13]});
+}
+function pintarMapa(){PINES.forEach((m,i)=>m&&m.setIcon(icono(P[i])))}
+function pintarYo(){
+  if(!MAPA||!POS) return;
+  const ll=[POS.lat,POS.lon];
+  if(!YO){YO=L.marker(ll,{icon:L.divIcon({className:"",html:`<div class="yo"></div>`,iconSize:[18,18],iconAnchor:[9,9]}),zIndexOffset:1000,interactive:false}).addTo(MAPA);
+    YOacc=L.circle(ll,{radius:POS.acc,color:"#2563EB",weight:1,fillOpacity:.08,interactive:false}).addTo(MAPA)}
+  else{YO.setLatLng(ll);YOacc.setLatLng(ll).setRadius(POS.acc)}
+  if(seguir) MAPA.panTo(ll,{animate:true});
+}
+
+/* ---------- Descargar el mapa para usarlo sin conexión ---------- */
+function teselas(){
+  const out=[],t=(la,lo,z)=>{const n=2**z,x=Math.floor((lo+180)/360*n),r=la*Math.PI/180;return [x,Math.floor((1-Math.log(Math.tan(r)+1/Math.cos(r))/Math.PI)/2*n)]};
+  for(let z=14;z<=18;z++){const [x0,y1]=t(ZONA[0][0],ZONA[0][1],z),[x1,y0]=t(ZONA[1][0],ZONA[1][1],z);
+    for(let x=x0;x<=x1;x++) for(let y=y0;y<=y1;y++) out.push(`https://tile.openstreetmap.org/${z}/${x}/${y}.png`)}
+  return out;
+}
+async function descargarMapa(b){
+  if(!window.caches){aviso("Este navegador no permite guardar el mapa.");return}
+  const L0=teselas(),c=await caches.open("china-teselas");let hechas=0,fallos=0;
+  b.disabled=true;
+  const cola=[...L0],obrero=async()=>{while(cola.length){const u=cola.shift();
+    try{if(!(await c.match(u))){const r=await fetch(u,{mode:"cors"});if(r.ok) await c.put(u,r);else fallos++}}catch(e){fallos++}
+    hechas++;b.innerHTML=`<i class="fa-solid fa-spinner fa-spin"></i>${hechas} de ${L0.length}`}};
+  await Promise.all([obrero(),obrero(),obrero(),obrero()]);
+  b.disabled=false;b.innerHTML=`<i class="fa-solid fa-circle-check"></i>Mapa guardado`;LS.set("cp-mapa",fallos?0:1);
+  aviso(fallos?`Guardado con ${fallos} huecos: repetidlo con mejor conexión.`:"Mapa guardado: funcionará sin conexión.");
+}
+
+/* ============================================================
+   PANTALLA
+   ============================================================ */
+function plan(){                             // minuto previsto de llegada a cada parada (sin contar la intro)
+  let m=0;return P.map(p=>{const r=m;if(p.id!=="intro") m+=p.min;return r});
+}
+function pintarPortada(){
+  const tot=P.filter(p=>p.id!=="intro").reduce((s,p)=>s+p.min,0),audio=P.reduce((s,_,i)=>s+minAudio(i),0),np=P.reduce((s,p)=>s+p.pistas.length,0);
+  const hechas=P.filter((_,i)=>paradaOida(i)).length;
+  $("portada").innerHTML=`<p class="eb">Audioguía · Pekín</p><h2>La Ciudad Prohibida<span>紫禁城</span></h2>
+    <p>Recorrido a pie de sur a norte, de Tiananmen a la Colina de Carbón, con ${np} historias: qué estáis viendo, curiosidades, leyendas, mitos y escándalos de 500 años de emperadores, concubinas y eunucos.</p>
+    <div class="kpis"><div><b>${fmtDur(tot)}</b><small>de visita</small></div><div><b>${fmtDur(audio)}</b><small>de audio</small></div><div><b>${hechas}/${P.length}</b><small>paradas oídas</small></div></div>
+    <div class="btns">${E.inicio?`<button class="btn pri" data-act="seguir-visita"><i class="fa-solid fa-play"></i>Seguir: ${esc(P[E.p].nombre)}</button>`
+      :`<button class="btn pri" data-act="empezar"><i class="fa-solid fa-play"></i>Empezar la visita</button>`}
+      <button class="btn" data-act="ajustes"><i class="fa-solid fa-sliders"></i>Voz y mapa</button></div>`;
+}
+function pintarEstado(){
+  const gps=POS?(Date.now()-POS.t<60000?`Precisión ±${Math.round(POS.acc)} m`:"Sin señal reciente"):vigia!=null?"Buscando…":"Desactivado";
+  let sig="";
+  const obj=P.find((p,i)=>p.lat&&i>=E.p&&!paradaOida(i))||P.find(p=>p.lat&&!paradaOida(p.i));
+  if(obj){
+    if(POS){const d=distM(POS.lat,POS.lon,obj.lat,obj.lon),g=rumbo(POS.lat,POS.lon,obj.lat,obj.lon);
+      sig=`<b>${esc(obj.nombre)}</b><span>${d<=obj.radio?"Estáis aquí":`<span class="flecha" style="transform:rotate(${Math.round(g)}deg)">↑</span> ${fmtM(d)} al ${cardinal(g)} · ${Math.max(1,Math.round(d/70))} min andando`}</span>`}
+    else sig=`<b>${esc(obj.nombre)}</b><span>Activad el GPS para ver la distancia</span>`;
+  }else sig=`<b>¡Visita completada!</b><span>Ya lo habéis oído todo</span>`;
+  let pl=`<b>Sin empezar</b><span>Previsto: ${fmtDur(P.filter(p=>p.id!=="intro").reduce((s,p)=>s+p.min,0))}</span>`;
+  if(E.inicio){
+    const pasado=(Date.now()-E.inicio)/60000,PL=plan(),i=Math.max(1,E.p),dif=Math.round(pasado-PL[i]);
+    pl=`<b>${fmtDur(pasado)} desde las ${hora(E.inicio)}</b><span>${Math.abs(dif)<=5?"Vais bien de tiempo":dif>0?`Unos ${fmtDur(dif)} por detrás del plan`:`Unos ${fmtDur(-dif)} por delante del plan`}</span>`;
+  }
+  $("estado").innerHTML=`<div class="est"><small><span class="punto ${POS&&Date.now()-POS.t<60000?"ok":""}"></span>GPS</small><b>${gps}</b>
+      <span>${vigia!=null||POS?(E.auto?"Avisa al llegar a cada parada":"Aviso automático apagado"):`<button class="btn sm" data-act="gps" style="margin-top:4px"><i class="fa-solid fa-location-arrow"></i>Activar</button>`}</span></div>
+    <div class="est"><small><i class="fa-regular fa-clock"></i>Tiempo</small>${pl}</div>
+    <div class="est ancha"><small><i class="fa-solid fa-person-walking"></i>Siguiente parada</small>${sig}</div>`;
+}
+function pintarParadas(){
+  const PL=plan(),abiertas=new Set([...document.querySelectorAll(".parada.abierta")].map(x=>+x.dataset.i));
+  if(!document.querySelector(".parada")) abiertas.add(E.p);
+  $("paradas").innerHTML=P.map(p=>{
+    const hecha=paradaOida(p.i);
+    return `<article class="parada ${abiertas.has(p.i)?"abierta":""} ${hecha?"hecha":""} ${p.i===E.p?"act":""}" id="p-${p.id}" data-i="${p.i}">
+      <button class="pc" data-abrir="${p.i}" aria-expanded="${abiertas.has(p.i)}"><span class="num"><span>${p.i||'<i class="fa-solid fa-headphones"></i>'}</span></span>
+        <span class="tx"><b>${esc(p.nombre)}</b><span class="sub"><span class="zh">${esc(p.zh)}</span> ${esc(p.py)} · ${p.pistas.length} historias · ${fmtDur(minAudio(p.i))} de audio${p.id!=="intro"?` · ${p.min} min aquí · <i class="fa-regular fa-clock"></i> +${fmtDur(PL[p.i])}`:""}</span></span>
+        <i class="fa-solid fa-chevron-down chev"></i></button>
+      <div class="pb">
+        ${p.resumen?`<p class="resumen">${esc(p.resumen)}</p>`:""}
+        <div class="ir"><i class="fa-solid fa-signs-post"></i><span>${esc(p.ir)}</span></div>
+        ${p.mira.length?`<div><p class="lbl" style="margin:0 0 8px"><i class="fa-solid fa-eye"></i>Fijaos en</p><ul class="mira">${p.mira.map(m=>`<li><i class="fa-solid fa-star"></i><span>${esc(m)}</span></li>`).join("")}</ul></div>`:""}
+        <div class="pistas">${p.pistas.map((x,k)=>`<button class="pista ${p.i===E.p&&k===E.k&&sonando?"sonando":""} ${oida(p.i,k)?"oida":""}" data-play="${p.i}" data-k="${k}">
+          <span class="pl"><i class="fa-solid ${p.i===E.p&&k===E.k&&sonando?"fa-volume-high":oida(p.i,k)?"fa-check":"fa-play"}"></i></span>
+          <span class="tx"><b>${esc(x.t)}</b><small><span class="tipo t-${esc(x.tipo)}">${esc(x.tipo)}</span>${fmtDur(Math.max(1,minPista(x)))}</small></span></button>`).join("")
+          ||`<p class="n">Falta el texto de esta parada.</p>`}</div>
+        <div class="btns">${p.pistas.length?`<button class="btn pri sm" data-play="${p.i}"><i class="fa-solid fa-play"></i>Escuchar la parada</button>`:""}
+          ${p.lat?`<a class="btn azul sm" href="${esc(urlAPie(p))}" target="_blank" rel="noopener"><i class="fa-solid fa-person-walking"></i>A pie en Mapas</a>
+          <a class="btn sm" href="${esc(urlMapas(p))}" target="_blank" rel="noopener"><i class="fa-solid fa-map-location-dot"></i>Ver en Mapas</a>
+          <button class="btn sm" data-centrar="${p.i}"><i class="fa-solid fa-crosshairs"></i>En el mapa</button>`:""}</div>
+        ${p.pistas.length?`<details class="texto"><summary><i class="fa-solid fa-align-left"></i> Leer el texto</summary>${p.pistas.map(x=>`<h4>${esc(x.t)}</h4>${x.texto.split(/\n+/).map(t=>`<p>${esc(t)}</p>`).join("")}`).join("")}</details>`:""}
+      </div></article>`}).join("");
+}
+function abrir(i,mover){
+  const el=document.querySelector(`.parada[data-i="${i}"]`);if(!el) return;
+  el.classList.add("abierta");el.querySelector(".pc").setAttribute("aria-expanded","true");
+  if(mover) el.scrollIntoView({behavior:"smooth",block:"start"});
+}
+function pintarRepro(){
+  const p=P[E.p],x=p&&p.pistas[E.k],tot=frases.length||1;
+  $("repro").innerHTML=`<div class="repro-in">
+    <button class="rinfo" data-ir-parada="${E.p}"><span class="num" style="width:30px;height:30px;font-size:12.5px">${E.p||'<i class="fa-solid fa-headphones"></i>'}</span>
+      <span class="tx"><b>${x?esc(x.t):"Elige una historia"}</b><small>${esc(p.nombre)} · ${E.k+1} de ${p.pistas.length||1}</small></span></button>
+    <div class="barra"><i style="width:${frases.length?(fi+(sonando?.5:0))/tot*100:0}%"></i></div>
+    <div class="ctrl">
+      <button data-act="pista-ant" aria-label="Historia anterior"><i class="fa-solid fa-backward-step"></i></button>
+      <button data-act="frase-ant" aria-label="Frase anterior"><i class="fa-solid fa-rotate-left"></i></button>
+      <button class="play" data-act="play" aria-label="${sonando?"Pausa":"Reproducir"}"><i class="fa-solid ${sonando?"fa-pause":"fa-play"}"></i></button>
+      <button data-act="frase-sig" aria-label="Frase siguiente"><i class="fa-solid fa-rotate-right"></i></button>
+      <button data-act="pista-sig" aria-label="Historia siguiente"><i class="fa-solid fa-forward-step"></i></button>
+      <button class="vel" data-act="vel" aria-label="Velocidad">${String(E.vel).replace(".",",")}×</button>
+    </div>
+    ${sonando&&frases[fi]?`<p class="frase">${esc(frases[fi])}</p>`:""}</div>`;
+  document.querySelectorAll(".pista").forEach(b=>{const on=sonando&&+b.dataset.play===E.p&&+b.dataset.k===E.k;
+    b.classList.toggle("sonando",on);b.querySelector(".pl i").className="fa-solid "+(on?"fa-volume-high":oida(+b.dataset.play,+b.dataset.k)?"fa-check":"fa-play")});
+}
+function ajustes(){
+  cargarVoces();
+  $("hoja").innerHTML=`<h3>Ajustes<button class="ico" data-act="cerrar" aria-label="Cerrar"><i class="fa-solid fa-xmark"></i></button></h3>
+    <div><label for="sVoz">Voz</label><select id="sVoz">${VOCES.length?VOCES.map(v=>`<option value="${esc(v.voiceURI)}" ${v.voiceURI===E.voz?"selected":""}>${esc(v.name)} · ${esc(v.lang)}</option>`).join(""):`<option>Voz en español del sistema</option>`}</select>
+      <p class="n" style="margin-top:6px">Para una voz más natural: Ajustes del iPhone › Accesibilidad › Contenido leído › Voces › Español (España) y descargad «Mónica (mejorada)» o una voz «Premium». Después recargad esta página.</p>
+      <div class="btns" style="margin-top:8px"><button class="btn sm" data-act="probar"><i class="fa-solid fa-volume-high"></i>Probar la voz</button></div></div>
+    <div><label for="sVel">Velocidad</label><select id="sVel">${[.85,.9,1,1.1,1.2,1.35].map(v=>`<option value="${v}" ${v===E.vel?"selected":""}>${String(v).replace(".",",")}×</option>`).join("")}</select></div>
+    <div class="fila"><span>Empezar a hablar sola al llegar a cada parada</span><input type="checkbox" class="sw" id="sAuto" ${E.auto?"checked":""}></div>
+    <div><label>Sin conexión</label><p class="n" style="margin:4px 0 8px">La guía y la voz ya funcionan sin internet. Descargad también el mapa del palacio con wifi en el hotel (unos 5 MB).</p>
+      <button class="btn azul sm" data-act="descargar">${LS.get("cp-mapa",0)?`<i class="fa-solid fa-circle-check"></i>Mapa guardado · repetir`:`<i class="fa-solid fa-download"></i>Descargar mapa`}</button></div>
+    <div><label>Consejos</label><ul class="mira" style="margin-top:6px">
+      <li><i class="fa-solid fa-star"></i><span>Mientras suena, la pantalla no se apaga: si el iPhone se bloquea, Safari corta la voz.</span></li>
+      <li><i class="fa-solid fa-star"></i><span>Con unos auriculares compartidos o el altavoz bajito podéis escucharla los dos.</span></li>
+      <li><i class="fa-solid fa-star"></i><span>Dentro de los patios el GPS puede desviarse 20 o 30 metros: si no salta el aviso, tocad la parada.</span></li></ul></div>
+    <div class="btns"><button class="btn sm" data-act="reiniciar"><i class="fa-solid fa-rotate"></i>Empezar de cero</button></div>`;
+  $("dlg").showModal();
+  $("sVoz").onchange=e=>{E.voz=e.target.value;guardar()};
+  $("sVel").onchange=e=>{E.vel=+e.target.value;guardar();pintarRepro();pintarParadas();pintarPortada()};
+  $("sAuto").onchange=e=>{E.auto=e.target.checked;guardar();pintarEstado()};
+}
+function todo(){pintarPortada();pintarEstado();pintarParadas();pintarRepro();pintarMapa()}
+
+/* ---------- Eventos ---------- */
+document.addEventListener("click",e=>{
+  const q=s=>e.target.closest(s);let b;
+  if(b=q("[data-play]")){const i=+b.dataset.play;$("llegada").innerHTML="";play(i,b.dataset.k!=null?+b.dataset.k:0);todo();return}
+  if(b=q("[data-abrir]")){const el=b.closest(".parada"),on=el.classList.toggle("abierta");b.setAttribute("aria-expanded",on);return}
+  if(b=q("[data-ir-parada]")){abrir(+b.dataset.irParada,true);return}
+  if(b=q("[data-centrar]")){const p=P[+b.dataset.centrar];if(MAPA){seguir=false;$("bSeguir").classList.remove("on");MAPA.setView([p.lat,p.lon],18);
+    PINES[p.i].openTooltip();$("mapa").scrollIntoView({behavior:"smooth",block:"center"})}return}
+  if(!(b=q("[data-act]"))) return;
+  const a=b.dataset.act;
+  if(a==="empezar"){E.inicio=E.inicio||Date.now();guardar();ubicar();play(0,0);todo();return}
+  if(a==="seguir-visita"){ubicar();play();todo();return}
+  if(a==="play") alternar();
+  if(a==="pista-ant") saltarPista(-1);
+  if(a==="pista-sig") saltarPista(1);
+  if(a==="frase-ant") saltarFrase(-1);
+  if(a==="frase-sig") saltarFrase(1);
+  if(a==="vel"){const vs=[.9,1,1.1,1.2],j=vs.indexOf(E.vel);E.vel=vs[(j+1)%vs.length];guardar();if(sonando) hablar();pintarRepro()}
+  if(a==="gps") ubicar();
+  if(a==="seguir"){seguir=true;b.classList.add("on");if(POS&&MAPA) MAPA.setView([POS.lat,POS.lon],18);else ubicar()}
+  if(a==="encuadrar"&&MAPA){seguir=false;$("bSeguir").classList.remove("on");MAPA.fitBounds([[39.9068,116.3860],[39.9245,116.3955]])}
+  if(a==="ajustes") ajustes();
+  if(a==="cerrar") $("dlg").close();
+  if(a==="cerrar-llegada") $("llegada").innerHTML="";
+  if(a==="probar"){desbloqueado=true;const u=new SpeechSynthesisUtterance("Bienvenidos a la Ciudad Prohibida, el palacio de los emperadores de China.");
+    const v=VOCES.find(v=>v.voiceURI===E.voz);if(v){u.voice=v;u.lang=v.lang}else u.lang="es-ES";u.rate=E.vel;parar();S.speak(u)}
+  if(a==="descargar") descargarMapa(b);
+  if(a==="reiniciar"&&confirm("¿Borrar el progreso y empezar la visita de cero?")){parar();Object.assign(E,{oidas:{},inicio:null,p:0,k:0});frases=[];guardar();$("dlg").close();todo()}
+});
+$("dlg").addEventListener("click",e=>{if(e.target===$("dlg")) $("dlg").close()});
+addEventListener("pagehide",()=>{if(S) S.cancel()});
+
+/* ---------- Arranque ---------- */
+if(E.p>=P.length) E.p=0;
+cargar(E.p,E.k);
+montarMapa();todo();
+if(LS.get("cp-geo",0)||PARAMS.get("pos")) ubicar();       // si ya disteis permiso, el GPS arranca solo
+setInterval(pintarEstado,30000);
+if("serviceWorker" in navigator) navigator.serviceWorker.register("../sw.js",{scope:"../"}).catch(()=>{});
+</script>
+</body>
+</html>

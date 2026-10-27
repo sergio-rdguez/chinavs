@@ -106,6 +106,10 @@ nav.abajo button:active{transform:scale(.94)}
 /* ---------- Tarjetas y piezas comunes ---------- */
 .card{background:var(--surface);border:1px solid var(--line);border-radius:16px;box-shadow:var(--sh);padding:16px}
 .card.xl{border-radius:24px}
+.audioguia{display:flex;align-items:center;gap:14px;text-decoration:none;color:inherit;border-color:var(--cb);background:var(--cs)}
+.audioguia b{display:block;font-size:15px;font-weight:800;color:var(--ink)}
+.audioguia .n{margin-top:2px}
+.ag-i{flex:none;width:44px;height:44px;border-radius:14px;background:var(--c);color:#fff;display:grid;place-items:center;font-size:18px}
 .card>h2:first-child,.card>.ch:first-child{margin-top:0}
 .ch{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px 10px;margin-bottom:12px}
 h2{display:flex;align-items:center;gap:8px;font-size:17px;font-weight:900;color:var(--ink);letter-spacing:-.01em;margin:4px 0 12px}
@@ -1928,7 +1932,7 @@ function detalleItem(k,di){
     <h3>${esc(x.titulo)}</h3>
     <p class="dh"><i class="fa-regular fa-clock"></i> ${x.t!=null?fmtMin(x.t):"Hora por confirmar"}${x.fin!=null?" a "+fmtMin(x.fin):""}</p>
     ${x.notas?`<p>${esc(x.notas)}</p>`:""}`;
-  html+=fichaLugar(p)+`<div class="btns">`+botonesLugar(p,`data-taxi-item="${esc(k)}"`);
+  html+=fichaLugar(p)+`<div class="btns">`+botonAudioguia(p&&p.nombre||x.titulo)+botonesLugar(p,`data-taxi-item="${esc(k)}"`);
   if(x.a) html+=`<button class="btn" data-editar-agenda="${esc(x.a.ID)}"><i class="fa-solid fa-pen"></i>Editar</button><button class="btn peligro" data-borrar-agenda="${esc(x.a.ID)}"><i class="fa-solid fa-trash"></i>Borrar</button>`;
   if(x.tr){                                   // el billete guardado, a un toque desde el plan
     const k=claveDoc("Transporte",x.tr);
@@ -1950,6 +1954,11 @@ function fichaLugar(p){
       ${p.loc?`<dt>Localizador</dt><dd class="mono">${esc(p.loc)}</dd>`:""}</dl>
     ${p.horario||p.precio?`<p class="n">Horarios y precios orientativos: confirmadlos antes de ir.</p>`:""}</div>`;
 }
+const AUDIOGUIAS=[[/ciudad prohibida|museo del palacio|gugong/i,"ciudad-prohibida/"]];   // sitios con audioguía propia
+function botonAudioguia(nombre){
+  const a=AUDIOGUIAS.find(([re])=>re.test(nombre||""));
+  return a?`<a class="btn pri" href="${a[1]}"><i class="fa-solid fa-headphones"></i>Audioguía</a>`:"";
+}
 function botonesLugar(p,taxi){
   if(!p||p.sin||!(p.zh||p.dir||p.hotel)) return "";
   const am=mapaLocal(p),zh=p.zh||p.dir;
@@ -1964,7 +1973,7 @@ function detalleLugar(id){
   const p=lugarDe(l.Nombre),o=primeraVisita()[norm(l.Nombre)],di=o?DIAS.findIndex(d=>d.iso===o.iso):-1,c=ciudad(l.Ciudad);
   hoja(`<div class="th" style="--c:${c.c}"><p class="dk"><i class="fa-solid fa-location-dot"></i>${esc(c.n)}${o?" · "+fecha(o.iso,{weekday:"long",day:"numeric",month:"long"}):""}</p>
     <h3>${esc(p.nombre)}</h3>${fichaLugar(p)}
-    <div class="btns">${botonesLugar(p,`data-taxi-lugar="${esc(id)}"`)}${di>=0?`<button class="btn" data-ir="${di}"><i class="fa-regular fa-calendar"></i>Ver ese día</button>`:""}</div></div>`);
+    <div class="btns">${botonAudioguia(l.Nombre)}${botonesLugar(p,`data-taxi-lugar="${esc(id)}"`)}${di>=0?`<button class="btn" data-ir="${di}"><i class="fa-regular fa-calendar"></i>Ver ese día</button>`:""}</div></div>`);
 }
 function formAgenda(id){
   const a=id?DATA.agenda.find(x=>x.ID===id):null,d=DIAS[sel];
@@ -2129,6 +2138,9 @@ function rCiudad(ck){
   let html=`<div class="pila th" style="--c:${c.c}">`+heroFoto(ck,{badge:`${rangoFechas(ds.map(x=>x.d))} · Parada ${ks.indexOf(ck)+1}`,titulo:c.n,
       sub:`${c.zh}${n?` · ${n} ${n===1?"noche":"noches"}`:""}${est?` · ${est}`:""}`,
       izq:`<button class="cristal" data-act="volver"><i class="fa-solid fa-arrow-left"></i>El viaje</button>`,der:pildoraClima(ck,ds.some(x=>x.d.iso===now.iso)?now.iso:primero)});
+  if(ck==="pekin") html+=`<a class="card audioguia" href="ciudad-prohibida/"><span class="ag-i"><i class="fa-solid fa-headphones"></i></span>
+    <span><b>Audioguía de la Ciudad Prohibida</b><span class="n">Unas 3 horas a pie, de Tiananmen a Jingshan: mapa con vuestra posición y la historia de cada rincón.</span></span>
+    <i class="fa-solid fa-chevron-right" style="color:var(--faint)"></i></a>`;
   html+=`<div><p class="lbl"><i class="fa-solid fa-hotel"></i>Alojamiento y tiempo en ${esc(c.n)}</p><div class="dos-col">
       <div class="pila">${H.length?H.map(h=>tarjetaHotel(h,{estado:1})).join(""):`<div class="hcard"><p class="n">Aquí no dormís: es una parada de paso.</p></div>`}</div>
       ${tarjetaClima(ck)}</div></div>`;
