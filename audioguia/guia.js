@@ -31,7 +31,7 @@ const urlMapas=p=>`https://maps.apple.com/?q=${encodeURIComponent(p.am)}${p.lat?
 const urlAPie=p=>`https://maps.apple.com/?daddr=${encodeURIComponent(p.am)}&dirflg=w`;
 
 /* ---------- Estado guardado ---------- */
-const E=Object.assign({oidas:{},inicio:null,auto:true,vel:1,voz:"",p:0,k:0},LS.get(CFG.clave+"-guia",{}));
+const E=Object.assign({oidas:{},inicio:null,reloj:null,auto:true,vel:1,voz:"",p:0,k:0},LS.get(CFG.clave+"-guia",{}));
 const guardar=()=>LS.set(CFG.clave+"-guia",E);
 const oida=(i,k)=>!!E.oidas[P[i].id+"/"+k];
 const paradaOida=i=>P[i].pistas.length>0&&P[i].pistas.every((_,k)=>oida(i,k));
@@ -92,7 +92,9 @@ function siguienteFrase(){
 function parar(){turno++;if(S) S.cancel();sonando=false;bloqueo(false);pintarRepro()}
 function play(i,k){
   desbloqueado=true;
+  const antes=E.p;
   if(i!=null){cargar(i,k||0);abrir(i,false)}
+  if(P[E.p].lat&&!E.reloj){E.reloj=E.inicio&&P[antes].lat?E.inicio:Date.now();guardar()}   // el reloj arranca en la primera parada con sitio, no en el taxi o el autobús
   else if(!frases.length) cargar(E.p,E.k);
   hablar();pintarParadas();
 }
@@ -200,11 +202,11 @@ async function descargarMapa(b){
 /* ============================================================
    PANTALLA
    ============================================================ */
-function plan(){                             // minuto previsto de llegada a cada parada (sin contar la intro)
-  let m=0;return P.map(p=>{const r=m;if(p.id!=="intro") m+=p.min;return r});
+function plan(){                             // minuto previsto de llegada a cada parada (sin contar las que no tienen sitio: la intro, el autobús)
+  let m=0;return P.map(p=>{const r=m;if(p.lat) m+=p.min;return r});
 }
 function pintarPortada(){
-  const tot=P.filter(p=>p.id!=="intro").reduce((s,p)=>s+p.min,0),audio=P.reduce((s,_,i)=>s+minAudio(i),0),np=P.reduce((s,p)=>s+p.pistas.length,0);
+  const tot=P.filter(p=>p.lat).reduce((s,p)=>s+p.min,0),audio=P.reduce((s,_,i)=>s+minAudio(i),0),np=P.reduce((s,p)=>s+p.pistas.length,0);
   const hechas=P.filter((_,i)=>paradaOida(i)).length;
   $("portada").innerHTML=`<p class="eb">Audioguía · Pekín</p><h2>${esc(CFG.titulo)}<span>${esc(CFG.zh)}</span></h2>
     <p>${esc(CFG.texto(np))}</p>
@@ -222,10 +224,12 @@ function pintarEstado(){
       sig=`<b>${esc(obj.nombre)}</b><span>${d<=obj.radio?"Estáis aquí":`<span class="flecha" style="transform:rotate(${Math.round(g)}deg)">↑</span> ${fmtM(d)} al ${cardinal(g)} · ${Math.max(1,Math.round(d/70))} min andando`}</span>`}
     else sig=`<b>${esc(obj.nombre)}</b><span>Activad el GPS para ver la distancia</span>`;
   }else sig=`<b>¡Visita completada!</b><span>Ya lo habéis oído todo</span>`;
-  let pl=`<b>Sin empezar</b><span>Previsto: ${fmtDur(P.filter(p=>p.id!=="intro").reduce((s,p)=>s+p.min,0))}</span>`;
-  if(E.inicio){
-    const pasado=(Date.now()-E.inicio)/60000,PL=plan(),i=Math.max(1,E.p),dif=Math.round(pasado-PL[i]);
-    pl=`<b>${fmtDur(pasado)} desde las ${hora(E.inicio)}</b><span>${Math.abs(dif)<=5?"Vais bien de tiempo":dif>0?`Unos ${fmtDur(dif)} por detrás del plan`:`Unos ${fmtDur(-dif)} por delante del plan`}</span>`;
+  let pl=`<b>Sin empezar</b><span>Previsto: ${fmtDur(P.filter(p=>p.lat).reduce((s,p)=>s+p.min,0))}</span>`;
+  const t0=E.reloj||(E.inicio&&P[E.p].lat?E.inicio:null);    // visitas empezadas antes de existir E.reloj: cuentan desde el inicio
+  if(E.inicio&&!t0) pl=`<b>De camino</b><span>El reloj arranca en la primera parada</span>`;
+  if(t0){
+    const pasado=(Date.now()-t0)/60000,PL=plan(),i=Math.max(1,E.p),dif=Math.round(pasado-PL[i]);
+    pl=`<b>${fmtDur(pasado)} desde las ${hora(t0)}</b><span>${Math.abs(dif)<=5?"Vais bien de tiempo":dif>0?`Unos ${fmtDur(dif)} por detrás del plan`:`Unos ${fmtDur(-dif)} por delante del plan`}</span>`;
   }
   $("estado").innerHTML=`<div class="est"><small><span class="punto ${POS&&Date.now()-POS.t<60000?"ok":""}"></span>GPS</small><b>${gps}</b>
       <span>${vigia!=null||POS?(E.auto?"Avisa al llegar a cada parada":"Aviso automático apagado"):`<button class="btn sm" data-act="gps" style="margin-top:4px"><i class="fa-solid fa-location-arrow"></i>Activar</button>`}</span></div>
@@ -238,8 +242,8 @@ function pintarParadas(){
   $("paradas").innerHTML=P.map(p=>{
     const hecha=paradaOida(p.i);
     return `<article class="parada ${abiertas.has(p.i)?"abierta":""} ${hecha?"hecha":""} ${p.i===E.p?"act":""}" id="p-${p.id}" data-i="${p.i}">
-      <button class="pc" data-abrir="${p.i}" aria-expanded="${abiertas.has(p.i)}"><span class="num"><span>${p.i||'<i class="fa-solid fa-headphones"></i>'}</span></span>
-        <span class="tx"><b>${esc(p.nombre)}</b><span class="sub"><span class="zh">${esc(p.zh)}</span> ${esc(p.py)} · ${p.pistas.length} historias · ${fmtDur(minAudio(p.i))} de audio${p.id!=="intro"?` · ${p.min} min aquí · <i class="fa-regular fa-clock"></i> +${fmtDur(PL[p.i])}`:""}</span></span>
+      <button class="pc" data-abrir="${p.i}" aria-expanded="${abiertas.has(p.i)}"><span class="num"><span>${p.lat?p.i:'<i class="fa-solid fa-headphones"></i>'}</span></span>
+        <span class="tx"><b>${esc(p.nombre)}</b><span class="sub"><span class="zh">${esc(p.zh)}</span> ${esc(p.py)} · ${p.pistas.length} historias · ${fmtDur(minAudio(p.i))} de audio${p.lat?` · ${p.min} min aquí · <i class="fa-regular fa-clock"></i> +${fmtDur(PL[p.i])}`:""}</span></span>
         <i class="fa-solid fa-chevron-down chev"></i></button>
       <div class="pb">
         ${p.resumen?`<p class="resumen">${esc(p.resumen)}</p>`:""}
@@ -328,7 +332,7 @@ document.addEventListener("click",e=>{
   if(a==="probar"){desbloqueado=true;const u=new SpeechSynthesisUtterance(CFG.saludo);
     const v=VOCES.find(v=>v.voiceURI===E.voz);if(v){u.voice=v;u.lang=v.lang}else u.lang="es-ES";u.rate=E.vel;parar();S.speak(u)}
   if(a==="descargar") descargarMapa(b);
-  if(a==="reiniciar"&&confirm("¿Borrar el progreso y empezar la visita de cero?")){parar();Object.assign(E,{oidas:{},inicio:null,p:0,k:0});frases=[];guardar();$("dlg").close();todo()}
+  if(a==="reiniciar"&&confirm("¿Borrar el progreso y empezar la visita de cero?")){parar();Object.assign(E,{oidas:{},inicio:null,reloj:null,p:0,k:0});frases=[];guardar();$("dlg").close();todo()}
 });
 $("dlg").addEventListener("click",e=>{if(e.target===$("dlg")) $("dlg").close()});
 addEventListener("pagehide",()=>{if(S) S.cancel()});

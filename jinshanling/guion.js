@@ -1,0 +1,391 @@
+/* Guion de la audioguía de la Gran Muralla en Jinshanling: lo que lee la voz en cada parada. */
+window.GUION={
+"intro": {
+"resumen": "Para el autobús de ida: el plan del día, qué es de verdad la Gran Muralla, sus mitos y sus leyendas, por qué los Ming la rehicieron en ladrillo y unos consejos para caminar por ella.",
+"mira": [
+"Por la ventana, pasado Miyun, las montañas empiezan a cerrarse",
+"Fíjate en las crestas: a veces se adivinan torres sueltas en lo alto",
+"Busca los carteles de Gubeikou, el viejo paso hacia Chengde",
+"Apunta la matrícula del autobús y el teléfono del guía antes de bajar"
+],
+"pistas": [
+{
+"tipo": "explica",
+"t": "Buenos días, rumbo a la muralla",
+"texto": "Buenos días y bienvenidos a bordo. Si estáis escuchando esto, ya habéis superado la parte más dura del día, que era levantarse temprano. El autobús ha salido a las siete y media del aparcamiento del Regent Hotel, junto a la estación de Dengshikou, y por delante quedan unas dos horas y media de carretera hacia el noreste. Si todo va bien, llegaréis hacia las diez de la mañana. Allí tendréis por delante unas cinco horas y media libres para caminar por la muralla a vuestro ritmo. La hora exacta de vuelta la decide el guía, así que escuchadla bien y no os fiéis de la memoria: apuntadla en el móvil. Apuntad también la matrícula del autobús y el teléfono del guía, porque en el aparcamiento puede haber decenas de autobuses casi iguales. Y un consejo de los que se agradecen: los baños buenos están en el centro de visitantes, antes de subir. Arriba, en la muralla, hay muy pocos. Ahora poneos cómodos. Os voy a contar qué vais a ver, porque una muralla sin historias es solo una pared muy larga."
+},
+{
+"tipo": "explica",
+"t": "No es una muralla, son muchas",
+"texto": "Lo primero que conviene saber es que la Gran Muralla no es una sola muralla. Es un conjunto de murallas, fosos, torres y fortines levantados por muchas dinastías a lo largo de unos dos mil años, a veces siguiendo trazados distintos, a veces superpuestos. En chino se la llama Changcheng, que significa literalmente muralla larga, y también Wanli Changcheng, la muralla de diez mil li. El li es una vieja medida de distancia, de algo más de medio kilómetro, y diez mil, en chino, es una forma de decir incontable. En 2012, después de años de medición, el Gobierno chino publicó una cifra oficial: sumando todos los tramos de todas las épocas, más de veintiún mil kilómetros. Es más de la mitad de la vuelta a la Tierra. Claro que mucha de esa longitud son terraplenes de tierra apisonada medio borrados, zanjas o tramos que aprovechan ríos y montañas. Lo que la mayoría de la gente imagina cuando piensa en la Gran Muralla, esa serpiente de ladrillo gris con torres que trepa por las crestas, es la parte construida por la dinastía Ming. Y es justo la que vais a pisar hoy."
+},
+{
+"tipo": "curiosidad",
+"t": "¿Se ve desde el espacio?",
+"texto": "Seguro que lo habéis oído alguna vez: la Gran Muralla es la única obra humana que se ve desde el espacio, o incluso desde la Luna. Es uno de los mitos más repetidos del mundo, y es falso. Desde la Luna no se ve ningún edificio humano: a esa distancia, la Tierra entera es una canica azul y blanca. Y desde la órbita de las estaciones espaciales, a unos cuatrocientos kilómetros de altura, la muralla es casi imposible de distinguir a simple vista. El problema no es la longitud, sino la anchura: en la mayoría de tramos mide unos pocos metros, y está hecha con piedra y tierra del mismo color que las montañas que la rodean. En cambio, desde allí arriba se ven bien autopistas, aeropuertos o ciudades iluminadas de noche. En 2003, el primer astronauta chino, Yang Liwei, reconoció al volver que no había conseguido verla, y aquello provocó bastante revuelo en China, porque el mito aparecía hasta en los libros de texto. Lo curioso es que la idea circulaba ya mucho antes de que nadie hubiera subido al espacio."
+},
+{
+"tipo": "leyenda",
+"t": "El primer emperador y las lágrimas de Meng Jiangnu",
+"texto": "El nombre que siempre se asocia con la muralla es el de Qin Shi Huang, el primer emperador de China, el mismo de los guerreros de terracota que veréis en Xian dentro de unos días. Cuando unificó el país, en el año 221 antes de Cristo, mandó a su general Meng Tian al norte con un enorme ejército para expulsar a los pueblos nómadas y unir los muros que ya habían levantado varios reinos anteriores. Aquella muralla era sobre todo de tierra apisonada, y de ella quedan pocos restos. Su construcción dejó un recuerdo terrible, y de ahí nace la leyenda más famosa de China sobre la muralla. Cuentan que una joven, Meng Jiangnu, vio cómo se llevaban a su marido recién casado a trabajar en las obras. Pasó el invierno, ella le tejió ropa de abrigo y caminó cientos de kilómetros para llevársela. Al llegar, le dijeron que su marido había muerto de agotamiento y que lo habían enterrado dentro del propio muro. Meng Jiangnu lloró tanto y con tanta pena que un tramo de la muralla se derrumbó, dejando a la vista los huesos de su esposo."
+},
+{
+"tipo": "historia",
+"t": "Los Han y la Ruta de la Seda",
+"texto": "Después de los Qin llegó la dinastía Han, que gobernó unos cuatro siglos y llevó la muralla mucho más lejos, hacia el oeste, adentrándose en el desierto. Su gran enemigo eran los Xiongnu, una confederación de pueblos nómadas a caballo que atacaba la frontera una y otra vez. Pero las murallas de los Han no solo servían para defenderse. Protegían también un corredor de oasis que llevaba hacia Asia Central, el camino por el que salían la seda, el té y la porcelana, y por el que entraban caballos, vidrio, plata y nuevas ideas, como el budismo. Ese camino es lo que hoy llamamos la Ruta de la Seda. En aquellos tramos del oeste, donde no había piedra, construían con capas de tierra apisonada alternadas con ramas, cañas y juncos. Algunos de esos muros, y torres de vigilancia muy erosionadas, siguen de pie en el desierto de Gansu. Así que, aunque solemos pensar en la muralla como una barrera que cerraba China, durante muchos siglos fue también una especie de carretera vigilada, que controlaba quién y qué entraba y salía del imperio."
+},
+{
+"tipo": "historia",
+"t": "Por qué los Ming la hicieron de ladrillo",
+"texto": "La muralla que vais a ver es de la dinastía Ming, que gobernó de 1368 a 1644 tras expulsar a los mongoles. Al principio, los Ming intentaron dominar las estepas con expediciones militares. Pero en 1449 ocurrió un desastre: en la batalla de Tumu, el joven emperador Zhengtong salió en persona a combatir a los mongoles, su ejército fue aniquilado y él mismo acabó prisionero. Imaginaos el golpe: el Hijo del Cielo, cautivo en una tienda en la estepa. A partir de entonces, la corte cambió de estrategia y apostó por defenderse detrás de un muro. Un siglo después llegó otro susto. En 1550, el jefe mongol Altan Kan atravesó la frontera, saqueó los alrededores de Pekín durante días y llegó hasta las puertas de la capital, mientras el ejército imperial apenas se atrevía a salir. Aquella humillación convenció a la corte de que hacía falta una muralla mucho más sólida en las montañas del norte de Pekín, la zona más cercana a la capital. Y esta vez no de tierra, sino de piedra y ladrillo. De esa obra nació el tramo de Jinshanling."
+},
+{
+"tipo": "curiosidad",
+"t": "Por la ventana: Miyun y Gubeikou",
+"texto": "Si miráis por la ventana, veréis que la llanura de Pekín se va quedando atrás y las montañas empiezan a cerrarse a ambos lados. Son los montes Yan, la barrera natural que separa la llanura del norte de China de las mesetas de Mongolia. La carretera atraviesa el distrito de Miyun, que todavía forma parte del municipio de Pekín, y pasa cerca del gran embalse de Miyun, una de las principales reservas de agua de la capital. Más adelante, fijaos en los carteles de Gubeikou. Es uno de los pasos de montaña más importantes de toda la muralla: un estrecho valle por el que, desde hace siglos, pasa el camino que une Pekín con el norte. Por aquí entraron ejércitos invasores, y por aquí pasaban también, ya con la dinastía Qing, los emperadores camino de su residencia de verano en Chengde, donde se refugiaban del calor y cazaban en los bosques. Precisamente para vigilar este paso tan delicado se reforzaron las crestas que lo rodean. Jinshanling está a muy pocos kilómetros al este de Gubeikou, ya del lado de la provincia de Hebei."
+},
+{
+"tipo": "explica",
+"t": "Consejos para caminar por la muralla",
+"texto": "Antes de llegar, unos consejos prácticos, que la muralla engaña. Los escalones no tienen nada que ver con los de una escalera normal: unos miden un palmo y el siguiente os llega a la rodilla, muchos están gastados y algunos inclinados. Subir cansa, pero lo peligroso es bajar. Hacedlo despacio, de lado si hace falta, apoyando bien todo el pie y agarrándoos al muro. En los tramos sin restaurar, mirad siempre dónde pisáis y no os acerquéis al borde para la foto. Llevad agua, algo de comer y una capa de abrigo, porque arriba suele soplar el viento y a finales de octubre refresca. Encontraréis vendedores ambulantes en algunas torres, con agua, cerveza y recuerdos, a precios de altura. Y un aviso: es muy posible que alguna persona del pueblo se ponga a caminar a vuestro lado, muy amable, ayudándoos en los escalones y contándoos cosas. Al final del camino os pedirá que le compréis un libro o unas postales a buen precio. Si no queréis compañía, decidlo con una sonrisa al principio: un simple no, gracias, bu yao, xie xie. Y ahora, a disfrutar."
+}
+]
+},
+"llegada": {
+"resumen": "Dónde estáis, de dónde viene el nombre de Jinshanling, quién mandó construir esta muralla y qué os espera en el recorrido de hoy.",
+"mira": [
+"Levanta la vista: la muralla corre por la cresta de las montañas",
+"Fíjate en las torres: de lejos parecen pequeñas cajas grises",
+"Busca la loma más alta hacia el este: ahí van las torres Jinshan",
+"Mira el contraste entre tramos restaurados y tramos en ruinas"
+],
+"pistas": [
+{
+"tipo": "explica",
+"t": "Bienvenidos a Jinshanling",
+"texto": "Ya estáis aquí. Bienvenidos a Jinshanling. Aunque la excursión sale de Pekín, técnicamente ahora mismo estáis en la provincia de Hebei, en el condado de Luanping, que depende de la ciudad de Chengde. La muralla que tenéis delante hace de frontera: al otro lado de la cresta empieza el distrito de Miyun, ya en el municipio de Pekín. El tramo de Jinshanling mide unos diez kilómetros y medio, y queda entre dos tramos famosos: al oeste, el paso de Gubeikou, por donde habéis pasado con el autobús, y al este, Simatai, conocida por sus tramos casi verticales y por su visita nocturna. Jinshanling tiene fama de ser uno de los tramos más bonitos de toda la muralla: tiene muchísimas torres, casi una cada pocos cientos de metros, y las montañas no son muy altas, así que la muralla se ve ondular por las crestas hasta perderse en el horizonte. Además, está bastante más lejos de Pekín que Badaling o Mutianyu, y eso se nota: aunque haya bastantes visitantes, aquí se puede caminar a gusto y encontrar ratos de auténtica soledad."
+},
+{
+"tipo": "curiosidad",
+"t": "La montaña de oro",
+"texto": "Jinshanling significa algo así como la cresta de la montaña de oro. Jin es oro, shan es montaña y ling es cresta o sierra. Pero no os hagáis ilusiones: no hay ninguna mina escondida. El nombre viene de dos lomas de este tramo, la Gran Montaña de Oro, Da Jinshan, y la Pequeña Montaña de Oro, Xiao Jinshan, en cuyas cimas se levantan dos de las torres más conocidas del recorrido, la Gran Torre Jinshan y la Pequeña Torre Jinshan. Las visitaréis más tarde. Hay quien dice que el nombre viene del color dorado que toman las piedras y la hierba seca con la luz del atardecer, y hay quien lo explica por la forma redondeada de las colinas. Como pasa con muchos nombres de lugar en China, la explicación exacta es difícil de saber. Lo que sí es seguro es que, en otoño, con los arbustos rojos y amarillos cubriendo las laderas, el nombre le sienta de maravilla. Habéis tenido suerte con la fecha: finales de octubre es una de las mejores épocas del año para venir aquí."
+},
+{
+"tipo": "historia",
+"t": "Dos hombres detrás de esta muralla",
+"texto": "Ya había muros en esta zona desde mucho antes, pero la muralla que vais a pisar se levantó en su mayor parte a partir de 1567 y durante los años siguientes, ya en tiempos del emperador Longqing y de su sucesor Wanli. Detrás de la obra hubo dos nombres. El primero es Tan Lun, un alto funcionario civil con experiencia militar que estaba al frente de la defensa de esta frontera del norte. El segundo es Qi Jiguang, uno de los generales más famosos de la historia de China, que llegó a esta región en 1568 para encargarse del mando militar. Los dos propusieron a la corte una idea ambiciosa: rehacer la muralla con ladrillo y, sobre todo, llenarla de torres huecas donde los soldados pudieran vivir, guardar armas y resistir un asedio. De Qi Jiguang os hablaré con calma cuando estéis dentro de una de sus torres, porque su vida da para una novela. De momento, quedaos con la idea: lo que vais a recorrer hoy no es una obra antigua anónima, sino el proyecto concreto de dos hombres, con fecha y firma."
+},
+{
+"tipo": "historia",
+"t": "Restaurada a medias, y es lo mejor",
+"texto": "Durante siglos, después de que perdiera su función militar, la muralla de Jinshanling quedó abandonada a su suerte. La lluvia, el hielo y la vegetación fueron haciendo su trabajo. En los años ochenta del siglo pasado se empezó a restaurar y a abrir al turismo una parte del tramo, y por eso veréis zonas con ladrillos nuevos, escalones rectos y almenas completas. Pero se restauró con relativa moderación, y hay muchos tramos que se dejaron tal como estaban, con torres medio derruidas, muros rotos y piedras sueltas. A esos tramos se les llama muralla salvaje. Ahí está precisamente el encanto de Jinshanling: en una sola caminata podéis ver cómo era la muralla en su mejor momento y cómo ha llegado hasta hoy. Otra cosa: en 1987 la Unesco incluyó la Gran Muralla en la lista del Patrimonio de la Humanidad. No una parte concreta, sino la muralla en su conjunto, y entre los tramos más conocidos de ella, Jinshanling es de los mejor conservados. Pisad con cuidado, porque estáis caminando, literalmente, sobre patrimonio mundial."
+},
+{
+"tipo": "explica",
+"t": "El plan para hoy",
+"texto": "Os cuento cómo está pensado el recorrido. Desde aquí, un camino con escalones sube hasta la muralla en unos veinte o treinta minutos. Llegaréis a un paso llamado Zhuanduokou, que es por donde casi todo el mundo se sube a la muralla. Allí giraréis a la derecha, hacia el este, y ya no cambiaréis de sentido. Iréis pasando torre tras torre por la cresta: primero las torres de Qi Jiguang, luego los tramos más empinados con sus curiosos muros de obstáculos, el paso de Shalingkou, la Pequeña Torre Jinshan, donde llega el teleférico, y la Gran Torre Jinshan, el mejor mirador para comer y hacer fotos. Al final, en el paso de Houchuankou, bajaréis hacia la salida y el aparcamiento. Son unas cuatro horas a buen paso, con paradas. Tenéis algo más de margen, pero no os confiéis: aquí los kilómetros cuentan doble, por las cuestas. Cada vez que lleguéis a una parada, el móvil os avisará, aunque las posiciones son aproximadas. Mirad de vez en cuando la hora y calculad bien el tiempo para volver al autobús. En marcha."
+}
+]
+},
+"zhuanduokou": {
+"resumen": "Primera vez sobre la muralla: qué es un paso, cómo está construida por dentro, con qué materiales y cómo se subían hasta aquí arriba.",
+"mira": [
+"Mira las almenas: tienen huecos de disparo pequeños abajo",
+"Fíjate en el muro bajo del lado de dentro, hacia el sur",
+"Busca las gárgolas de piedra que sacan el agua por fuera",
+"Toca el mortero entre los ladrillos: ha aguantado más de cuatro siglos"
+],
+"pistas": [
+{
+"tipo": "explica",
+"t": "Qué es un kou",
+"texto": "Ya estáis encima de la Gran Muralla. Respirad un momento, que la subida tiene lo suyo. Este lugar se llama Zhuanduokou. Fijaos en la última sílaba, kou, porque la vais a oír mucho hoy: Shalingkou, Houchuankou, Gubeikou. Kou significa boca, y en la muralla se usa para los pasos, los puntos bajos entre dos montañas por donde un camino cruza de un lado a otro. Eran los lugares más vigilados y más peligrosos, porque por ellos podía colarse un ejército con sus caballos. Por eso en los pasos la muralla solía tener una puerta, más guardia y torres más cercanas entre sí. En Zhuanduokou, el nombre se suele explicar como el paso del ladrillo y las almenas, porque zhuan es ladrillo y duo son las almenas. Hoy este paso funciona como puerta de entrada para casi todos los visitantes, así que mirad bien hacia ambos lados antes de seguir: a vuestra izquierda la muralla se va hacia el oeste, hacia Gubeikou. A vuestra derecha, hacia el este, empieza vuestro camino de hoy."
+},
+{
+"tipo": "explica",
+"t": "Anatomía de la muralla",
+"texto": "Ahora que estáis encima, fijaos en cómo está hecha. Lo que pisáis es el paseo de ronda, por donde caminaban los soldados. Aquí tiene unos pocos metros de ancho: lo justo para que pasaran varios hombres o un caballo, aunque esa idea de que por la muralla circulaban carros es más bien una exageración. Mirad hacia el norte, hacia el lado de fuera: ese muro alto con almenas es el parapeto de combate. Entre almena y almena hay huecos para mirar y disparar, y además, en muchas almenas, veréis pequeños agujeros más abajo, las aspilleras, para disparar flechas o armas de fuego hacia abajo sin asomarse. Ahora mirad al sur, al lado de dentro: el muro es más bajo, sin almenas. Era solo una barandilla para no caerse, porque de ese lado no se esperaba al enemigo. Y fijaos, de trecho en trecho, en unos canalones de piedra que sobresalen del muro: son desagües. La gran enemiga de una muralla no son los ejércitos, sino el agua de lluvia que se mete dentro, y estos canales la sacaban hacia fuera."
+},
+{
+"tipo": "curiosidad",
+"t": "Ladrillo, cal y arroz",
+"texto": "Por dentro, la muralla no es maciza de ladrillo. Es como un bocadillo: dos paredes exteriores de piedra en la base y ladrillo en la parte alta, y en el medio un relleno de tierra apisonada, cascotes y piedras. Encima, el suelo de ladrillo por el que camináis. Los ladrillos se fabricaban cerca, en hornos levantados en los valles de alrededor, con arcilla local, y se cocían a alta temperatura. Por eso son tan duros y por eso han durado cuatro siglos y medio. Para unirlos se usaba un mortero de cal. Y aquí viene lo curioso: en algunas obras de la época Ming se mezclaba la cal con una especie de sopa de arroz glutinoso, el arroz pegajoso. Investigadores chinos han estudiado esos morteros y han encontrado que el almidón del arroz hacía la mezcla más resistente y más impermeable. No sabemos con seguridad si se usó en todos los tramos, y probablemente no, porque el arroz era caro y había que transportarlo desde lejos. Pero la idea de una muralla pegada en parte con arroz tiene su gracia."
+},
+{
+"tipo": "leyenda",
+"t": "Burros, cabras y cadenas humanas",
+"texto": "Mirad alrededor y pensad en lo que supone construir aquí arriba, sin carreteras ni grúas. Cada ladrillo pesa varios kilos, y las piedras de la base muchísimo más. Todo había que subirlo desde los valles por laderas empinadísimas. Se usaban carretillas y poleas donde se podía, pero sobre todo espaldas: hombres cargando con pértigas sobre los hombros y largas cadenas humanas pasándose los ladrillos de mano en mano montaña arriba. También se usaron burros y mulas con alforjas. Y aquí entra una historia que os contarán muchos guías chinos: dicen que, en los tramos más escarpados, donde ni los burros podían subir, se ataban ladrillos a los cuernos de las cabras, que son capaces de trepar por casi cualquier roca, y se las azuzaba ladera arriba. ¿Es verdad? Nadie lo puede asegurar, y más bien suena a leyenda. Pero lo que sí es seguro es que la muralla la levantaron decenas de miles de soldados, trabajadores y presos, en condiciones muy duras, y que muchos no volvieron a casa."
+},
+{
+"tipo": "explica",
+"t": "Por qué va por la cresta",
+"texto": "Antes de seguir, mirad la muralla hacia el este, hacia donde vais. Veréis que no va recta, sino que sube, baja y se retuerce siguiendo exactamente la línea más alta de las montañas. Parece un capricho, porque habría sido mucho más fácil construirla por los valles. Pero tiene toda su lógica. Desde la cresta se domina el terreno a ambos lados, se ve venir al enemigo a muchos kilómetros y las señales se transmiten de torre en torre sin obstáculos. Además, la propia montaña hace la mitad del trabajo: el enemigo que quiera llegar a la muralla tiene que subir primero una ladera empinadísima, cansado y al descubierto, mientras los defensores esperan arriba. Y sobre todo, la caballería, que era la gran fuerza de los nómadas del norte, no sirve de nada en estas pendientes. La muralla no tenía que ser infranqueable por sí sola: bastaba con frenar a los jinetes y dar tiempo a que llegaran refuerzos. Por eso los chinos la describen a menudo como un dragón que duerme sobre el lomo de las montañas. Seguid al dragón hacia el este."
+}
+]
+}
+,
+"torres": {
+"resumen": "Quién fue Qi Jiguang, el general que llenó esta cresta de torres de ladrillo, cómo se vivía dentro de ellas y cómo se avisaba del enemigo de torre en torre.",
+"mira": [
+"Entrad en una torre: mirad el grosor de los muros junto a las ventanas",
+"Fijaos en los techos: bóvedas de cañón, cúpulas pequeñas, pasillos en cruz",
+"Buscad la escalera estrecha o el hueco que sube a la azotea",
+"Mirad hacia los lados: cada torre ve a la siguiente, y esa era la idea"
+],
+"pistas": [
+{
+"tipo": "historia",
+"t": "Qi Jiguang, el general de los piratas",
+"texto": "El hombre al que debéis casi todo lo que estáis pisando se llamaba Qi Jiguang, y antes de venir a estas montañas fue el azote de los piratas. A mediados del siglo dieciséis, la costa sureste de China, en las provincias de Zhejiang y Fujian, sufría los ataques de los llamados wokou: bandas de piratas en las que había japoneses, pero también muchos chinos, contrabandistas y aventureros de todas partes. Saqueaban ciudades, quemaban cosechas y el ejército regular no sabía pararlos. Qi Jiguang decidió que el problema eran los soldados. En lugar de mercenarios desganados, reclutó a mineros y campesinos de la zona de Yiwu, gente dura y disciplinada, y los entrenó a conciencia. Les enseñó a combatir en pequeños grupos de doce hombres, cada uno con un arma distinta, una formación que llamaba del pato mandarín, porque los compañeros nunca se separaban. Aquel ejército, que la gente acabó llamando el ejército de la familia Qi, ganó batalla tras batalla. Y cuando la costa se calmó, la corte pensó que un hombre así sería muy útil en otra frontera: la del norte, justo aquí."
+},
+{
+"tipo": "historia",
+"t": "Una idea nueva: torres huecas",
+"texto": "Hacia 1568 Qi Jiguang llegó al norte como comandante de la región militar de Jizhou, que protegía el flanco noreste de Pekín. Allí trabajó codo con codo con Tan Lun, gobernador general de la zona y viejo compañero de las campañas contra los piratas. Lo que encontraron no les gustó nada: una muralla vieja, en muchos tramos de tierra apisonada o piedra suelta, con torres macizas o pequeñas plataformas donde los soldados quedaban a la intemperie. Qi propuso algo distinto: torres huecas de ladrillo, de dos pisos, construidas encima de la propia muralla. En chino se llaman kongxin ditai, torres de enemigo huecas. Por dentro tenían salas abovedadas donde los soldados podían vivir, dormir y guardar armas y víveres; por arriba, una azotea almenada para vigilar y disparar. Así una pequeña guarnición podía aguantar semanas aislada. La propuesta pedía miles de torres; en los primeros años se levantaron más de mil a lo largo de este sector. Lo que estáis viendo, una torre tras otra encaramadas a la cresta como cuentas de un collar, es exactamente aquel plan hecho realidad."
+},
+{
+"tipo": "explica",
+"t": "Vivir dentro de una torre",
+"texto": "Entrad y mirad a vuestro alrededor. Estáis en lo que fue a la vez cuartel, almacén y fortaleza. En la planta baja, entre los gruesos pilares de ladrillo, dormían los soldados, se guardaban las flechas, la pólvora, el agua y el grano. Las ventanas eran también troneras: desde ellas se disparaba con ballestas, con arcabuces y con pequeños cañones de mano que los Ming usaban mucho en esta época. La guarnición dependía del tamaño de la torre: en las pequeñas, apenas un puñado de hombres; en las grandes, unas cuantas decenas. Imaginad la vida aquí: semanas de guardia en lo alto de una montaña, con el viento colándose por las aberturas, cocinando lo que subían las mulas desde el valle, mirando un horizonte del que podía surgir en cualquier momento una nube de polvo de jinetes. En verano, tormentas eléctricas sobre la cresta; en invierno, nieve y temperaturas muy por debajo de cero. Por eso tantas torres tienen huecos para chimeneas y rincones donde encender fuego. No era un destino glorioso: era paciencia, frío y vigilancia."
+},
+{
+"tipo": "curiosidad",
+"t": "Cada torre, un techo distinto",
+"texto": "Una de las cosas más bonitas de Jinshanling es que las torres no son iguales. Si vais entrando en unas cuantas a lo largo del día, fijaos en los techos. Hay salas cubiertas con bóvedas de cañón, como un túnel, a veces dos o tres paralelas; hay pequeñas cúpulas sobre planta cuadrada; hay pasillos que se cruzan formando una especie de laberinto alrededor de un núcleo central; y en algunas torres el piso de arriba se apoyaba en vigas de madera que ya han desaparecido, dejando solo los huecos en la pared. También cambian las fachadas: unas tienen tres ventanas por lado, otras cuatro o cinco, y por eso muchas torres se conocen por el número de ojos. Las diferencias tienen explicación: cada tramo lo levantaba una unidad distinta, con sus propios maestros de obra, y además se adaptaban al terreno y a lo que se esperaba de cada torre. En este sector hay también una torre más grande que hacía de puesto de mando, la llamada Torre del General, Jiangjunlou, desde donde un oficial coordinaba a las vecinas."
+},
+{
+"tipo": "explica",
+"t": "Humo de día, fuego de noche",
+"texto": "Una torre sola no servía de mucho; lo importante era la cadena. Desde cada torre se ve la siguiente, y así una alarma podía recorrer decenas de kilómetros en muy poco tiempo. De día se usaban columnas de humo; de noche, hogueras; y para reforzar el mensaje, cañonazos. Los Ming tenían incluso un código, fijado ya en el siglo quince: una columna de humo y un cañonazo si se acercaban unos cien enemigos; dos si eran unos quinientos; tres si pasaban de mil, y así hasta cinco columnas para un ejército de diez mil jinetes o más. Al llegar la señal, las guarniciones cerraban los pasos y se avisaba a la retaguardia. Os contarán, seguramente, que el humo se hacía quemando excrementos de lobo, porque subía recto y negro aunque hiciera viento. De hecho, en chino la palabra langyan, humo de lobo, se usa todavía para hablar de la guerra. Pero eso tiene mucho de leyenda: en la práctica se quemaba leña, paja, hierba húmeda y lo que hubiera a mano. Reunir estiércol de lobo para miles de torres habría sido, como poco, complicado."
+}
+]
+},
+"zhangqiang": {
+"resumen": "Los tabiques que cortan el paso en las cuestas, los muros contra los caballos y los ladrillos firmados por las unidades que los fabricaron.",
+"mira": [
+"Los muros cortos que cruzan el paseo en las cuestas más empinadas",
+"Las pequeñas aspilleras abiertas en esos tabiques",
+"Ladrillos con caracteres chinos grabados: buscadlos a la altura de la mano",
+"Por fuera, hacia el norte, restos de muros bajos al pie de la muralla"
+],
+"pistas": [
+{
+"tipo": "explica",
+"t": "Defender la muralla palmo a palmo",
+"texto": "Mirad las cuestas más empinadas de este tramo. Veréis que el paseo de la muralla está cortado, cada pocos metros, por tabiques bajos que lo cruzan de lado a lado, dejando solo un paso estrecho junto a un borde. Son los zhangqiang, los muros de obstáculos. ¿Para qué servían, si la muralla ya estaba para frenar al enemigo? Precisamente para el caso de que fallara. Si los atacantes conseguían subir a la muralla con escalas o por un tramo derrumbado, lo peor que podía pasar era que corrieran por arriba, de torre en torre, sin nadie que los parara. Estos tabiques convertían la cuesta en una sucesión de pequeñas trincheras. Los defensores se parapetaban detrás de cada uno, disparaban, retrocedían al siguiente y volvían a disparar, y el enemigo, que además venía cuesta arriba, tenía que conquistar el camino metro a metro. Fijaos en que muchos tienen aspilleras, pequeños agujeros para disparar o vigilar sin asomarse. Es una de las señas de identidad de Jinshanling: en pocos tramos de la Gran Muralla se conservan tantos y tan bien."
+},
+{
+"tipo": "curiosidad",
+"t": "Muros contra caballos",
+"texto": "Ahora asomaos con cuidado al lado norte, el que daba a la estepa. En algunos puntos, al pie de la muralla o un poco más abajo, quedan restos de muros bajos de piedra que corren paralelos a ella. Se los conoce como dangmaqiang, muros contra los caballos. El peligro del norte eran los jinetes: los pueblos de la estepa, mongoles sobre todo en época Ming, atacaban a caballo, rápidos, y su gran ventaja era la velocidad. Un muro bajo no detiene a un ejército, pero sí rompe una carga: obliga a los caballos a frenar, a saltar o a desmontar, justo en la zona donde llegan las flechas y las balas de los defensores. Era una primera línea, un freno antes del gran obstáculo. A veces se completaba con zanjas o con piedras amontonadas. En el terreno abrupto que veis aquí, con laderas muy empinadas, los caballos ya lo tenían difícil de por sí, y por eso estos muros se concentraban en los collados y pasos, donde la montaña se abre. Pensad en la muralla no como una línea, sino como una red de defensas escalonadas."
+},
+{
+"tipo": "historia",
+"t": "Ladrillos con firma",
+"texto": "Ahora un juego: buscad ladrillos con caracteres chinos grabados. En este sector de Jinshanling hay bastantes, y se los conoce como wenzizhuan, ladrillos con escritura. No son grafitis de turistas, aunque por desgracia también los hay. Son inscripciones originales, hechas en el molde antes de cocer el ladrillo. Suelen indicar un año del reinado del emperador Wanli y la unidad militar que los fabricó. Los más citados dicen cosas como año quinto de Wanli, campamento izquierdo de Shandong, o año sexto de Wanli, campamento de la tropa de choque de Zhenlu. El año quinto de Wanli es 1577, así que estos ladrillos llevan casi cuatrocientos cincuenta años en su sitio. Que vengan unidades de Shandong, una provincia lejana, os da una idea de cómo funcionaba esto: la defensa de Pekín movilizaba tropas de todo el imperio, que se turnaban para hacer guardia y para construir. Si encontráis uno, no lo toquéis demasiado ni os subáis a la muralla para alcanzarlo: hacedle una foto y seguid buscando, que hay más."
+},
+{
+"tipo": "explica",
+"t": "Si el ladrillo falla, sabemos quién fue",
+"texto": "¿Por qué firmar un ladrillo? Por lo mismo por lo que hoy se pone un número de lote: para saber a quién pedir cuentas. La administración Ming era muy burocrática y muy desconfiada. Cada tramo de muralla se encargaba a una unidad concreta, con un oficial responsable, y si al cabo de unos años una sección se desmoronaba, las inscripciones permitían saber quién la había hecho y cuándo. El castigo por una obra mal hecha podía ser serio. Ese sistema de responsabilidad explica, en parte, la calidad de lo que estáis viendo: ladrillos bien cocidos, regulares, y torres que han aguantado siglos de terremotos, heladas y abandono. Y en una de las torres de dos pisos de este sector, que hacía de almacén, hay otra sorpresa tallada: una mampara de ladrillo con la figura de un qilin, el animal fabuloso de la mitología china, con cuerpo de ciervo, escamas y cabeza de dragón, que anuncia buenos tiempos y gobernantes sabios. Se la conoce como qilin yingbi. Si dais con ella, buscadle la cola y las nubes que la rodean: es un detalle de lujo en un sitio hecho para la guerra."
+},
+{
+"tipo": "historia",
+"t": "Quién cargaba los ladrillos",
+"texto": "Mientras subís esta cuesta, pensad que cada uno de estos ladrillos, que pesan entre diez y quince kilos, llegó hasta aquí arriba a hombros, en mulas o con ingeniosos sistemas de cuerdas. Se cocían en hornos instalados en los valles cercanos, se subían por senderos de cabras y se colocaban en lo alto de crestas donde a vosotros os cuesta respirar solo con la mochila. ¿Quién hacía este trabajo? Sobre todo, los propios soldados: en la época de Qi Jiguang, la construcción formaba parte de su servicio, y por eso las unidades firmaban los ladrillos. Junto a ellos trabajaban campesinos reclutados en levas obligatorias y condenados a trabajos forzados, a los que se enviaba a la frontera como castigo. Las condiciones eran muy duras, y la muralla tiene fama en China de haber costado muchas vidas, aunque las cifras que circulan son imposibles de comprobar. Cuando os sentéis a descansar en uno de estos tabiques, dedicadles un pensamiento: vosotros subís por gusto y con buen calzado; ellos subían cargados, y no podían darse la vuelta."
+}
+]
+},
+"shalingkou": {
+"resumen": "Los soldados campesinos que vivían junto a la muralla, la paz de 1571 con los mongoles y la gran pregunta: ¿sirvió de algo todo esto?",
+"mira": [
+"El collado: aquí la cresta baja y la muralla con ella, era un paso natural",
+"Al sur, los valles y las aldeas: de ahí venían la comida y los soldados",
+"Al norte, las montañas que se pierden hacia Mongolia",
+"Los colores de los arbustos en otoño: rojos, ocres y amarillos"
+],
+"pistas": [
+{
+"tipo": "explica",
+"t": "Un paso en la montaña",
+"texto": "Estáis en Shalingkou, el paso de la loma de arena. Fijaos en la forma del terreno: aquí la cresta baja, se abre un collado, y la muralla baja con ella para volver a subir al otro lado. Todos los nombres que acaban en kou, como Zhuanduokou o el Houchuankou al que llegaréis más tarde, significan boca o paso: son los puntos débiles de la montaña, por donde un camino podía cruzarla. Por eso los pasos estaban mejor defendidos que las crestas, y por eso también eran los lugares donde la muralla tenía puertas. Porque la muralla, y esto sorprende a mucha gente, tenía puertas: por ellas pasaban patrullas, mensajeros, a veces comerciantes, y salían los soldados a vigilar más allá. Desde aquí, si miráis al sur, veréis los valles por los que llegaban la comida, la pólvora y los relevos. Al norte, la sucesión de montañas que lleva hacia las llanuras de Mongolia. Estas montañas son los Yanshan, la cordillera que separa la llanura de Pekín de las tierras altas del norte, y que fue durante siglos una auténtica frontera entre dos mundos."
+},
+{
+"tipo": "historia",
+"t": "Soldados que también eran campesinos",
+"texto": "¿Quién vivía aquí? Los Ming heredaron y ampliaron un sistema curioso: las familias militares hereditarias, los junhu. Al fundarse la dinastía, en el siglo catorce, muchas familias fueron registradas como militares, y esa condición pasaba de padres a hijos. En cada generación, al menos un hombre de la familia debía servir como soldado, y la familia entera solía vivir cerca de su puesto. Para no tener que alimentar desde la capital a cientos de miles de soldados, se les daban tierras para cultivar junto a la frontera: colonias agrícolas, llamadas tuntian, donde los soldados alternaban la guardia con el arado. En teoría, el sistema era perfecto: un ejército que se mantenía a sí mismo. En la práctica, con los años, los oficiales se quedaban las mejores tierras, muchas familias huían para escapar de la obligación y las guarniciones se quedaban vacías. Por eso hombres como Qi Jiguang recurrieron cada vez más a soldados reclutados y pagados. Muchas de las aldeas que veis en los valles nacieron como asentamientos de aquellas familias militares."
+},
+{
+"tipo": "historia",
+"t": "La paz de 1571 y los mercados de caballos",
+"texto": "Ahora una historia que cambia la imagen de la muralla. A mediados del siglo dieciséis, el gran enemigo era Altan Khan, un líder mongol tan poderoso que en 1550 llegó a acampar a las puertas de Pekín. ¿Qué quería? Sobre todo, comerciar. Los mongoles necesitaban grano, té, telas y objetos de metal, y la corte Ming, por desconfianza, les cerraba los mercados. Cuando no podían comprar, saqueaban. En 1571 se llegó por fin a un acuerdo: Altan Khan recibió un título honorífico del emperador, se convirtió formalmente en vasallo, y se abrieron mercados fronterizos, los mashi o mercados de caballos, en varios puntos de la muralla. Los mongoles llevaban caballos, ganado y pieles, y se llevaban productos chinos. Las incursiones disminuyeron muchísimo. Y aquí está la clave: la muralla no era solo un muro para cerrar, era también un filtro, una aduana, una forma de decidir por dónde y cuándo se podía pasar. Las torres que veis se terminaban justo mientras se firmaba esa paz. Funcionaban mejor, quizá, como argumento en la negociación que como barrera en la batalla."
+},
+{
+"tipo": "curiosidad",
+"t": "¿Funcionaba de verdad la muralla?",
+"texto": "Es la gran pregunta, y los historiadores no se ponen de acuerdo. Los escépticos recuerdan que la muralla nunca impidió del todo las invasiones: los jinetes de la estepa la cruzaron muchas veces, buscando tramos mal vigilados o sobornando a los guardias, y cuando la dinastía Ming cayó, el ejército que acabó con ella entró por una puerta abierta. Además, costaba una fortuna, y ese dinero se sacaba de impuestos que empobrecían al campo. Los defensores de la muralla responden que nunca se pensó para detener a todos, sino para frenar, avisar y canalizar. Un grupo de saqueadores que tenía que abrir brecha en la muralla perdía la sorpresa, y al volver cargado de botín y ganado era mucho más fácil de interceptar. Pequeñas incursiones, que eran las más frecuentes, se volvían poco rentables. Y la muralla marcaba un límite claro, que facilitaba los acuerdos. Quizá la respuesta justa sea esta: no era un muro infranqueable, sino un sistema, y como todo sistema dependía de la gente que lo hacía funcionar. Con soldados bien pagados y bien mandados, como con Qi Jiguang, funcionaba bastante bien."
+},
+{
+"tipo": "explica",
+"t": "El otoño en los montes Yanshan",
+"texto": "Tomaos un respiro y mirad el paisaje, porque venís en una de las mejores épocas del año. A finales de octubre, los montes Yanshan se tiñen de colores: los arbustos de las laderas, muchos de ellos zumaques y arces pequeños, se vuelven rojos y granates; los robles y otros árboles, amarillos y ocres; y las hierbas secas de las crestas toman un tono dorado que contrasta con el gris de la muralla. El aire suele ser seco y limpio, y en los días claros se ven cadenas de montañas una detrás de otra, cada vez más azules, con la muralla subiendo y bajando por ellas hasta perderse. Ahora imaginad este mismo sitio en enero, cuando aquí vivían los soldados. Por las noches el termómetro puede bajar de quince grados bajo cero, y el viento del noroeste, que llega directo de Siberia, barre la cresta sin nada que lo pare. Hacer guardia en la azotea de una torre, con un abrigo acolchado de algodón y las manos heladas, debía de ser una tortura. Hoy, disfrutad del sol y de los colores: os han tocado los buenos tiempos."
+}
+]
+},
+"xiaojinshan": {
+"resumen": "La Pequeña Torre Jinshan, una de las más conocidas del tramo, el ajetreo del teleférico, la fama de Jinshanling entre los fotógrafos y la leyenda de una heroína.",
+"mira": [
+"El techo de la sala interior, curvado como el casco de un barco del revés",
+"Por dónde se cruza la torre: hay que pasar por dentro para seguir",
+"La llegada del teleférico y el cambio de ambiente que trae",
+"Mirad hacia el este: la siguiente loma, con la Gran Torre Jinshan"
+],
+"pistas": [
+{
+"tipo": "explica",
+"t": "La Pequeña Torre Jinshan",
+"texto": "Estáis en la Pequeña Torre Jinshan, Xiao Jinshan lou, una de las torres más conocidas de toda la sección. Las fuentes la datan en 1569, es decir, en los primeros años del gran programa de construcción de Qi Jiguang, y la sitúan a unos cuatrocientos noventa metros de altitud. Es una torre de ladrillo y piedra de dos plantas, y tiene un detalle que os obligará a fijaros en ella: no se puede rodear por fuera. Para seguir caminando por la muralla hay que entrar y cruzarla por su interior, porque por uno de los lados no está conectada directamente con el paseo. Esto, que hoy provoca algún pequeño atasco de visitantes, tenía su lógica militar: la torre era también una puerta, un punto de control dentro de la propia muralla. Una vez dentro, levantad la vista. El techo de la sala principal tiene una forma curvada y alargada que a muchos les recuerda el casco de un barco puesto del revés. Es una de las cubiertas más bonitas de Jinshanling, así que aprovechad para hacer una foto antes de seguir."
+},
+{
+"tipo": "curiosidad",
+"t": "El teleférico y los dos ritmos de la muralla",
+"texto": "Habréis notado que aquí cambia el ambiente. Junto a esta torre llega el teleférico que sube desde la zona de entrada, y con él aparece mucha más gente: grupos con guía, familias, gente con ropa de ciudad y zapatos poco apropiados, que suben, se hacen unas cuantas fotos y vuelven a bajar. Es la manera rápida de ver la muralla, y no tiene nada de malo: hay quien no puede o no quiere subir escaleras durante horas. Pero si vosotros venís andando desde Zhuanduokou, ya sabéis que la muralla tiene otro ritmo: el de las cuestas, el silencio entre torre y torre, el viento y el cansancio en las piernas. Los soldados de los Ming conocían solo ese ritmo, el lento. Si tenéis que esperar un poco para cruzar la torre, tomadlo con paciencia; en cuanto sigáis hacia el este, la gente volverá a escasear. Y si vais cansados, recordad que el teleférico también baja: es una buena salida de emergencia si el tiempo o las fuerzas se acaban antes de llegar a Houchuankou. Mirad antes el horario, que en temporada baja puede cerrar pronto."
+},
+{
+"tipo": "curiosidad",
+"t": "La muralla de los fotógrafos",
+"texto": "Jinshanling tiene fama en China de ser la muralla de los fotógrafos, y en cuanto miréis a vuestro alrededor entenderéis por qué. Aquí se juntan tres cosas difíciles de encontrar a la vez: una muralla bien conservada pero sin reconstruir del todo, con su aire auténtico; un trazado que sube y baja por crestas afiladas, de modo que desde cualquier torre se ve una larga serpiente de piedra delante y detrás; y muchas torres, muy seguidas, que dan ritmo a la imagen. Los fotógrafos chinos vienen sobre todo al amanecer y al atardecer, y sueñan con un fenómeno que aquí llaman mar de nubes: algunas mañanas, después de una noche fría y húmeda, la niebla se queda atrapada en los valles y solo asoman las crestas y las torres, como islas. En invierno, con nieve, el paisaje es aún más espectacular. Muchas de las fotos de la Gran Muralla que habéis visto en libros, calendarios y fondos de pantalla están hechas en este tramo, entre esta torre y la siguiente. Así que buscad vuestro ángulo: la muralla bajando hacia el collado, una torre en primer plano y las montañas al fondo."
+},
+{
+"tipo": "leyenda",
+"t": "La leyenda de Wu Guihua",
+"texto": "Las montañas de Jinshanling tienen sus propias leyendas, y una de las más contadas en la zona es la de Wu Guihua. Os la cuento tal como la cuentan aquí, sabiendo que es eso, una leyenda local, sin base documental segura. Dicen que Wu Guihua era una joven de una de las familias que vivían junto a la muralla, hija o esposa de un soldado de la guarnición, según quién la cuente. Un día, mientras los hombres estaban lejos, una partida de jinetes del norte atacó por sorpresa este tramo. En lugar de huir, ella se quedó en la torre, encendió la señal de alarma y, con los pocos defensores que quedaban, aguantó el ataque el tiempo suficiente para que llegaran los refuerzos. En algunas versiones muere en el combate; en otras, sobrevive y se convierte en heroína de la comarca. Hay quien relaciona con ella una de las grandes torres del sector y quien dice que se la recuerda en la Torre del General. Lo cierto es que la historia refleja algo real: en la frontera vivían familias enteras, y la guerra no distinguía entre soldados y civiles."
+},
+{
+"tipo": "curiosidad",
+"t": "Los vendedores de la muralla",
+"texto": "Seguramente ya os habéis cruzado con ellos, y si no, lo haréis en breve: hombres y mujeres, a menudo de cierta edad, que suben cada día a la muralla con una mochila o una cesta cargada de agua, refrescos, fruta, cerveza, postales y libros de fotos. Algunos os acompañarán un rato charlando en inglés básico antes de ofreceros algo. Casi todos viven en las aldeas de los valles cercanos, y muchos descienden, según cuentan con orgullo, de familias de soldados que se instalaron aquí en tiempos de los Ming. Durante siglos, estas aldeas vivieron del campo, y en parte también de los ladrillos de la muralla, que se llevaban para construir casas y corrales. Hoy viven en buena medida del turismo, y estos vendedores son los herederos directos de aquella gente de frontera. Si necesitáis agua, es buen momento para comprársela: es lógico que cueste más que en la ciudad, la han subido a hombros como los ladrillos. Si no queréis nada, basta con un no, gracias amable, bu yao, xiexie. Y si os apetece, preguntadles de qué aldea son: a muchos les encanta contarlo."
+}
+]
+}
+,
+"dajinshan": {
+"resumen": "El mejor balcón de Jinshanling: Simatai al este, Gubeikou al oeste, un buen rato para comer y la muralla convertida en símbolo de toda China.",
+"mira": [
+"Mira hacia el este: la muralla trepa hasta la Torre Wangjing, en Simatai",
+"Mira hacia el oeste: allí, tras las lomas, queda el paso de Gubeikou",
+"Sigue con la vista la línea de torres: sube y baja como el lomo de un dragón",
+"Busca un rincón a la sombra de la torre para comer y descansar las piernas"
+],
+"pistas": [
+{
+"tipo": "explica",
+"t": "El balcón de Jinshanling",
+"texto": "Habéis llegado a la Gran Torre Jinshan, y si tenéis un poco de suerte con la neblina, este es el mejor balcón de toda la caminata. Tomaos un minuto antes de hacer fotos y orientaos. Hacia el este, la muralla sigue saltando de cresta en cresta hasta perderse en unos picos cada vez más afilados: aquello ya es Simatai, el tramo vecino, famoso por subir por filos tan estrechos que parecen imposibles. Lo más alto que veis por allí es la Torre Wangjing, cuyo nombre significa algo así como la torre desde la que se ve la capital. Se cuenta que en las noches muy claras, desde allí arriba, se distinguía el resplandor de Pekín. Hacia el oeste, detrás de las lomas por las que habéis venido, queda Gubeikou, uno de los pasos más importantes de todo el norte, la puerta natural entre las llanuras de Pekín y las tierras de Mongolia y Manchuria. Estáis, por tanto, en plena guardia de esa puerta. Cada torre que veis desde aquí vigilaba un valle, una vaguada o un sendero por el que podía colarse un jinete."
+},
+{
+"tipo": "curiosidad",
+"t": "Cómo se mira un dragón",
+"texto": "Los chinos llevan siglos comparando la Gran Muralla con un dragón dormido sobre las montañas, y desde aquí entenderéis por qué. Fijaos en cómo la línea de piedra no busca el camino fácil: va siempre por la cresta, por lo más alto, aunque eso la obligue a subir y bajar sin descanso. Las torres son como las escamas del lomo, y los tramos que se pierden entre la vegetación parecen el cuerpo del animal hundiéndose y reapareciendo. Hay un truco para disfrutarlo más: en vez de mirar de frente, buscad un punto donde la muralla se aleje en diagonal, haciendo eses. Ahí es donde de verdad se ve el dragón. Los fotógrafos chinos adoran Jinshanling precisamente por esto, y suelen venir al amanecer o al atardecer, cuando la luz rasante saca relieve a cada almena. A estas horas la luz es más plana, pero en otoño los arbustos de las laderas se ponen rojos y amarillos, y eso compensa con creces. Si os apetece una foto distinta, agachaos y encuadrad el suelo de ladrillo en primer plano, con las torres al fondo."
+},
+{
+"tipo": "explica",
+"t": "Hora de comer y de respirar",
+"texto": "Buen momento para parar. Lleváis un buen rato de escalones, y lo que queda hasta la bajada también tiene sus cuestas, así que sentaos, sacad lo que hayáis traído y bebed agua aunque no tengáis sed: en la muralla se suda más de lo que parece, incluso con fresco. Si hace viento, las torres son el mejor refugio: sus muros de ladrillo cortan el aire y a mediodía guardan algo de calor. Una advertencia práctica: aquí arriba no hay papeleras, así que guardad los envoltorios en la mochila y tiradlos abajo. Y antes de levantaros, mirad el reloj y haced cuentas. Desde aquí hasta el paso de Houchuankou y la bajada al aparcamiento os queda, siendo prudentes, cerca de una hora de camino. Contad con llegar al autobús con al menos un cuarto de hora de margen sobre la hora que os haya dado el guía. Si vais sobrados, quedaos un rato más aquí arriba: pocas veces en la vida vais a comer con estas vistas, y la tortilla, o lo que sea que llevéis, sabe mejor a quinientos metros de altura."
+},
+{
+"tipo": "historia",
+"t": "Quien no llega a la Gran Muralla no es un héroe",
+"texto": "En casi todas las tiendas de recuerdos de la muralla, desde camisetas hasta medallas que os graban con vuestro nombre, aparece la misma frase en chino: bu dao Changcheng fei haohan. Significa, más o menos, quien no llega a la Gran Muralla no es un héroe. Es un verso de Mao Zedong, escrito en 1935, durante la Larga Marcha, cuando el Ejército Rojo huía hacia el noroeste perseguido por las tropas del gobierno nacionalista. En el poema, la Gran Muralla era una meta lejana, casi un símbolo de llegar al final del camino a pesar de todo. Con los años, aquel verso de guerra se convirtió en un eslogan turístico, y hoy millones de visitantes chinos se hacen la foto con el puño en alto para demostrar que ellos sí han llegado. Así que, oficialmente, después de esta subida ya podéis consideraros héroes. Si os apetece el recuerdo, en Badaling y en la tienda de abajo suelen vender certificados y camisetas con la frase. Es de las cosas más turísticas que hay, sí, pero hoy os la habéis ganado a pulso."
+},
+{
+"tipo": "historia",
+"t": "Nixon, el himno y una muralla de carne",
+"texto": "En febrero de 1972, el presidente Richard Nixon hizo su histórico viaje a China, el que rompió más de veinte años de hielo entre los dos países. Uno de los momentos más televisados fue su visita a la muralla de Badaling, en pleno invierno. Allí, rodeado de periodistas, soltó una frase que se hizo famosa por lo obvia: más o menos, que había que concluir que esta es una gran muralla y que solo un gran pueblo pudo construirla. Pero la muralla ya era entonces mucho más que un monumento. En los años treinta, cuando Japón invadía China, la muralla se convirtió en el gran símbolo de resistencia. La Marcha de los Voluntarios, una canción de 1935 que acabaría siendo el himno nacional de la República Popular, empieza llamando a los que no quieren ser esclavos a levantarse y dice: con nuestra carne y nuestra sangre construyamos una nueva Gran Muralla. Es decir, cuando la piedra ya no bastaba, el muro tenían que ser las personas. Cada vez que suena el himno en unos Juegos Olímpicos, esta muralla está ahí, cantada."
+},
+{
+"tipo": "curiosidad",
+"t": "Lo que los europeos sabían de la muralla",
+"texto": "Una curiosidad que siempre sorprende: Marco Polo, que según su libro pasó años en la China de los mongoles a finales del siglo trece, no menciona la Gran Muralla ni una sola vez. Algunos lo usan como argumento para dudar de que llegara a China; otros responden, con bastante lógica, que en su época la mayoría de estas murallas no existían todavía. Lo que tenéis delante es obra de los Ming, que llegaron después. Las primeras noticias europeas más o menos fiables las trajeron los portugueses y, sobre todo, los misioneros jesuitas que llegaron a la corte Ming a finales del siglo dieciséis, como el italiano Matteo Ricci. Sus cartas y libros alimentaron en Europa la imagen de un muro gigantesco que cerraba todo un imperio. A partir de ahí la leyenda creció sola: los viajeros la exageraban, los grabados la dibujaban más recta y más continua de lo que es, y los filósofos de la Ilustración la ponían como ejemplo de la grandeza, o del encierro, de China. Vosotros, que la estáis pisando, ya sabéis que es otra cosa: muchas murallas, de muchas épocas, adaptadas a cada monte."
+}
+]
+},
+"houchuankou": {
+"resumen": "Cómo acabó la dinastía que levantó esta muralla, por qué los Qing la dejaron morir, quién la ha salvado y cómo bajar sin perder el autobús.",
+"mira": [
+"Fíjate en los tramos más allá: piedra suelta, hierba y almenas caídas",
+"Compara un tramo restaurado con uno sin restaurar: color y aristas",
+"Busca las señales de bajada hacia la salida y el aparcamiento",
+"Mira el reloj antes de seguir hacia el este"
+],
+"pistas": [
+{
+"tipo": "historia",
+"t": "1644: la muralla no cayó, la abrieron",
+"texto": "Ayer, en lo alto de la colina de Jingshan, oísteis cómo terminó el último emperador Ming. Hoy toca ver ese final desde aquí. En la primavera de 1644, el ejército rebelde de Li Zicheng, un antiguo funcionario de correos convertido en caudillo campesino, entró en Pekín casi sin resistencia. No vino del norte, saltando murallas, sino desde el interior de China. El emperador Chongzhen, abandonado por casi todos, subió a Jingshan y se ahorcó en un árbol. Mientras tanto, el mejor ejército Ming estaba precisamente en la muralla, en Shanhaiguan, el paso donde la muralla toca el mar, al mando del general Wu Sangui, vigilando a los manchúes. Wu Sangui tuvo que elegir entre someterse a los rebeldes o aliarse con sus enemigos de siempre. Eligió abrir la puerta. Manchúes y Ming lucharon juntos contra Li Zicheng, lo derrotaron, y los manchúes ya no se marcharon: fundaron la dinastía Qing, que gobernaría China hasta 1912. Es la gran ironía de esta obra inmensa. Ninguna muralla resiste cuando quienes la guardan deciden abrir la puerta."
+},
+{
+"tipo": "historia",
+"t": "Kangxi y la muralla del corazón",
+"texto": "Con los Qing, la muralla perdió su sentido. Los nuevos emperadores venían precisamente del otro lado, y su imperio se extendía ahora por Manchuria y Mongolia: el enemigo ya no estaba al norte, estaba dentro de casa. A finales del siglo diecisiete, cuando le propusieron reparar tramos que se estaban cayendo, el emperador Kangxi, uno de los más grandes de la historia china, se negó. Según la tradición, respondió que la verdadera defensa no son las piedras, sino tener al pueblo unido y contento, que la muralla de verdad es el corazón de la gente. Y estos montes, en vez de frontera, se convirtieron en camino. Kangxi y sus sucesores iban cada verano hacia el norte, a cazar en los grandes cotos de Mulan y a descansar en la residencia de montaña de Chengde, y la ruta pasaba por Gubeikou, aquí al lado. Imaginad las caravanas imperiales cruzando sin miedo el mismo paso que doscientos años antes se vigilaba día y noche. Las torres seguían en pie, pero ya nadie dormía en ellas."
+},
+{
+"tipo": "historia",
+"t": "Ladrillos para el corral y balas en 1933",
+"texto": "Durante los siglos siguientes, la muralla fue quedándose sola. Sin soldados ni presupuesto, la lluvia, el hielo y las raíces hicieron su trabajo. Y la gente de los pueblos también: un buen ladrillo cocido Ming era un material excelente y gratuito, así que muchos acabaron en paredes de casas, corrales y pocilgas de las aldeas de alrededor. Si alguna vez paseáis por estos valles, veréis ladrillos grises sospechosamente parecidos a los de aquí arriba. En el siglo veinte, la muralla volvió a ser frente de guerra. En 1933, el ejército japonés, que ya controlaba Manchuria, atacó los pasos de la muralla, y en Gubeikou, a pocos kilómetros de donde estáis, hubo combates muy duros. Las tropas chinas defendieron las torres con fusiles y granadas, casi como si estuvieran en la época Ming, y aunque al final tuvieron que retirarse, aquella resistencia se convirtió en un símbolo. Después, en los años de la Revolución Cultural, la muralla fue vista a veces como reliquia feudal, y hubo derribos y saqueos de piedra para obras de todo tipo."
+},
+{
+"tipo": "historia",
+"t": "Amemos China, reparemos la Gran Muralla",
+"texto": "El rescate empezó en serio en los años ochenta. En 1984, varios periódicos de Pekín lanzaron una campaña de donaciones para restaurar la muralla, y Deng Xiaoping, el líder que estaba abriendo China al mundo, le dio su apoyo con una caligrafía que se hizo célebre: ai wo Zhonghua, xiu wo Changcheng, algo así como amemos China, reparemos nuestra Gran Muralla. Hubo aportaciones de escolares, de trabajadores, de chinos de ultramar y de extranjeros. Poco después, en 1987, la Unesco declaró la Gran Muralla Patrimonio de la Humanidad. Jinshanling se restauró en buena parte por aquellos años, y por eso aquí conviven tramos rehechos, con escalones limpios y almenas completas, con otros que se dejaron tal cual, gastados y cubiertos de hierba. Fijaos en la diferencia de color: el ladrillo nuevo es más claro y regular, el viejo más oscuro, redondeado por siglos de viento. A muchos visitantes, y a muchos fotógrafos, les gusta precisamente esa mezcla: es una muralla arreglada, pero que no oculta su edad."
+},
+{
+"tipo": "curiosidad",
+"t": "Restaurar o dejar en paz",
+"texto": "Restaurar la Gran Muralla parece una idea buena sin discusión, pero en China es un tema bastante polémico. En algunos tramos, las obras han sido tan agresivas que lo que queda parece nuevo, con almenas uniformes que nunca existieron así. El caso más sonado ocurrió en 2016 en un tramo de la provincia de Liaoning, cuando circularon fotos de una muralla antigua cubierta con una especie de capa lisa de hormigón y arena, como si fuera un camino asfaltado. Internet se llenó de burlas y críticas, y aquello obligó a revisar cómo se hacían estas obras. Desde entonces, la idea dominante entre los expertos es intervenir lo mínimo: consolidar lo que se cae, sin rehacerlo. Más allá de los tramos abiertos al público está la llamada muralla salvaje, kilómetros sin restaurar donde el suelo se desmorona, no hay barandillas y las piedras se mueven bajo los pies. Hay excursionistas que la buscan precisamente por eso, y cada año hay accidentes. Hoy no es el día: quedaos en la parte señalizada y dejad la aventura para las fotos."
+},
+{
+"tipo": "explica",
+"t": "La bajada y el reloj",
+"texto": "Ahora, lo importante: volver al autobús a tiempo. En el paso de Houchuankou sale el camino de bajada señalizado hacia la salida y el aparcamiento; seguid los carteles y, si dudáis, preguntad por la salida o por el aparcamiento enseñando el móvil, o simplemente seguid a los grupos que bajan. La bajada tiene muchos escalones irregulares, a veces sueltos, y es justo donde más gente se tuerce un tobillo, porque las piernas ya están cansadas. Id despacio, apoyando todo el pie, y usad la barandilla donde la haya. Antes de seguir más allá hacia el este, mirad el reloj con honestidad. El tramo que continúa hacia la Torre de los Cinco Ojos es precioso, pero a veces está cerrado, y si está abierto la vuelta se alarga mucho: más de una hora extra es fácil. Si os sobra tiempo, mejor gastarlo arriba, en un último rato de fotos, que en una carrera final. Una vez abajo, buscad el autobús con la matrícula que apuntasteis y, si os perdéis, llamad al guía. Y respirad: lo habéis conseguido."
+}
+]
+},
+"vuelta": {
+"resumen": "Para el camino de vuelta: lo que habéis pisado hoy, unas cifras para pensar, el plan de esta noche y el salto a Xi'an de mañana.",
+"mira": [
+"Mira por la ventanilla: las crestas por las que habéis caminado se quedan atrás",
+"Fíjate en los pueblos del valle: alguna pared tendrá ladrillos de la muralla",
+"Comprueba que lleváis todo: pasaporte, móvil, gafas, chaqueta",
+"Pon el despertador de mañana antes de que se os olvide"
+],
+"pistas": [
+{
+"tipo": "explica",
+"t": "Lo que habéis pisado hoy",
+"texto": "Ya estáis sentados, con las piernas cargadas y la cabeza llena de piedra. Repasemos lo que habéis hecho. Habéis subido hasta el paso de Zhuanduokou, habéis caminado por la cresta de oeste a este entrando en torres levantadas hace más de cuatro siglos, os habéis cruzado con los muros de obstáculos y los ladrillos con nombre, habéis pasado por Shalingkou, por la Pequeña y la Gran Torre Jinshan, y habéis bajado por Houchuankou. Unos cuantos kilómetros, cientos de escalones y un buen desnivel acumulado, en uno de los tramos más bonitos y mejor conservados de toda la Gran Muralla. Y lo habéis hecho, además, en un sitio donde todavía se puede caminar sin ir pegados a la espalda de otros. Si tenéis fuerzas, aprovechad ahora para mirar las fotos y apuntar en algún sitio un par de cosas que no queráis olvidar: el viento en la torre, el color de los montes, la primera vez que visteis la muralla perdiéndose en el horizonte. Dentro de unos años serán esos detalles, y no los datos, lo que recordaréis."
+},
+{
+"tipo": "curiosidad",
+"t": "Cifras para pensar, con prudencia",
+"texto": "Os dejo unas cuantas cifras para el camino, con una advertencia: sobre la muralla circulan muchas exageraciones. La medición oficial china de 2012 sumó más de veintiún mil kilómetros, pero cuidado, porque esa cifra junta murallas de muchas dinastías, tramos paralelos, fosos y restos que apenas se ven. Lo que construyeron los Ming, el tipo de muralla que habéis pisado hoy, ronda los ocho o nueve mil kilómetros. ¿Cuánto tardaron? Hablamos de unos dos mil años de murallas en total, pero solo este tramo de ladrillo es obra de unas pocas décadas de la segunda mitad del siglo dieciséis. ¿Y cuántos murieron? Es la pregunta que todo el mundo hace, y la respuesta honesta es que no se sabe. Se repite mucho que en tiempos del primer emperador murieron cientos de miles o incluso un millón de trabajadores, pero son cifras sin base documental sólida. Lo que sí es seguro es que fue un trabajo durísimo, hecho por soldados, campesinos reclutados y presos, y que muchos no volvieron a casa."
+},
+{
+"tipo": "explica",
+"t": "Esta noche: hutongs y Houhai",
+"texto": "Llegaréis a Dengshikou a última hora de la tarde, probablemente ya de noche, y la jornada no ha terminado. El plan es suave y apetece: un paseo por los hutongs, los callejones tradicionales de Pekín. Nanluoguxiang es el más famoso, muy animado y algo turístico, con tiendas y puestos de comida; si os apetece algo más tranquilo, las callejuelas laterales que salen de él conservan mejor el ambiente de barrio, con sus patios cuadrados y sus puertas rojas. Desde allí, a poca distancia andando, está el lago Houhai, parte de la zona de Shichahai. Por la noche se ilumina con los bares de la orilla, y alrededor hay puestos de comida callejera para cenar picoteando: brochetas, bollos rellenos, dulces de azúcar. Si volvéis muy cansados o el autobús se retrasa, id directamente a Houhai y dejad los hutongs para otro viaje. Y antes de dormir, un aviso importante: mañana el tren sale a las 7:55 de la estación de Pekín Oeste, no de la que tenéis junto al hotel. Dejad las maletas hechas esta misma noche."
+},
+{
+"tipo": "historia",
+"t": "Mañana, la otra punta de la historia",
+"texto": "Mañana cambiáis de escenario, pero no de historia. El tren bala os llevará a Xi'an, la antigua Chang'an, que fue capital de China durante muchos siglos y punto de partida de la Ruta de la Seda. Allí os espera el otro extremo de lo que habéis visto hoy. Los Guerreros de Terracota son el ejército de arcilla que acompañó en su tumba a Qin Shi Huang, el primer emperador, el mismo que en el año 221 antes de Cristo unificó China y mandó unir y prolongar las murallas que ya existían en el norte. La leyenda de la Gran Muralla empieza con él, aunque de sus murallas, de tierra apisonada, quede muy poco. Y en Xi'an hay otra muralla más que os va a gustar: la muralla de la ciudad, construida también por los Ming en el siglo catorce, la muralla urbana mejor conservada de China. Mide casi catorce kilómetros, es ancha como una avenida, y la recorreréis en bicicleta. Así cerraréis el círculo: hoy, la muralla que protegía el imperio; pasado mañana, la que protegía una ciudad."
+},
+{
+"tipo": "explica",
+"t": "Despedida",
+"texto": "Y con esto termina la audioguía de Jinshanling. Gracias por dejarme acompañaros desde las siete y media de la mañana hasta aquí. Hoy habéis hecho algo que muchísima gente sueña con hacer alguna vez: caminar por la Gran Muralla, y no por un tramo cualquiera lleno de tiendas, sino por la cresta de unos montes donde todavía se oye el viento. Pensad en los soldados que pasaron inviernos enteros en aquellas torres, en los albañiles que dejaron su nombre en los ladrillos, en los emperadores que la levantaron por miedo y en los que la abandonaron porque ya no hacía falta. Todo eso estaba hoy bajo vuestros pies. Ahora toca descansar un poco. Si podéis, cerrad los ojos un rato en el autobús: os vendrá bien para la noche y para el madrugón de mañana. Bebed agua, estirad las piernas cuando bajéis, y disfrutad de la cena en Houhai, que os la habéis ganado. Como dijo Mao, quien no llega a la Gran Muralla no es un héroe. Pues bien: hoy lo sois. Buen viaje, y hasta la próxima audioguía."
+}
+]
+}
+
+};

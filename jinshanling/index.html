@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#FFFFFF">
+<script>try{var t=localStorage.getItem("china-tema");if(t==="oscuro"||(t!=="claro"&&matchMedia("(prefers-color-scheme: dark)").matches)){document.documentElement.dataset.tema="oscuro";document.querySelector('meta[name="theme-color"]').content="#0F172A"}}catch(e){}</script>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Jinshanling">
+<meta name="format-detection" content="telephone=no">
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="apple-touch-icon" href="../icon-180.png">
+<link rel="icon" href="../icon-180.png">
+<title>Gran Muralla · Audioguía</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<link rel="stylesheet" href="../audioguia/guia.css">
+</head>
+<body>
+<header class="top">
+  <div class="top-in">
+    <a class="volver" href="../#viaje/pekin" aria-label="Volver a la app del viaje"><i class="fa-solid fa-arrow-left"></i></a>
+    <span class="logo" aria-hidden="true">长</span>
+    <div class="tit"><h1>Gran Muralla</h1><p id="sub">Audioguía · 金山岭长城 · el día entero</p></div>
+    <button class="ico" data-act="ajustes" aria-label="Ajustes de la audioguía"><i class="fa-solid fa-sliders"></i></button>
+  </div>
+</header>
+
+<main>
+  <section class="portada" id="portada"></section>
+  <div id="llegada"></div>
+  <div class="estado" id="estado"></div>
+  <div class="mapaW">
+    <div id="mapa" role="region" aria-label="Mapa de la visita"></div>
+    <div class="mapaB">
+      <button data-act="seguir" id="bSeguir" aria-label="Seguir mi posición"><i class="fa-solid fa-location-crosshairs"></i></button>
+      <button data-act="encuadrar" aria-label="Ver toda la ruta"><i class="fa-solid fa-expand"></i></button>
+    </div>
+  </div>
+  <p class="lbl"><i class="fa-solid fa-headphones"></i>Las paradas, del autobús de ida al de vuelta</p>
+  <div id="paradas" style="display:grid;gap:10px"></div>
+  <p class="n" style="padding:0 4px">Mapa © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>. La posición de cada parada en la muralla es aproximada y puede desviarse un par de cientos de metros: guiaos por los nombres de los pasos y las torres. Si el aviso salta antes de tiempo, apagadlo en Ajustes. Horarios orientativos: mandan el guía y el bono.</p>
+</main>
+
+<div class="repro" id="repro"></div>
+<dialog id="dlg"><div class="hoja" id="hoja"></div></dialog>
+<div class="aviso" id="aviso" role="status" aria-live="polite"></div>
+
+<script src="guion.js"></script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+/* ============================================================
+   RECORRIDO
+   Coordenadas en WGS-84 (las del GPS del iPhone y las de OpenStreetMap), aproximadas:
+   la muralla va por la cresta de oeste a este, de Zhuanduokou a Houchuankou.
+   Las paradas sin coordenadas (los dos trayectos en autobús) no tienen pin ni aviso.
+   [id, nombre, chino, pinyin, lat, lon, minutos, radio de aviso (m), búsqueda en Mapas, cómo llegar]
+   ============================================================ */
+const CFG={
+ clave:"jsl",                               // prefijo de lo guardado en el móvil
+ titulo:"La Gran Muralla en Jinshanling",zh:"金山岭长城",
+ texto:n=>`Excursión de día entero desde Dengshikou: ${n} historias para el autobús y para la caminata por la cresta, de Zhuanduokou a Houchuankou. Quién la levantó, cómo vivían sus soldados y por qué al final no sirvió de mucho.`,
+ saludo:"Bienvenidos a la Gran Muralla. Hoy toca caminar por el lomo del dragón.",
+ limites:[[40.6630,117.2370],[40.6830,117.2680]],
+ ruta:[
+ ["intro","En el autobús de ida","去长城的路上","Qù Chángchéng de lùshang",null,null,150,0,"金山岭长城",
+  "Salida a las 07:30 del aparcamiento del Regent Hotel (北京丽晶酒店), junto a la salida C de la estación de metro Dengshikou (灯市口, línea 5). Llegad 10 minutos antes. Escuchad esta parada en el autobús: son unas 2 horas 30 de carretera, hay tiempo de sobra."],
+ ["llegada","Centro de visitantes y subida","金山岭长城 游客中心","Jīnshānlǐng Chángchéng yóukè zhōngxīn",40.6660,117.2460,20,150,"金山岭长城 游客中心",
+  "El autobús os deja en el aparcamiento. Antes de bajar, apuntad la matrícula, el teléfono del guía y la hora exacta de vuelta. Pasad el control con el pasaporte y subid en la lanzadera o a pie hasta la puerta central; desde ahí, un camino de escalones sube hasta la muralla en unos 20-30 minutos. Si preferís ahorraros la cuesta, el teleférico sube hacia la Pequeña Torre Jinshan: entonces id a la parada 6 y haced el tramo al revés."],
+ ["zhuanduokou","Paso de Zhuanduokou","砖垛口","Zhuānduǒkǒu",40.6770,117.2405,25,130,"金山岭长城 砖垛口",
+  "Al final del camino de subida llegáis al paso de Zhuanduokou, el punto por el que casi todo el mundo pisa la muralla. Subid a ella y girad a la derecha, hacia el este: ese es el sentido de toda la visita."],
+ ["torres","Las torres de Qi Jiguang","敌楼","dílóu",40.6782,117.2445,30,120,"金山岭长城 将军楼",
+  "Caminad hacia el este por la cresta. Entrad en la primera torre de dos pisos que os encontréis: cualquiera de estas sirve para escuchar la parada dentro, a la sombra."],
+ ["zhangqiang","Muros de obstáculos y ladrillos con nombre","障墙 · 文字砖","zhàngqiáng · wénzìzhuān",40.6790,117.2485,30,120,"金山岭长城 障墙",
+  "Seguid hacia el este. En las cuestas más empinadas veréis tabiques cortos que cruzan el paseo de la muralla de lado a lado: son los muros de obstáculos. Id con calma y mirando dónde pisáis."],
+ ["shalingkou","Paso de Shalingkou","沙岭口","Shālǐngkǒu",40.6795,117.2520,25,120,"金山岭长城 沙岭口",
+  "Continuad por la cresta hasta el siguiente collado, donde la muralla baja y vuelve a subir: es el paso de Shalingkou. Si vais justos de tiempo o de fuerzas, desde aquí hay camino de bajada; preguntad en la torre o mirad los carteles."],
+ ["xiaojinshan","Pequeña Torre Jinshan","小金山楼","Xiǎo Jīnshān lóu",40.6800,117.2555,25,110,"金山岭长城 小金山楼",
+  "Seguid hacia el este. La Pequeña Torre Jinshan es la que queda junto a la llegada del teleférico: la reconoceréis por el ajetreo. Para cruzarla hay que pasar por dentro de la torre."],
+ ["dajinshan","Gran Torre Jinshan","大金山楼","Dà Jīnshān lóu",40.6801,117.2585,40,110,"金山岭长城 大金山楼",
+  "Un centenar de metros más allá, en lo alto de la siguiente loma, está la Gran Torre Jinshan. Es el mejor sitio para las fotos y para sentarse a comer lo que llevéis."],
+ ["houchuankou","Houchuankou y la bajada","后川口","Hòuchuānkǒu",40.6785,117.2640,45,120,"金山岭长城 后川口",
+  "Seguid hacia el este hasta el paso de Houchuankou y bajad por el camino señalizado hacia la salida y el aparcamiento. Mirad el reloj antes de seguir más allá: el tramo del este hasta la Torre de los Cinco Ojos puede estar cerrado y la vuelta se alarga mucho."],
+ ["vuelta","En el autobús de vuelta","回北京","Huí Běijīng",null,null,0,0,"灯市口站",
+  "Para el autobús de vuelta, con la caminata ya hecha. Unas 2 horas 30 hasta Dengshikou, algo más si hay atasco a la entrada de Pekín."]
+ ],
+ zona:[[40.6630,117.2370],[40.6830,117.2680]]      // lo que se descarga para usar sin conexión
+};
+
+</script>
+<script src="../audioguia/guia.js"></script>
+</body>
+</html>
