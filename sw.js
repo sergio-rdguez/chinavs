@@ -1,8 +1,9 @@
 /* Viaje a China: copia de la app para que abra sin conexión.
    Sirve primero lo guardado y se actualiza por detrás; la versión nueva aparece al abrir la app la vez siguiente. */
-const CACHE = "china-v6";
+const CACHE = "china-v7";
 const FOTOS = ["pekin", "xian", "shanghai", "zhangjiajie", "yangshuo", "shenzhen", "hongkong"].map(k => `./img/${k}.jpg`);
-const GUIA = ["./ciudad-prohibida/", "./ciudad-prohibida/index.html", "./ciudad-prohibida/guion.js"];   // audioguía de la Ciudad Prohibida
+const GUIAS = ["ciudad-prohibida", "templo-del-cielo"];   // audioguías: cada una en su carpeta, con el motor común
+const GUIA = ["./audioguia/guia.css", "./audioguia/guia.js", ...GUIAS.flatMap(g => [`./${g}/`, `./${g}/index.html`, `./${g}/guion.js`])];
 const ARCHIVOS = ["./", "./index.html", "./manifest.webmanifest", "./icon-180.png", "./icon-512.png", ...FOTOS, ...GUIA];
 // Teselas del mapa de la audioguía: caché aparte que sobrevive a las versiones nuevas
 const TESELAS = "china-teselas", OSM = /^https:\/\/tile\.openstreetmap\.org\//;
@@ -54,8 +55,8 @@ self.addEventListener("fetch", e => {
   const url = new URL(req.url);
   if (url.origin !== location.origin) return;                       // la hoja, el clima, el cambio y los mapas van directos
   e.respondWith(caches.open(CACHE).then(async cache => {
-    const guia = url.pathname.includes("/ciudad-prohibida/");
-    const clave = req.mode === "navigate" ? (guia ? "./ciudad-prohibida/index.html" : "./index.html") : req;   // cualquier entrada a la app usa la misma copia
+    const guia = GUIAS.find(g => url.pathname.includes(`/${g}/`));
+    const clave = req.mode === "navigate" ? (guia ? `./${guia}/index.html` : "./index.html") : req;   // cualquier entrada a la app usa la misma copia
     const guardado = await cache.match(clave);
     const red = fetch(req).then(res => {
       if (res.ok && !res.redirected) {
@@ -67,7 +68,7 @@ self.addEventListener("fetch", e => {
             .then(cs => cs.forEach(c => c.postMessage({ tipo: "nueva" }))));
       }
       return res;
-    }).catch(() => guardado || cache.match(guia ? "./ciudad-prohibida/index.html" : "./index.html"));
+    }).catch(() => guardado || cache.match(guia ? `./${guia}/index.html` : "./index.html"));
     return guardado || red;
   }));
 });

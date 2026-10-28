@@ -1959,10 +1959,8 @@ function rHoy(){
   if(esHoy) html+=tarjetaRapidos(gk||d.ck);
   if(esHoy&&now.min>=18*60&&DIAS[sel+1]) html+=tarjetaManana(sel+1);
   html+=tarjetaAvisos(sel,esHoy?"Para hoy":"Para este día");
-  if(itemsDia(d.iso).some(x=>AUDIOGUIAS.some(([re])=>re.test(x.titulo)||re.test(x.lugar&&x.lugar.nombre||""))))   // hoy toca un sitio con audioguía: a un toque
-    html+=`<a class="card audioguia th" style="--c:${ciudad(d.Ciudad).c}" href="ciudad-prohibida/"><span class="ag-i"><i class="fa-solid fa-headphones"></i></span>
-      <span><b>Audioguía de la Ciudad Prohibida</b><span class="n">Toca para abrirla: mapa con vuestra posición y las historias de cada parada.</span></span>
-      <i class="fa-solid fa-chevron-right" style="color:var(--faint)"></i></a>`;
+  AUDIOGUIAS.filter(([re])=>itemsDia(d.iso).some(x=>re.test(x.titulo)||re.test(x.lugar&&x.lugar.nombre||"")))   // hoy toca un sitio con audioguía: a un toque
+    .forEach(a=>html+=tarjetaAudioguia(a,ciudad(d.Ciudad).c));
   html+=htmlDia(sel,{vivo:true,aqui,dist});
   html+=`<button class="enl" data-compartir-dia="${sel}" style="justify-self:center"><i class="fa-solid fa-share-nodes"></i> Compartir el plan del día</button>`;
   if(!geoActiva()) html+=`<button class="enl" data-act="geo" style="justify-self:center"><i class="fa-solid fa-location-arrow"></i> Usar mi ubicación para ajustar el plan</button>`;
@@ -2014,7 +2012,11 @@ function fichaLugar(p){
       ${p.loc?`<dt>Localizador</dt><dd class="mono">${esc(p.loc)}</dd>`:""}</dl>
     ${p.horario||p.precio?`<p class="n">Horarios y precios orientativos: confirmadlos antes de ir.</p>`:""}</div>`;
 }
-const AUDIOGUIAS=[[/ciudad prohibida|museo del palacio|gugong/i,"ciudad-prohibida/"]];   // sitios con audioguía propia
+const AUDIOGUIAS=[                           // sitios con audioguía propia: [nombre en el plan, carpeta, título, de qué va]
+ [/ciudad prohibida|museo del palacio|gugong/i,"ciudad-prohibida/","Audioguía de la Ciudad Prohibida","Unas 3 horas a pie, de Tiananmen a Jingshan: mapa con vuestra posición y la historia de cada rincón."],
+ [/templo del cielo|tiantan/i,"templo-del-cielo/","Audioguía del Templo del Cielo","Unas 2 horas, de la Puerta Este a la Oeste: el altar, el muro del eco y los rituales del emperador."]];
+const tarjetaAudioguia=(a,c)=>`<a class="card audioguia th" style="--c:${c}" href="${a[1]}"><span class="ag-i"><i class="fa-solid fa-headphones"></i></span>
+    <span><b>${a[2]}</b><span class="n">${a[3]}</span></span><i class="fa-solid fa-chevron-right" style="color:var(--faint)"></i></a>`;
 function botonAudioguia(nombre){
   const a=AUDIOGUIAS.find(([re])=>re.test(nombre||""));
   return a?`<a class="btn pri" href="${a[1]}"><i class="fa-solid fa-headphones"></i>Audioguía</a>`:"";
@@ -2198,9 +2200,7 @@ function rCiudad(ck){
   let html=`<div class="pila th" style="--c:${c.c}">`+heroFoto(ck,{badge:`${rangoFechas(ds.map(x=>x.d))} · Parada ${ks.indexOf(ck)+1}`,titulo:c.n,
       sub:`${c.zh}${n?` · ${n} ${n===1?"noche":"noches"}`:""}${est?` · ${est}`:""}`,
       izq:`<button class="cristal" data-act="volver"><i class="fa-solid fa-arrow-left"></i>El viaje</button>`,der:pildoraClima(ck,ds.some(x=>x.d.iso===now.iso)?now.iso:primero)});
-  if(ck==="pekin") html+=`<a class="card audioguia" href="ciudad-prohibida/"><span class="ag-i"><i class="fa-solid fa-headphones"></i></span>
-    <span><b>Audioguía de la Ciudad Prohibida</b><span class="n">Unas 3 horas a pie, de Tiananmen a Jingshan: mapa con vuestra posición y la historia de cada rincón.</span></span>
-    <i class="fa-solid fa-chevron-right" style="color:var(--faint)"></i></a>`;
+  if(ck==="pekin") html+=AUDIOGUIAS.map(a=>tarjetaAudioguia(a,c.c)).join("");
   html+=`<div><p class="lbl"><i class="fa-solid fa-hotel"></i>Alojamiento y tiempo en ${esc(c.n)}</p><div class="dos-col">
       <div class="pila">${H.length?H.map(h=>tarjetaHotel(h,{estado:1})).join(""):`<div class="hcard"><p class="n">Aquí no dormís: es una parada de paso.</p></div>`}</div>
       ${tarjetaClima(ck)}</div></div>`;

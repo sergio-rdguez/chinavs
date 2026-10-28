@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#FFFFFF">
+<script>try{var t=localStorage.getItem("china-tema");if(t==="oscuro"||(t!=="claro"&&matchMedia("(prefers-color-scheme: dark)").matches)){document.documentElement.dataset.tema="oscuro";document.querySelector('meta[name="theme-color"]').content="#0F172A"}}catch(e){}</script>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Templo del Cielo">
+<meta name="format-detection" content="telephone=no">
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="apple-touch-icon" href="../icon-180.png">
+<link rel="icon" href="../icon-180.png">
+<title>Templo del Cielo · Audioguía</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<link rel="stylesheet" href="../audioguia/guia.css">
+</head>
+<body>
+<header class="top">
+  <div class="top-in">
+    <a class="volver" href="../#viaje/pekin" aria-label="Volver a la app del viaje"><i class="fa-solid fa-arrow-left"></i></a>
+    <span class="logo" aria-hidden="true">天</span>
+    <div class="tit"><h1>Templo del Cielo</h1><p id="sub">Audioguía · 天坛 · unas 2 horas</p></div>
+    <button class="ico" data-act="ajustes" aria-label="Ajustes de la audioguía"><i class="fa-solid fa-sliders"></i></button>
+  </div>
+</header>
+
+<main>
+  <section class="portada" id="portada"></section>
+  <div id="llegada"></div>
+  <div class="estado" id="estado"></div>
+  <div class="mapaW">
+    <div id="mapa" role="region" aria-label="Mapa de la visita"></div>
+    <div class="mapaB">
+      <button data-act="seguir" id="bSeguir" aria-label="Seguir mi posición"><i class="fa-solid fa-location-crosshairs"></i></button>
+      <button data-act="encuadrar" aria-label="Ver toda la ruta"><i class="fa-solid fa-expand"></i></button>
+    </div>
+  </div>
+  <p class="lbl"><i class="fa-solid fa-headphones"></i>Las paradas, de la Puerta Este a la Oeste</p>
+  <div id="paradas" style="display:grid;gap:10px"></div>
+  <p class="n" style="padding:0 4px">Mapa © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>. La posición de cada parada es aproximada (unos 20–30 m). Horarios y precios orientativos.</p>
+</main>
+
+<div class="repro" id="repro"></div>
+<dialog id="dlg"><div class="hoja" id="hoja"></div></dialog>
+<div class="aviso" id="aviso" role="status" aria-live="polite"></div>
+
+<script src="guion.js"></script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+/* ============================================================
+   RECORRIDO
+   Coordenadas en WGS-84 (las del GPS del iPhone y las de OpenStreetMap),
+   aproximadas: el eje del Salón de Oración y el Altar Circular está en la longitud 116.4066.
+   [id, nombre, chino, pinyin, lat, lon, minutos, radio de aviso (m), búsqueda en Mapas, cómo llegar]
+   ============================================================ */
+const CFG={
+ clave:"tt",                                // prefijo de lo guardado en el móvil
+ titulo:"El Templo del Cielo",zh:"天坛",
+ texto:n=>`Recorrido a pie de la Puerta Este a la Puerta Oeste, con ${n} historias: cómo rezaba el Hijo del Cielo, el número 9, el muro que susurra y la vida del parque hoy.`,
+ saludo:"Bienvenidos al Templo del Cielo, donde el emperador hablaba con el cielo.",
+ limites:[[39.8735,116.3955],[39.8860,116.4185]],
+ ruta:[
+ ["intro","Antes de entrar","天坛","Tiāntán",null,null,5,0,"天坛公园",
+  "Escuchadla en el taxi o mientras entráis. No hace falta estar en ningún sitio concreto."],
+ ["puerta_este","Puerta Este y el parque","天坛东门","Tiāntán dōngmén",39.8822,116.4176,8,90,"天坛公园 东门",
+  "Entrad por la Puerta Este (metro línea 5, estación Tiantan Dongmen). Pasado el control, seguid el paseo de cipreses hacia el oeste."],
+ ["corredor","Corredor Largo y Piedras de las Siete Estrellas","长廊","Chángláng",39.8826,116.4098,12,70,"天坛 长廊",
+  "Seguid hacia el oeste hasta el corredor cubierto lleno de gente cantando y jugando a las cartas. Las piedras están junto al corredor, en la explanada de su lado sur."],
+ ["qiniandian","Salón de Oración por las Buenas Cosechas","祈年殿","Qíniándiàn",39.8823,116.4066,25,60,"天坛 祈年殿",
+  "Al final del corredor, entrad al recinto del salón por su puerta este: tendréis delante el gran edificio redondo de tres tejados azules."],
+ ["danbi","Puente Danbi (Camino Sagrado)","丹陛桥","Dānbìqiáo",39.8800,116.4066,10,60,"天坛 丹陛桥",
+  "Salid del recinto del salón por la puerta sur y bajad hacia el sur por la gran calzada elevada."],
+ ["huangqiongyu","Bóveda Imperial del Cielo y Muro del Eco","皇穹宇","Huángqióngyǔ",39.8782,116.4066,18,50,"天坛 皇穹宇",
+  "Al final de la calzada, cruzad la puerta del recinto circular: dentro está el pequeño templo redondo rodeado por el Muro del Eco."],
+ ["yuanqiu","Altar Circular","圜丘","Yuánqiū",39.8764,116.4066,15,55,"天坛 圜丘",
+  "Salid por la puerta sur del recinto del eco: justo delante está el altar blanco de tres terrazas."],
+ ["zhaigong","Palacio de la Abstinencia","斋宫","Zhāigōng",39.8812,116.4012,15,60,"天坛 斋宫",
+  "Volved un poco hacia el norte y tomad el camino del oeste: el palacio, rodeado por un foso, queda a unos 600 metros. Suele cerrar antes que el parque: si vais justos, id primero aquí."],
+ ["shenyueshu","Oficina de la Música Divina y Puerta Oeste","神乐署","Shényuèshǔ",39.8778,116.3985,12,60,"天坛 神乐署",
+  "Desde el Palacio de la Abstinencia, id hacia el suroeste, cerca de la Puerta Oeste. Al salir por ella, Qianmen queda a unos 20 minutos andando hacia el norte."]
+ ],
+ zona:[[39.872,116.394],[39.888,116.420]]      // lo que se descarga para usar sin conexión
+};
+
+</script>
+<script src="../audioguia/guia.js"></script>
+</body>
+</html>
