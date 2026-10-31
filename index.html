@@ -2015,7 +2015,8 @@ function fichaLugar(p){
 const AUDIOGUIAS=[                           // sitios con audioguía propia: [nombre en el plan, carpeta, título, de qué va]
  [/ciudad prohibida|museo del palacio|gugong/i,"ciudad-prohibida/","Audioguía de la Ciudad Prohibida","Unas 3 horas a pie, de Tiananmen a Jingshan: mapa con vuestra posición y la historia de cada rincón."],
  [/templo del cielo|tiantan/i,"templo-del-cielo/","Audioguía del Templo del Cielo","Unas 2 horas, de la Puerta Este a la Oeste: el altar, el muro del eco y los rituales del emperador."],
- [/jinshanling|gran muralla/i,"jinshanling/","Audioguía de la Gran Muralla","Hace de guía: para el coche y para la caminata de Zhuanduokou a la Torre de los Cinco Ojos del Este, con salida por la Puerta Este."]];
+ [/jinshanling|gran muralla/i,"jinshanling/","Audioguía de la Gran Muralla","Hace de guía: para el coche y para la caminata de Zhuanduokou a la Torre de los Cinco Ojos del Este, con salida por la Puerta Este."],
+ [/guerreros de terracota|terracota|bingmayong/i,"guerreros-terracota/","Audioguía de los Guerreros de Terracota","Lo esencial en unos 16 minutos de audio, con voz grabada: el emperador, las tres fosas y la tumba que nadie ha abierto."]];
 const tarjetaAudioguia=(a,c)=>`<a class="card audioguia th" style="--c:${c}" href="${a[1]}"><span class="ag-i"><i class="fa-solid fa-headphones"></i></span>
     <span><b>${a[2]}</b><span class="n">${a[3]}</span></span><i class="fa-solid fa-chevron-right" style="color:var(--faint)"></i></a>`;
 function botonAudioguia(nombre){

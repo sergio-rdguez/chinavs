@@ -1,12 +1,14 @@
 /* Viaje a China: copia de la app para que abra sin conexión.
    Sirve primero lo guardado y se actualiza por detrás; la versión nueva aparece al abrir la app la vez siguiente. */
-const CACHE = "china-v9";
+const CACHE = "china-v10";
 const FOTOS = ["pekin", "xian", "shanghai", "zhangjiajie", "yangshuo", "shenzhen", "hongkong"].map(k => `./img/${k}.jpg`);
-const GUIAS = ["ciudad-prohibida", "templo-del-cielo", "jinshanling"];   // audioguías: cada una en su carpeta, con el motor común
-const GUIA = ["./audioguia/guia.css", "./audioguia/guia.js", ...GUIAS.flatMap(g => [`./${g}/`, `./${g}/index.html`, `./${g}/guion.js`])];
+const GUIAS = ["ciudad-prohibida", "templo-del-cielo", "jinshanling", "guerreros-terracota"];   // audioguías: cada una en su carpeta, con el motor común
+const GUIA = ["./audioguia/guia.css", "./audioguia/guia.js", ...GUIAS.flatMap(g => [`./${g}/`, `./${g}/index.html`, `./${g}/guion.js`]), "./guerreros-terracota/audio/index.js"];
 const ARCHIVOS = ["./", "./index.html", "./manifest.webmanifest", "./icon-180.png", "./icon-512.png", ...FOTOS, ...GUIA];
 // Teselas del mapa de la audioguía: caché aparte que sobrevive a las versiones nuevas
 const TESELAS = "china-teselas", OSM = /^https:\/\/tile\.openstreetmap\.org\//;
+// Voz grabada de las audioguías: la guarda la propia guía al abrirla, en otra caché que también sobrevive a las versiones nuevas
+const AUDIO = "china-audio";
 // Iconos y mapas se descargan ya en casa: en China estos CDN pueden ir lentos o estar bloqueados
 const FA = "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/";
 const EXTRA = [FA + "css/all.min.css", FA + "webfonts/fa-solid-900.woff2", FA + "webfonts/fa-regular-400.woff2", FA + "webfonts/fa-brands-400.woff2",
@@ -24,7 +26,7 @@ self.addEventListener("activate", e => {
   e.waitUntil(caches.keys()
     .then(async ks => {
       const nueva = await caches.open(CACHE);                         // lo ya descargado de los CDN pasa a la caché nueva
-      for (const k of ks.filter(k => k !== CACHE && k !== TESELAS)) {
+      for (const k of ks.filter(k => k !== CACHE && k !== TESELAS && k !== AUDIO)) {
         const vieja = await caches.open(k);
         for (const req of await vieja.keys()) if (CDN.test(req.url) && !(await nueva.match(req))) await nueva.put(req, await vieja.match(req));
         await caches.delete(k);
@@ -54,6 +56,13 @@ self.addEventListener("fetch", e => {
   }
   const url = new URL(req.url);
   if (url.origin !== location.origin) return;                       // la hoja, el clima, el cambio y los mapas van directos
+  if (url.pathname.endsWith(".mp3")) {                              // audio: no cambia nunca, lo guardado vale para siempre
+    e.respondWith(caches.open(AUDIO).then(async c => (await c.match(req.url)) || fetch(req).then(res => {
+      if (res.ok && res.status === 200) c.put(req.url, res.clone());
+      return res;
+    })));
+    return;
+  }                       // la hoja, el clima, el cambio y los mapas van directos
   e.respondWith(caches.open(CACHE).then(async cache => {
     const guia = GUIAS.find(g => url.pathname.includes(`/${g}/`));
     const clave = req.mode === "navigate" ? (guia ? `./${guia}/index.html` : "./index.html") : req;   // cualquier entrada a la app usa la misma copia
