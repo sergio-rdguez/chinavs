@@ -1137,7 +1137,7 @@ function horaMadrid(now){
   return new Intl.DateTimeFormat("es-ES",{timeZone:"Europe/Madrid",hour:"2-digit",minute:"2-digit",hourCycle:"h23"}).format(new Date());
 }
 
-/* ---------- Estado: última copia de la hoja + cambios aún sin enviar ---------- */
+/* ---------- Estado: última copia del servidor + cambios aún sin enviar ---------- */
 const TABLA={Agenda:"agenda",Lugares:"lugares",Gastos:"gastos",Diario:"diario",Ajustes:"ajustes"};
 
 function aplicar(d,op){
@@ -1186,7 +1186,7 @@ function mutar(op,silencioso){
   if(silencioso){dirty=true;pastilla()} else renderAll(true);        // en silencio, se repinta al salir del campo
   enviar();
 }
-let versionDatos=0;                           // sube con cada respuesta de la hoja tras un cambio: una lectura más antigua no la pisa
+let versionDatos=0;                           // sube con cada respuesta del servidor tras un cambio: una lectura más antigua no la pisa
 /* Acceso: se entra una vez y la sesión se queda en el móvil. Sin conexión todo sigue funcionando con la copia local;
    solo se pide entrar de nuevo si Supabase rechaza la sesión. */
 let SESION=LS.json("china-sesion"),renovando=null,arrancada=false;
@@ -1266,7 +1266,7 @@ async function enviar(){
     }
   }finally{
     flushing=false; rebuild(); renderAll();
-    if(error) setTimeout(()=>sincronizar(),500);                       // la hoja había cambiado: se trae la versión buena
+    if(error) setTimeout(()=>sincronizar(),500);                       // los datos habían cambiado: se trae la versión buena
   }
 }
 let leyendo=null,ultIntento=0;

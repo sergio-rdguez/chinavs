@@ -1,6 +1,6 @@
-/* Viaje a China: datos en Supabase (sustituye a la hoja de cálculo y a apps-script.gs).
+/* Viaje a China: datos en Supabase.
    Las filas se guardan tal como las recibe la app; solo se accede por china_leer y china_aplicar,
-   que admiten las mismas operaciones y con las mismas limitaciones que tenía el script.
+   que solo admiten las operaciones de la app y las columnas permitidas.
    Se puede volver a ejecutar sin perder datos. */
 
 create table if not exists public.china_filas (
@@ -149,7 +149,7 @@ begin
 end
 $$;
 
--- Todos los datos, con la misma forma que devolvía la hoja. La versión 3 es la del último script.
+-- Todos los datos, con la forma que espera la app.
 create or replace function public.china_datos() returns jsonb
 language sql stable set search_path = '' as $$
   select jsonb_build_object('version', 3) || jsonb_object_agg(h.hoja, coalesce(f.filas, '[]'::jsonb))
@@ -179,7 +179,7 @@ declare
 begin
   perform public.china_exige_viajero();
   begin
-    perform pg_advisory_xact_lock(hashtext('china_filas'));     -- de uno en uno, como en la hoja
+    perform pg_advisory_xact_lock(hashtext('china_filas'));     -- de uno en uno
     if p->>'action' = 'batch' then
       for r in select e.value as op, e.ordinality - 1 as i from jsonb_array_elements(coalesce(p->'ops', '[]'::jsonb)) with ordinality e loop
         begin
