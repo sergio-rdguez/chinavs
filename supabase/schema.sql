@@ -252,11 +252,31 @@ begin
 end
 $$;
 
-/* Qué toca avisar, en hora de China (UTC+8, también Hong Kong):
-   transportes: la víspera a las 20:00 y antes de salir (vuelo 3 h, tren 90 min);
-   agenda: 30 min antes de visitas y traslados; cada noche a las 21:00, a qué hora empieza el día siguiente.
-   Si el aviso tenía que salir hace más de 20 min ya no se manda. */
-create or replace function public.china_avisos_debidos(ahora timestamp) returns table (clave text, titulo text, cuerpo text)
+/* Cuándo avisar a cada persona. Lo elige en la app y se guarda en Ajustes como avi:<correo>; si no ha elegido nada, o está mal, valen estos:
+   {"vuelo":{"vispera":"20:00","antes":[180]},"tren":{"vispera":"20:00","antes":[90]},"agenda":30,"noche":true}
+   vispera: hora del aviso del día anterior, "" para ninguno. antes: minutos antes de salir, tantos como quiera.
+   agenda: minutos antes de visitas y traslados, 0 para ninguno. noche: a las 21:00, a qué hora empieza el día siguiente.
+   Todo en hora de China (UTC+8, también Hong Kong). Si el aviso tenía que salir hace más de 20 min ya no se manda. */
+create or replace function public.china_avisos_prefs(correo text) returns jsonb
+language plpgsql stable set search_path = '' as $$
+begin
+  return coalesce((select (f.datos->>'Valor')::jsonb from public.china_filas f where f.tabla = 'ajustes' and f.clave = 'avi:' || correo limit 1), '{}'::jsonb);
+exception when others then
+  return '{}'::jsonb;
+end
+$$;
+
+create or replace function public.china_duracion(minutos integer) returns text
+language sql immutable set search_path = '' as $$
+  select case
+    when minutos < 60 then minutos || ' min'
+    when minutos % 60 = 0 then minutos / 60 || ' h'
+    else minutos / 60 || ' h ' || minutos % 60 || ' min'
+  end
+$$;
+
+drop function if exists public.china_avisos_debidos(timestamp);
+create or replace function public.china_avisos_debidos(ahora timestamp, prefs jsonb default '{}'::jsonb) returns table (clave text, titulo text, cuerpo text)
 language sql stable set search_path = '' as $$
   with hora as (
     select c.tabla, c.clave as id, c.datos,
@@ -268,6 +288,7 @@ language sql stable set search_path = '' as $$
   ),
   transporte as (
     select h.*, h.datos->>'Tipo' ~* 'vuelo' as vuelo,
+      case when h.datos->>'Tipo' ~* 'vuelo' then prefs->'vuelo' else prefs->'tren' end as conf,
       (case when h.datos->>'Tipo' ~* 'vuelo' then 'Vuelo ' else 'Tren ' end) || coalesce(h.datos->>'Nº vuelo/tren', '') as nombre,
       to_char(h.t, 'HH24:MI') as sale,
       (h.datos->>'Origen') || ' → ' || (h.datos->>'Destino')
@@ -279,55 +300,71 @@ language sql stable set search_path = '' as $$
     from hora h where h.tabla = 'agenda' order by h.t::date, h.t
   ),
   todos as (
-    select 'tr:' || tr.id || ':' || tr.t || ':antes' as clave,
-      tr.t - case when tr.vuelo then interval '3 hours' else interval '90 minutes' end as momento,
+    select 'tr:' || tr.id || ':' || tr.t || ':antes:' || m.minutos as clave,
+      tr.t - m.minutos * interval '1 minute' as momento,
       tr.nombre || ' a las ' || tr.sale as titulo,
-      'Sale en ' || case when tr.vuelo then '3 h' else '1 h 30 min' end || ': ' || tr.ruta as cuerpo
+      'Sale en ' || public.china_duracion(m.minutos) || ': ' || tr.ruta as cuerpo
     from transporte tr
+    cross join lateral (
+      select e::integer as minutos
+      from jsonb_array_elements_text(case
+        when jsonb_typeof(tr.conf->'antes') = 'array' then tr.conf->'antes'
+        when tr.vuelo then '[180]'::jsonb
+        else '[90]'::jsonb
+      end) e
+      where e ~ '^\d{1,4}$' and e::integer > 0
+    ) m
     union all
     select 'tr:' || tr.id || ':' || tr.t || ':vispera',
-      tr.t::date - 1 + time '20:00',
+      tr.t::date - 1 + coalesce(tr.conf->>'vispera', '20:00')::time,
       'Mañana: ' || lower(left(tr.nombre, 1)) || substr(tr.nombre, 2) || ' a las ' || tr.sale,
       tr.ruta
     from transporte tr
+    where coalesce(tr.conf->>'vispera', '20:00') ~ '^([01]\d|2[0-3]):[0-5]\d$'
     union all
-    select 'ag:' || h.id || ':' || h.t,
-      h.t - interval '30 minutes',
+    select 'ag:' || h.id || ':' || h.t || ':' || a.minutos,
+      h.t - a.minutos * interval '1 minute',
       'A las ' || to_char(h.t, 'HH24:MI') || ': ' || (h.datos->>'Qué'),
-      coalesce(nullif(h.datos->>'Lugar', ''), nullif(left(h.datos->>'Notas', 140), ''), 'En 30 min')
-    from hora h where h.tabla = 'agenda' and h.datos->>'Tipo' in ('visita', 'traslado')
+      coalesce(nullif(h.datos->>'Lugar', ''), nullif(left(h.datos->>'Notas', 140), ''), 'En ' || public.china_duracion(a.minutos))
+    from hora h
+    cross join (select case when coalesce(prefs->>'agenda', '') ~ '^\d{1,4}$' then (prefs->>'agenda')::integer else 30 end as minutos) a
+    where h.tabla = 'agenda' and h.datos->>'Tipo' in ('visita', 'traslado') and a.minutos > 0
     union all
     select 'dia:' || d.dia || ':' || d.empieza,
       d.dia - 1 + time '21:00',
       'Mañana empezáis a las ' || d.empieza,
       d.que
     from dias d
+    where coalesce(prefs->>'noche', 'true') <> 'false'
   )
   select t.clave, t.titulo, t.cuerpo from todos t
   where t.momento <= ahora and t.momento > ahora - interval '20 minutes'
 $$;
 
--- Lo que la función de avisos tiene que enviar ahora. Cada aviso se marca aquí, así no sale dos veces.
+-- Lo que la función de avisos tiene que enviar ahora a cada móvil. Cada aviso se marca aquí, así no sale dos veces.
 create or replace function public.china_avisos_tomar(ahora timestamptz default now()) returns jsonb
 language plpgsql security definer set search_path = '' as $$
 declare
-  subs jsonb;
-  avisos jsonb := '[]'::jsonb;
+  s record;
+  subs jsonb := '[]'::jsonb;
+  avisos jsonb;
+  china timestamp := (ahora at time zone 'Asia/Shanghai')::timestamp;
 begin
-  select coalesce(jsonb_agg(jsonb_build_object('endpoint', s.endpoint, 'p256dh', s.p256dh, 'auth', s.auth, 'bienvenida', s.bienvenida)), '[]'::jsonb)
-    into subs from public.china_suscripciones s;
-  update public.china_suscripciones s set bienvenida = false where s.bienvenida;
-  if jsonb_array_length(subs) > 0 then
-    with nuevos as (
+  for s in select * from public.china_suscripciones loop
+    with debidos as (
+      select * from public.china_avisos_debidos(china, public.china_avisos_prefs(s.email))
+    ), nuevos as (
       insert into public.china_avisos_enviados (clave)
-      select d.clave from public.china_avisos_debidos((ahora at time zone 'Asia/Shanghai')::timestamp) d
+      select md5(s.endpoint) || ':' || d.clave from debidos d
       on conflict do nothing returning clave
     )
     select coalesce(jsonb_agg(jsonb_build_object('clave', d.clave, 'titulo', d.titulo, 'cuerpo', d.cuerpo)), '[]'::jsonb)
       into avisos
-      from public.china_avisos_debidos((ahora at time zone 'Asia/Shanghai')::timestamp) d join nuevos n on n.clave = d.clave;
-  end if;
-  return jsonb_build_object('subs', subs, 'avisos', avisos, 'vapid', (select c.valor from public.china_config c where c.clave = 'vapid'));
+      from debidos d join nuevos n on n.clave = md5(s.endpoint) || ':' || d.clave;
+    subs := subs || jsonb_build_object('endpoint', s.endpoint, 'p256dh', s.p256dh, 'auth', s.auth, 'bienvenida', s.bienvenida, 'avisos', avisos);
+  end loop;
+  update public.china_suscripciones x set bienvenida = false where x.bienvenida;
+  return jsonb_build_object('subs', subs, 'vapid', (select c.valor from public.china_config c where c.clave = 'vapid'));
 end
 $$;
 
@@ -348,7 +385,7 @@ $$;
 revoke all on function public.china_editables(text), public.china_columnas(text), public.china_filtra(jsonb, text[]),
   public.china_fila(text, integer, text), public.china_nueva(text, text, jsonb, integer), public.china_op(jsonb),
   public.china_es_viajero(), public.china_exige_viajero(), public.china_datos(), public.china_leer(), public.china_aplicar(jsonb),
-  public.china_suscribir(jsonb), public.china_desuscribir(jsonb), public.china_vapid(), public.china_avisos_debidos(timestamp),
+  public.china_suscribir(jsonb), public.china_desuscribir(jsonb), public.china_vapid(), public.china_avisos_prefs(text), public.china_duracion(integer), public.china_avisos_debidos(timestamp, jsonb),
   public.china_avisos_tomar(timestamptz), public.china_vapid_guardar(jsonb), public.china_avisos_quitar(jsonb)
   from public, anon, authenticated;
 grant execute on function public.china_es_viajero(), public.china_leer(), public.china_aplicar(jsonb),

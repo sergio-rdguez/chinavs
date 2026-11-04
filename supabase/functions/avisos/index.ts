@@ -97,10 +97,13 @@ Deno.serve(async (req) => {
     const { subs, avisos, vapid: guardada } = await rpc("china_avisos_tomar");
     const vapid = guardada || await crearVapid();
     const muertas = new Set<string>();
+    let total = 0;
     for (const sub of subs) {
+      const suyos = sub.avisos || avisos || [];
+      total += suyos.length;
       const lista = sub.bienvenida
-        ? [{ clave: "bienvenida", titulo: "Avisos activados", cuerpo: "Así os llegarán los transportes y lo próximo del viaje." }, ...avisos]
-        : avisos;
+        ? [{ clave: "bienvenida", titulo: "Avisos activados", cuerpo: "Así os llegarán los transportes y lo próximo del viaje." }, ...suyos]
+        : suyos;
       for (const a of lista) {
         try {
           if (!await enviar(sub, vapid, a)) muertas.add(sub.endpoint);
@@ -110,7 +113,7 @@ Deno.serve(async (req) => {
       }
     }
     if (muertas.size) await rpc("china_avisos_quitar", { p: [...muertas] });
-    return Response.json({ subs: subs.length, avisos: avisos.length, quitadas: muertas.size }, { headers: CORS });
+    return Response.json({ subs: subs.length, avisos: total, quitadas: muertas.size }, { headers: CORS });
   } catch (e) {
     console.error(String(e));
     return Response.json({ error: "No se han podido enviar los avisos" }, { status: 500, headers: CORS });

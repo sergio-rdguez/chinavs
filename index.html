@@ -2558,13 +2558,40 @@ async function alternarAvisos(){
   }catch(e){aviso(SESION?"No se han podido cambiar los avisos. Hace falta conexión.":"Entra primero para activar los avisos.")}
   rKit();
 }
+/* Cuándo avisa a cada persona: se guarda en Ajustes y el servidor lo aplica a sus móviles */
+const AVISOS_ANTES={vuelo:[60,120,180,240,300,360],tren:[30,60,90,120,180]},AVISOS_VISPERA=["","18:00","19:00","20:00","21:00","22:00"];
+const txtAntes=m=>m<60?`${m} min`:m%60?`${m/60|0} h ${m%60}`:`${m/60} h`;
+function misAvisos(){
+  let p={};
+  try{p=JSON.parse(ajuste("avi:"+LS.get("china-entra"),"{}"))||{}}catch(e){}
+  return {vuelo:{vispera:"20:00",antes:[180],...p.vuelo},tren:{vispera:"20:00",antes:[90],...p.tren},agenda:p.agenda??30,noche:p.noche??true};
+}
+function cambiaAviso(campo,val){
+  const p=misAvisos(),[t,k]=campo.split(".");
+  if(campo==="agenda") p.agenda=+val;
+  else if(campo==="noche") p.noche=!p.noche;
+  else if(k==="vispera") p[t].vispera=val;
+  else{const m=+val;p[t].antes=p[t].antes.includes(m)?p[t].antes.filter(x=>x!==m):[...p[t].antes,m].sort((a,b)=>a-b)}
+  mutar({action:"upsert",tabla:"Ajustes",id:"avi:"+LS.get("china-entra"),values:{Valor:JSON.stringify(p)}});
+}
+function configAvisos(){
+  if(!LS.get("china-entra")) return "";
+  const p=misAvisos(),chip=(campo,val,on,txt)=>`<button data-aviso="${campo}" data-val="${val}" aria-pressed="${on}" class="${on?"on":""}">${txt}</button>`;
+  const fila=(txt,chips)=>`<p class="n" style="margin:12px 0 6px">${txt}</p><div class="chips">${chips}</div>`;
+  const transporte=(t,nombre)=>`<p style="margin:16px 0 0"><b>${nombre}</b></p>`+
+    fila("El día antes, a las",AVISOS_VISPERA.map(v=>chip(t+".vispera",v,p[t].vispera===v,v||"No")).join(""))+
+    fila("Antes de salir (elige los que quieras)",AVISOS_ANTES[t].map(m=>chip(t+".antes",m,p[t].antes.includes(m),txtAntes(m))).join(""));
+  return transporte("vuelo","Vuelos")+transporte("tren","Trenes")+`<p style="margin:16px 0 0"><b>El resto del plan</b></p>`+
+    fila("Visitas y traslados, antes de empezar",[0,15,30,60].map(m=>chip("agenda",m,p.agenda===m,m?txtAntes(m):"No")).join(""))+
+    fila("A las 21:00, a qué hora empieza el día siguiente",chip("noche",1,p.noche,p.noche?"Sí":"No"));
+}
 function ajusteAvisos(){
   const accion=IOS&&!enApp()?`<p class="n">En iPhone solo funcionan con la app instalada: en Safari, Compartir y «Añadir a pantalla de inicio». Luego ábrela desde el icono.</p>`
     :!pushPosible()?`<p class="n">Este navegador no admite avisos.</p>`
     :Notification.permission==="denied"?`<p class="n">Permiso denegado. Se cambia en Ajustes del iPhone → Notificaciones → China.</p>`
     :`<button class="btn sm" data-act="avisos" style="margin-top:8px"><i class="fa-regular ${avisosOn?"fa-bell-slash":"fa-bell"}"></i>${avisosOn?"Desactivar avisos":"Activar avisos"}</button>`;
   return `<div class="ajuste"><i class="fa-regular fa-bell"></i><div><b>Avisos</b>
-    <p class="n">Vuelos y trenes, la víspera y antes de salir; visitas y traslados, 30 min antes; y cada noche, a qué hora empieza el día siguiente.</p>${accion}</div></div>`;
+    <p class="n">Tú eliges cuándo. Llegan aunque la app esté cerrada; las horas son las de China.</p>${accion}${avisosOn?configAvisos():""}</div></div>`;
 }
 
 /* ---------- Calendario (.ics) ---------- */
@@ -2719,6 +2746,7 @@ document.addEventListener("click",async e=>{
     mutar({action:"remove",tabla:"Ajustes",id:`lst:${k}:${key}`});if(marcado(k,key)) mutar({action:"remove",tabla:"Ajustes",id:`chk:${k}:${key}`});return;
   }
   if(b=q("[data-compartir-dia]")){const i=+b.dataset.compartirDia;compartirTexto(textoDia(i),"Plan del día "+(i+1));return}
+  if(b=q("[data-aviso]")){cambiaAviso(b.dataset.aviso,b.dataset.val);return}
   if(b=q("[data-modo-tema]")){LS.set("china-tema",b.dataset.modoTema);aplicarTema();rKit();return}
   if(b=q("[data-kit]")){kitTab=b.dataset.kit;history.replaceState(null,"","#kit/"+kitTab);rKit();conversor();return}
   if(b=q("[data-sugerencia]")){mutar({action:"addTask",text:b.dataset.sugerencia});aviso("Añadida a preparativos");return}
