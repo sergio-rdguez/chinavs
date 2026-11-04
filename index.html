@@ -10,6 +10,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="China">
 <meta name="format-detection" content="telephone=no">
+<link rel="preconnect" href="https://epkoicrucqachfavvjnm.supabase.co" crossorigin>
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="icon" href="icon-180.png">
@@ -148,7 +149,7 @@ label.btn{margin:0;color:var(--text);cursor:pointer}
 .alerta .enl{display:block;padding:4px 0 0;color:inherit;text-decoration:underline}
 .vacio{color:var(--muted);padding:18px 4px;font-size:13px;text-align:center}
 
-input[type=text],input[type=time],textarea,select{font:16px var(--f);width:100%;min-height:44px;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--surface);
+input[type=text],input[type=time],input[type=password],textarea,select{font:16px var(--f);width:100%;min-height:44px;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--surface);
   color:var(--ink);appearance:none;-webkit-appearance:none}
 input:focus,textarea:focus,select:focus{outline:0;border-color:var(--red);box-shadow:0 0 0 3px color-mix(in srgb,var(--red) 18%,transparent)}
 textarea{resize:vertical;line-height:1.45}
@@ -1256,7 +1257,7 @@ async function enviar(){
       const lote=QUEUE.slice(0,25);
       lote.forEach(o=>ENVIANDO.add(o));
       let j;
-      try{j=await pedir("china_aplicar",lote.length>1?{action:"batch",ops:lote}:lote[0],45000)}
+      try{j=await pedir("china_aplicar",lote.length>1?{action:"batch",ops:lote}:lote[0],20000)}
       catch(e){syncEstado="sin";break}
       finally{lote.forEach(o=>ENVIANDO.delete(o))}
       QUEUE=QUEUE.filter(o=>!lote.includes(o)); guardaCola();         // se quitan los enviados, aunque mientras tanto hayan entrado otros
@@ -1278,7 +1279,7 @@ function sincronizar(manual){
   const v0=versionDatos;
   return leyendo=(async()=>{
     try{
-      const j=await pedir("china_leer",null,25000);
+      const j=await pedir("china_leer",null,20000);
       if(!j||j.error||!j.itinerario) throw new Error(j&&j.error||"Respuesta no válida");
       if(versionDatos===v0&&!flushing){recibe(j);rebuild()}            // si mientras tanto se envió algo, la respuesta de ese envío es más nueva
       syncEstado=""; renderAll();
@@ -1291,6 +1292,14 @@ function sincronizar(manual){
     }finally{leyendo=null}
     enviar();
   })();
+}
+/* Lo que cambie el otro móvil llega casi al momento: se pregunta solo por la revisión, que apenas ocupa, y se descarga si es distinta */
+async function mirarCambios(){
+  if(!arrancada||!SESION||document.hidden||navigator.onLine===false||flushing||leyendo||QUEUE.length) return;
+  try{
+    const rev=await pedir("china_rev",null,10000);
+    if(rev!==(SERVER&&SERVER.rev)||syncEstado==="sin") sincronizar();
+  }catch(e){if(syncEstado!=="sin"&&!e.estado){syncEstado="sin";pastilla()}}
 }
 const pendientes=()=>QUEUE.filter(o=>o.action!=="seed").length;
 
@@ -2468,6 +2477,7 @@ function kitAjustes(){
         <form data-form="personas" class="dos"><div><label for="pe1">Persona 1</label><input id="pe1" type="text" value="${esc(p1)}" required></div>
           <div><label for="pe2">Persona 2</label><input id="pe2" type="text" value="${esc(p2)}" required></div><p class="guardado" style="grid-column:1/-1"><i class="fa-solid fa-cloud"></i> Se guarda al salir del campo</p></form></div></div>
       ${ajusteAvisos()}
+      ${ajusteCuenta()}
       <div class="ajuste"><i class="fa-solid fa-rotate"></i><div><b>Sincronización</b>
         <p class="n">${est}${n?` ${n} ${n===1?"cambio pendiente":"cambios pendientes"} de enviar.`:""}</p>
         <p class="n">Sin conexión, todo se guarda en el móvil y se envía después.</p>
@@ -2585,6 +2595,37 @@ function configAvisos(){
     fila("Visitas y traslados, antes de empezar",[0,15,30,60].map(m=>chip("agenda",m,p.agenda===m,m?txtAntes(m):"No")).join(""))+
     fila("A las 21:00, a qué hora empieza el día siguiente",chip("noche",1,p.noche,p.noche?"Sí":"No"));
 }
+let salirPendiente=false;
+function ajusteCuenta(){
+  if(!SESION) return "";
+  return `<div class="ajuste"><i class="fa-regular fa-user"></i><div style="flex:1"><b>Cuenta</b>
+    <p class="n">${esc(LS.get("china-entra")||"")}</p>
+    <form data-form="clave" class="add" style="margin-top:8px"><input id="claveN" type="password" autocomplete="new-password" placeholder="Nueva contraseña" aria-label="Nueva contraseña" minlength="8" required><button class="btn sm">Cambiar</button></form>
+    <button class="btn sm peligro" data-act="salir" style="margin-top:8px"><i class="fa-solid fa-right-from-bracket"></i>${salirPendiente?"Pulsa otra vez: se borra la copia de este móvil":"Cerrar sesión"}</button></div></div>`;
+}
+async function cambiarClave(){
+  const v=$("claveN").value;
+  if(v.length<8){aviso("Al menos 8 caracteres.");return}
+  try{
+    const r=await fetch(`${SUPA}/auth/v1/user`,{method:"PUT",headers:{apikey:SUPA_CLAVE,Authorization:"Bearer "+await token(),"Content-Type":"application/json"},body:JSON.stringify({password:v})});
+    if(!r.ok) throw errorHTTP(r);
+    $("claveN").value="";aviso("Contraseña cambiada");
+  }catch(e){aviso(e.estado===422?"Esa contraseña no vale: prueba con otra distinta.":"No se ha podido cambiar. Hace falta conexión.")}
+}
+/* Lo guardado sigue en la nube: al salir solo se borra la copia del móvil, salvo que aún haya algo sin subir */
+async function cerrarSesion(){
+  const docs=await bdOp("readonly",s=>s.getAll()).catch(()=>[]);
+  if(pendientes()||docs.some(d=>!d.subido&&!d.grande)){aviso("Aún hay cambios o archivos sin enviar. Conéctate y vuelve a intentarlo.");return}
+  if(!salirPendiente){salirPendiente=true;rKit();setTimeout(()=>{salirPendiente=false;if(tab==="kit") rKit()},8000);return}
+  try{
+    if(avisosOn){const s=await(await navigator.serviceWorker.ready).pushManager.getSubscription();if(s){const endpoint=s.endpoint;await s.unsubscribe();await pedir("china_desuscribir",{endpoint},8000).catch(()=>{})}}
+    const headers=await cabDoc();await fetch(`${SUPA}/auth/v1/logout?scope=local`,{method:"POST",headers}).catch(()=>{});
+  }catch(e){}
+  const tema=LS.get("china-tema"),correo=LS.get("china-entra");
+  try{localStorage.clear();if(tema) LS.set("china-tema",tema);if(correo) LS.set("china-entra",correo)}catch(e){}
+  await new Promise(ok=>{const r=indexedDB.deleteDatabase("china-docs");r.onsuccess=r.onerror=r.onblocked=ok});
+  location.reload();
+}
 function ajusteAvisos(){
   const accion=IOS&&!enApp()?`<p class="n">En iPhone solo funcionan con la app instalada: en Safari, Compartir y «Añadir a pantalla de inicio». Luego ábrela desde el icono.</p>`
     :!pushPosible()?`<p class="n">Este navegador no admite avisos.</p>`
@@ -2684,6 +2725,17 @@ async function sincronizarDocs(){
   }catch(e){}finally{docsEnCurso=false}
   cargarDocs();
 }
+/* Las fotos del móvil pesan mucho y se suben con datos de viaje: se reducen manteniendo la letra legible. Los PDF no se tocan. */
+async function reducirFoto(f){
+  if(!/^image\/(jpeg|png|heic|heif|webp)$/.test(f.type)||f.size<15e5) return f;
+  try{
+    const bm=await createImageBitmap(f),k=Math.min(1,2400/Math.max(bm.width,bm.height)),c=document.createElement("canvas");
+    c.width=Math.round(bm.width*k);c.height=Math.round(bm.height*k);
+    const g=c.getContext("2d");g.fillStyle="#fff";g.fillRect(0,0,c.width,c.height);g.drawImage(bm,0,0,c.width,c.height);
+    const b=await new Promise(r=>c.toBlob(r,"image/jpeg",.85));
+    return b&&b.size<f.size?new File([b],f.name.replace(/\.\w+$/,"")+".jpg",{type:"image/jpeg"}):f;
+  }catch(e){return f}
+}
 async function verDoc(k){
   try{
     let d=await bdOp("readonly",s=>s.get(k));
@@ -2775,6 +2827,7 @@ document.addEventListener("click",async e=>{
     if(a==="nuevo-agenda"){if(b.dataset.di!=null&&+b.dataset.di!==sel){sel=+b.dataset.di;selManual=true;rHoy()}formAgenda(null)}
     if(a==="sync") sincronizar(true);
     if(a==="avisos") alternarAvisos();
+    if(a==="salir") cerrarSesion();
     if(a==="geo"){ubicar(true);renderAll()}
     if(a==="perdido") perdido();
     if(a==="compartir-ubicacion") compartirUbicacion();
@@ -2846,8 +2899,7 @@ document.addEventListener("change",async e=>{
     mutar({action:"check",row:c._row,key:c._k,done:t.checked});
   }
   if(t.matches("[data-doc]")&&t.files[0]){
-    const f=t.files[0];
-    try{const datos=await f.arrayBuffer();         // en bytes: Safari en modo privado no guarda archivos (Blob) en IndexedDB
+    try{const f=await reducirFoto(t.files[0]),datos=await f.arrayBuffer();         // en bytes: Safari en modo privado no guarda archivos (Blob) en IndexedDB
       await bdOp("readwrite",s=>s.put({name:f.name,type:f.type,blob:datos},t.dataset.doc));aviso("Billete guardado");cargarDocs();sincronizarDocs()}
     catch(err){aviso("No se ha podido guardar el billete.")}
   }
@@ -2913,6 +2965,8 @@ function guardarForm(f,auto){
   }else if(tipo==="lista"){
     const k=f.dataset.k,inp=$("lmT-"+k),t=inp.value.trim(); inp.value="";
     if(t){mutar({action:"upsert",tabla:"Ajustes",id:`lst:${k}:${Date.now().toString(36)}`,values:{Valor:t}});aviso("Añadido")}
+  }else if(tipo==="clave"){
+    cambiarClave();
   }else if(tipo==="presupuesto"){
     const v=num($("preI").value),val=v&&v>0?String(v):"";
     if(val===String(ajuste("presupuesto",""))) return ok();
@@ -2948,8 +3002,9 @@ setInterval(()=>{                       // el reloj avanza: se repinta solo la p
   if(!arrancada) return;
   if(tab==="hoy"){const t0=tab;tab="";repintarHoy();tab=t0}
   if(QUEUE.length) enviar();
-  if(!document.hidden&&navigator.onLine!==false&&Date.now()-(+LS.get("china-ts")||0)>2*60e3&&Date.now()-ultIntento>2*60e3) sincronizar();   // lo que cambie el otro móvil llega solo
+  if(!document.hidden&&navigator.onLine!==false&&Date.now()-(+LS.get("china-ts")||0)>10*60e3&&Date.now()-ultIntento>10*60e3) sincronizar();   // por si acaso; lo normal es que avise mirarCambios
 },30000);
+setInterval(mirarCambios,20000);
 
 /* ---------- Arranque ---------- */
 function arrancar(){
@@ -2971,7 +3026,7 @@ if("serviceWorker" in navigator){
   navigator.serviceWorker.register("sw.js").catch(()=>{});
   const nueva=()=>{$("nueva").hidden=false};                      // la copia nueva ya está guardada: basta con recargar
   navigator.serviceWorker.addEventListener("controllerchange",()=>{if(habia) nueva()});
-  navigator.serviceWorker.addEventListener("message",e=>{if(e.data&&e.data.tipo==="nueva") nueva()});
+  navigator.serviceWorker.addEventListener("message",e=>{if(e.data&&e.data.tipo==="nueva") nueva();if(e.data&&e.data.tipo==="ir") location.hash=e.data.hash});
 }
 
 </script>

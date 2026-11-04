@@ -1,6 +1,6 @@
 /* Viaje a China: copia de la app para que abra sin conexión.
    Sirve primero lo guardado y se actualiza por detrás; la versión nueva aparece al abrir la app la vez siguiente. */
-const CACHE = "china-v14";
+const CACHE = "china-v15";
 const FOTOS = ["pekin", "xian", "shanghai", "zhangjiajie", "yangshuo", "shenzhen", "hongkong"].map(k => `./img/${k}.jpg`);
 const GUIAS = ["ciudad-prohibida", "templo-del-cielo", "jinshanling", "guerreros-terracota"];   // audioguías: cada una en su carpeta, con el motor común
 const GUIA = ["./audioguia/guia.css", "./audioguia/guia.js", ...GUIAS.flatMap(g => [`./${g}/`, `./${g}/index.html`, `./${g}/guion.js`]), "./guerreros-terracota/audio/index.js"];
@@ -84,10 +84,15 @@ self.addEventListener("fetch", e => {
 self.addEventListener("push", e => {                                // aviso: en iPhone hay que mostrarlo siempre
   let d = {};
   try { d = e.data.json(); } catch (err) {}
-  e.waitUntil(self.registration.showNotification(d.titulo || "Viaje a China", { body: d.cuerpo || "", icon: "icon-180.png", tag: d.clave, data: { url: "./" } }));
+  e.waitUntil(self.registration.showNotification(d.titulo || "Viaje a China", { body: d.cuerpo || "", icon: "icon-180.png", tag: d.clave, data: { hash: /^tr:/.test(d.clave || "") ? "#reservas/transporte" : "#hoy" } }));
 });
 self.addEventListener("notificationclick", e => {
   e.notification.close();
   e.waitUntil(self.clients.matchAll({ type: "window", includeUncontrolled: true })
-    .then(cs => cs.length ? cs[0].focus() : self.clients.openWindow(e.notification.data && e.notification.data.url || "./")));
+    .then(cs => {
+      const hash = e.notification.data && e.notification.data.hash || "#hoy";
+      if (!cs.length) return self.clients.openWindow("./" + hash);
+      cs[0].postMessage({ tipo: "ir", hash });
+      return cs[0].focus();
+    }));
 });

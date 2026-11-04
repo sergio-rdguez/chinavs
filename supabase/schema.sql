@@ -149,10 +149,16 @@ begin
 end
 $$;
 
+-- Cambia con cada escritura o borrado: basta comparar esto para saber si hay algo nuevo que descargar
+create or replace function public.china_revision() returns text
+language sql stable set search_path = '' as $$
+  select count(*) || '-' || coalesce(extract(epoch from max(c.actualizado))::text, '0') from public.china_filas c
+$$;
+
 -- Todos los datos, con la forma que espera la app.
 create or replace function public.china_datos() returns jsonb
 language sql stable set search_path = '' as $$
-  select jsonb_build_object('version', 3) || jsonb_object_agg(h.tabla, coalesce(f.filas, '[]'::jsonb))
+  select jsonb_build_object('version', 3, 'rev', public.china_revision()) || jsonb_object_agg(h.tabla, coalesce(f.filas, '[]'::jsonb))
   from unnest(array['itinerario','alojamiento','transporte','checklist','agenda','lugares','gastos','diario','ajustes']) h(tabla)
   left join lateral (
     select jsonb_agg(jsonb_build_object('_row', c.fila, '_k', c.clave) || c.datos order by c.fila) as filas
@@ -165,6 +171,14 @@ language plpgsql stable security definer set search_path = '' as $$
 begin
   perform public.china_exige_viajero();
   return public.china_datos();
+end
+$$;
+
+create or replace function public.china_rev() returns jsonb
+language plpgsql stable security definer set search_path = '' as $$
+begin
+  perform public.china_exige_viajero();
+  return to_jsonb(public.china_revision());
 end
 $$;
 
@@ -199,6 +213,11 @@ begin
   end;
 end
 $$;
+
+-- Copia diaria de todo, por si algo se borra o se pisa sin querer (ver nube.sql)
+create table if not exists public.china_copias (dia date primary key, datos jsonb not null, creada timestamptz not null default now());
+alter table public.china_copias enable row level security;
+revoke all on table public.china_copias from public, anon, authenticated;
 
 /* ---------- Avisos: suscripciones de cada móvil y lo ya enviado ---------- */
 create table if not exists public.china_suscripciones (
@@ -384,11 +403,11 @@ $$;
 -- La app solo puede llamar a estas, y solo con sesión; la función de avisos entra con su clave de servidor
 revoke all on function public.china_editables(text), public.china_columnas(text), public.china_filtra(jsonb, text[]),
   public.china_fila(text, integer, text), public.china_nueva(text, text, jsonb, integer), public.china_op(jsonb),
-  public.china_es_viajero(), public.china_exige_viajero(), public.china_datos(), public.china_leer(), public.china_aplicar(jsonb),
+  public.china_es_viajero(), public.china_exige_viajero(), public.china_revision(), public.china_datos(), public.china_rev(), public.china_leer(), public.china_aplicar(jsonb),
   public.china_suscribir(jsonb), public.china_desuscribir(jsonb), public.china_vapid(), public.china_avisos_prefs(text), public.china_duracion(integer), public.china_avisos_debidos(timestamp, jsonb),
   public.china_avisos_tomar(timestamptz), public.china_vapid_guardar(jsonb), public.china_avisos_quitar(jsonb)
   from public, anon, authenticated;
-grant execute on function public.china_es_viajero(), public.china_leer(), public.china_aplicar(jsonb),
+grant execute on function public.china_es_viajero(), public.china_rev(), public.china_leer(), public.china_aplicar(jsonb),
   public.china_suscribir(jsonb), public.china_desuscribir(jsonb), public.china_vapid() to authenticated;
 grant execute on function public.china_avisos_tomar(timestamptz), public.china_vapid_guardar(jsonb), public.china_avisos_quitar(jsonb) to service_role;
 
