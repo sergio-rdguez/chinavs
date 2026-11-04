@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#FFFFFF">
+<script>try{var t=localStorage.getItem("china-tema");if(t==="oscuro"||(t!=="claro"&&matchMedia("(prefers-color-scheme: dark)").matches)){document.documentElement.dataset.tema="oscuro";document.querySelector('meta[name="theme-color"]').content="#0F172A"}}catch(e){}</script>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Terracota">
+<meta name="format-detection" content="telephone=no">
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="apple-touch-icon" href="../icon-180.png">
+<link rel="icon" href="../icon-180.png">
+<title>Guerreros de Terracota · Audioguía</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<link rel="stylesheet" href="../audioguia/guia.css">
+</head>
+<body>
+<header class="top">
+  <div class="top-in">
+    <a class="volver" href="../#viaje/xian" aria-label="Volver a la app del viaje"><i class="fa-solid fa-arrow-left"></i></a>
+    <span class="logo" aria-hidden="true">俑</span>
+    <div class="tit"><h1>Guerreros de Terracota</h1><p id="sub">Audioguía · 兵马俑 · lo esencial en 16 minutos</p></div>
+    <button class="ico" data-act="ajustes" aria-label="Ajustes de la audioguía"><i class="fa-solid fa-sliders"></i></button>
+  </div>
+</header>
+
+<main>
+  <section class="portada" id="portada"></section>
+  <div id="llegada"></div>
+  <div class="estado" id="estado"></div>
+  <div class="mapaW">
+    <div id="mapa" role="region" aria-label="Mapa de la visita"></div>
+    <div class="mapaB">
+      <button data-act="seguir" id="bSeguir" aria-label="Seguir mi posición"><i class="fa-solid fa-location-crosshairs"></i></button>
+      <button data-act="encuadrar" aria-label="Ver toda la ruta"><i class="fa-solid fa-expand"></i></button>
+    </div>
+  </div>
+  <p class="lbl"><i class="fa-solid fa-headphones"></i>Las paradas, del coche de ida al de vuelta</p>
+  <div id="paradas" style="display:grid;gap:10px"></div>
+  <p class="n" style="padding:0 4px">Mapa © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>. La posición de cada fosa es aproximada y dentro de los hangares el GPS se desvía: si no salta el aviso, tocad la parada. Voz grabada con Kokoro (Apache 2.0).</p>
+</main>
+
+<div class="repro" id="repro"></div>
+<dialog id="dlg"><div class="hoja" id="hoja"></div></dialog>
+<div class="aviso" id="aviso" role="status" aria-live="polite"></div>
+
+<script src="guion.js"></script>
+<script src="audio/index.js"></script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+/* ============================================================
+   RECORRIDO
+   Museo del Mausoleo de Qin Shi Huang, en Lintong. Coordenadas en WGS-84, aproximadas.
+   Orden: Fosa 1 (la grande), Fosa 2 (vitrinas), Fosa 3 (cuartel general) y la sala de exposición.
+   Las paradas sin coordenadas (los trayectos en coche y la sala, que no tiene sitio fijo en el mapa) no tienen pin ni aviso.
+   [id, nombre, chino, pinyin, lat, lon, minutos, radio de aviso (m), búsqueda en Mapas, cómo llegar]
+   ============================================================ */
+const CFG={
+ clave:"bmy",                               // prefijo de lo guardado en el móvil
+ ciudad:"Xi'an",
+ titulo:"Los Guerreros de Terracota",zh:"秦始皇兵马俑",
+ texto:n=>`Lo esencial, sin agobios: ${n} historias, unos 16 minutos de audio en total. Quién fue el emperador que no quería morir, cómo se hizo un ejército en el que no hay dos caras iguales y por qué su tumba sigue sin abrirse.`,
+ saludo:"Hola. Soy la voz de vuestra audioguía de los Guerreros de Terracota. Cuando queráis, empezamos.",
+ despedida:"Aquí termina la audioguía. Gracias por la compañía, y buen viaje a Shanghái.",
+ limites:[[34.3825,109.2695],[34.3880,109.2770]],
+ ruta:[
+ ["intro","De camino a Lintong","去兵马俑的路上","Qù Bīngmǎyǒng de lùshang",null,null,0,0,"秦始皇兵马俑博物馆",
+  "Escuchad esta parada en el coche: son unos 40 kilómetros, cerca de una hora desde el centro de Xi'an. Llevad el pasaporte, que hace de entrada."],
+ ["fosa1","Fosa 1: el gran ejército","一号坑","Yī hào kēng",34.3847,109.2731,60,110,"秦始皇兵马俑 一号坑",
+  "Pasado el control, seguid los carteles hacia la Fosa 1, el hangar más grande. Escuchad la primera historia desde la entrada, de frente a las filas de soldados."],
+ ["fosa2","Fosa 2: arqueros, carros y caballería","二号坑","Èr hào kēng",34.3864,109.2747,35,70,"秦始皇兵马俑 二号坑",
+  "Salid de la Fosa 1 y seguid los carteles hacia la Fosa 2, a un par de minutos andando. Las vitrinas con los guerreros de cerca están en el borde del hangar."],
+ ["fosa3","Fosa 3: el cuartel general","三号坑","Sān hào kēng",34.3863,109.2718,15,60,"秦始皇兵马俑 三号坑",
+  "La Fosa 3 es el hangar pequeño que queda junto a la Fosa 2. Se ve en un momento."],
+ ["sala","Sala de exposición y carros de bronce","铜车马 · 陈列厅","Tóngchēmǎ · chénliètīng",null,null,25,0,"秦始皇兵马俑 铜车马",
+  "Para terminar, buscad los carteles de los carros de bronce o de la sala de exposición. Si vais justos de tiempo, podéis saltárosla y escuchar la historia en el coche."],
+ ["vuelta","De vuelta a Xi'an","回西安","Huí Xī'ān",null,null,0,0,"西安",
+  "Para el coche de vuelta a Xi'an, con la visita ya hecha."]
+ ],
+ zona:[[34.3815,109.2680],[34.3890,109.2785]]       // lo que se descarga para usar sin conexión
+};
+</script>
+<script src="../audioguia/guia.js"></script>
+</body>
+</html>
