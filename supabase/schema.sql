@@ -4,20 +4,20 @@
    Se puede volver a ejecutar sin perder datos. */
 
 create table if not exists public.china_filas (
-  hoja text not null check (hoja in ('itinerario','alojamiento','transporte','checklist','agenda','lugares','gastos','diario','ajustes')),
+  tabla text not null check (tabla in ('itinerario','alojamiento','transporte','checklist','agenda','lugares','gastos','diario','ajustes')),
   fila integer not null,
   clave text not null,
   datos jsonb not null default '{}'::jsonb,
   actualizado timestamptz not null default now(),
-  primary key (hoja, fila)
+  primary key (tabla, fila)
 );
-create index if not exists china_filas_clave on public.china_filas (hoja, clave);
+create index if not exists china_filas_clave on public.china_filas (tabla, clave);
 
 -- Sin políticas: la clave pública de la app no puede tocar la tabla directamente
 alter table public.china_filas enable row level security;
 revoke all on table public.china_filas from public, anon, authenticated;
 
--- Columnas que la app puede modificar en las pestañas fijas
+-- Columnas que la app puede modificar en las tablas fijas
 create or replace function public.china_editables(h text) returns text[]
 language sql immutable set search_path = '' as $$
   select case h
@@ -27,7 +27,7 @@ language sql immutable set search_path = '' as $$
   end
 $$;
 
--- Pestañas que gestiona la app. La primera columna es siempre el identificador.
+-- Tablas que gestiona la app. La primera columna es siempre el identificador.
 create or replace function public.china_columnas(h text) returns text[]
 language sql immutable set search_path = '' as $$
   select case h
@@ -52,17 +52,17 @@ language plpgsql stable set search_path = '' as $$
 declare
   hay integer[];
 begin
-  if exists (select 1 from public.china_filas c where c.hoja = h and c.fila = n and c.clave = k) then return n; end if;
-  select array_agg(c.fila) into hay from public.china_filas c where c.hoja = h and c.clave = k;
+  if exists (select 1 from public.china_filas c where c.tabla = h and c.fila = n and c.clave = k) then return n; end if;
+  select array_agg(c.fila) into hay from public.china_filas c where c.tabla = h and c.clave = k;
   if coalesce(array_length(hay, 1), 0) = 1 then return hay[1]; end if;
   raise exception 'Los datos han cambiado. Actualiza la app y vuelve a intentarlo.';
 end
 $$;
 
--- Fila nueva con todas las columnas de la pestaña
+-- Fila nueva con todas las columnas de la tabla
 create or replace function public.china_nueva(h text, id text, v jsonb, n integer) returns void
 language sql set search_path = '' as $$
-  insert into public.china_filas (hoja, fila, clave, datos)
+  insert into public.china_filas (tabla, fila, clave, datos)
   select h, n, id,
     (select jsonb_object_agg(col, '') from unnest(public.china_columnas(h)) col)
     || public.china_filtra(v, public.china_columnas(h))
@@ -73,53 +73,53 @@ create or replace function public.china_op(p jsonb) returns void
 language plpgsql set search_path = '' as $$
 declare
   accion text := p->>'action';
-  h text := lower(p->>'sheet');
+  h text := lower(p->>'tabla');
   id text := btrim(coalesce(p->>'id', ''));
   texto text := btrim(coalesce(p->>'text', ''));
   n integer;
   r record;
 begin
   if accion = 'update' then
-    if public.china_editables(h) is null then raise exception 'Pestaña no editable: %', p->>'sheet'; end if;
+    if public.china_editables(h) is null then raise exception 'Tabla no editable: %', p->>'tabla'; end if;
     n := public.china_fila(h, (p->>'row')::integer, p->>'key');
     update public.china_filas c
       set datos = c.datos || public.china_filtra(p->'values', public.china_editables(h)), actualizado = now()
-      where c.hoja = h and c.fila = n;
+      where c.tabla = h and c.fila = n;
 
   elsif accion = 'check' then
     n := public.china_fila('checklist', (p->>'row')::integer, p->>'key');
     update public.china_filas c
       set datos = c.datos || jsonb_build_object('Hecho', coalesce((p->>'done')::boolean, false)), actualizado = now()
-      where c.hoja = 'checklist' and c.fila = n;
+      where c.tabla = 'checklist' and c.fila = n;
 
   elsif accion = 'addTask' then
     if texto = '' then raise exception 'Tarea vacía'; end if;
-    if not exists (select 1 from public.china_filas c where c.hoja = 'checklist' and c.clave = texto) then   -- no duplica si el envío se repite
-      insert into public.china_filas (hoja, fila, clave, datos)
+    if not exists (select 1 from public.china_filas c where c.tabla = 'checklist' and c.clave = texto) then   -- no duplica si el envío se repite
+      insert into public.china_filas (tabla, fila, clave, datos)
       select 'checklist', coalesce(max(c.fila), 1) + 1, texto, jsonb_build_object('Tarea', texto, 'Hecho', false)
-      from public.china_filas c where c.hoja = 'checklist';
+      from public.china_filas c where c.tabla = 'checklist';
     end if;
 
   elsif accion = 'upsert' then
-    if public.china_columnas(h) is null then raise exception 'Pestaña no válida: %', p->>'sheet'; end if;
+    if public.china_columnas(h) is null then raise exception 'Tabla no válida: %', p->>'tabla'; end if;
     if id = '' then raise exception 'Falta el identificador'; end if;
-    select min(c.fila) into n from public.china_filas c where c.hoja = h and c.clave = id;
+    select min(c.fila) into n from public.china_filas c where c.tabla = h and c.clave = id;
     if n is not null then
       update public.china_filas c
         set datos = c.datos || (public.china_filtra(p->'values', public.china_columnas(h)) - 'ID'), actualizado = now()
-        where c.hoja = h and c.fila = n;
+        where c.tabla = h and c.fila = n;
     else
-      select coalesce(max(c.fila), 1) + 1 into n from public.china_filas c where c.hoja = h;
+      select coalesce(max(c.fila), 1) + 1 into n from public.china_filas c where c.tabla = h;
       perform public.china_nueva(h, id, p->'values', n);
     end if;
 
   elsif accion = 'remove' then
-    if public.china_columnas(h) is null then raise exception 'Pestaña no válida: %', p->>'sheet'; end if;
-    delete from public.china_filas c where c.hoja = h and c.fila = (select min(x.fila) from public.china_filas x where x.hoja = h and x.clave = id);
+    if public.china_columnas(h) is null then raise exception 'Tabla no válida: %', p->>'tabla'; end if;
+    delete from public.china_filas c where c.tabla = h and c.fila = (select min(x.fila) from public.china_filas x where x.tabla = h and x.clave = id);
 
   elsif accion = 'seed' then
-    if h not in ('agenda', 'lugares') then raise exception 'Pestaña no válida: %', p->>'sheet'; end if;
-    if not exists (select 1 from public.china_filas c where c.hoja = h) then   -- solo si la pestaña está vacía
+    if h not in ('agenda', 'lugares') then raise exception 'Tabla no válida: %', p->>'tabla'; end if;
+    if not exists (select 1 from public.china_filas c where c.tabla = h) then   -- solo si la tabla está vacía
       for r in select e.value as fila, e.ordinality as i from jsonb_array_elements(coalesce(p->'rows', '[]'::jsonb)) with ordinality e loop
         perform public.china_nueva(h, r.fila->>'ID', r.fila, r.i::integer + 1);
       end loop;
@@ -152,11 +152,11 @@ $$;
 -- Todos los datos, con la forma que espera la app.
 create or replace function public.china_datos() returns jsonb
 language sql stable set search_path = '' as $$
-  select jsonb_build_object('version', 3) || jsonb_object_agg(h.hoja, coalesce(f.filas, '[]'::jsonb))
-  from unnest(array['itinerario','alojamiento','transporte','checklist','agenda','lugares','gastos','diario','ajustes']) h(hoja)
+  select jsonb_build_object('version', 3) || jsonb_object_agg(h.tabla, coalesce(f.filas, '[]'::jsonb))
+  from unnest(array['itinerario','alojamiento','transporte','checklist','agenda','lugares','gastos','diario','ajustes']) h(tabla)
   left join lateral (
     select jsonb_agg(jsonb_build_object('_row', c.fila, '_k', c.clave) || c.datos order by c.fila) as filas
-    from public.china_filas c where c.hoja = h.hoja
+    from public.china_filas c where c.tabla = h.tabla
   ) f on true
 $$;
 
@@ -259,12 +259,12 @@ $$;
 create or replace function public.china_avisos_debidos(ahora timestamp) returns table (clave text, titulo text, cuerpo text)
 language sql stable set search_path = '' as $$
   with hora as (
-    select c.hoja, c.clave as id, c.datos,
-      ((c.datos->>'Fecha') || ' ' || (case when c.hoja = 'transporte' then c.datos->>'Salida' else c.datos->>'Hora' end))::timestamp as t
+    select c.tabla, c.clave as id, c.datos,
+      ((c.datos->>'Fecha') || ' ' || (case when c.tabla = 'transporte' then c.datos->>'Salida' else c.datos->>'Hora' end))::timestamp as t
     from public.china_filas c
-    where c.hoja in ('transporte', 'agenda')
+    where c.tabla in ('transporte', 'agenda')
       and coalesce(c.datos->>'Fecha', '') ~ '^\d{4}-\d{2}-\d{2}$'
-      and coalesce(case when c.hoja = 'transporte' then c.datos->>'Salida' else c.datos->>'Hora' end, '') ~ '^([01]?\d|2[0-3]):[0-5]\d$'
+      and coalesce(case when c.tabla = 'transporte' then c.datos->>'Salida' else c.datos->>'Hora' end, '') ~ '^([01]?\d|2[0-3]):[0-5]\d$'
   ),
   transporte as (
     select h.*, h.datos->>'Tipo' ~* 'vuelo' as vuelo,
@@ -272,11 +272,11 @@ language sql stable set search_path = '' as $$
       to_char(h.t, 'HH24:MI') as sale,
       (h.datos->>'Origen') || ' → ' || (h.datos->>'Destino')
         || case when coalesce(h.datos->>'Localizador', '') <> '' then '. Localizador: ' || (h.datos->>'Localizador') else '' end as ruta
-    from hora h where h.hoja = 'transporte'
+    from hora h where h.tabla = 'transporte'
   ),
   dias as (
     select distinct on (h.t::date) h.t::date as dia, to_char(h.t, 'HH24:MI') as empieza, h.datos->>'Qué' as que
-    from hora h where h.hoja = 'agenda' order by h.t::date, h.t
+    from hora h where h.tabla = 'agenda' order by h.t::date, h.t
   ),
   todos as (
     select 'tr:' || tr.id || ':' || tr.t || ':antes' as clave,
@@ -295,7 +295,7 @@ language sql stable set search_path = '' as $$
       h.t - interval '30 minutes',
       'A las ' || to_char(h.t, 'HH24:MI') || ': ' || (h.datos->>'Qué'),
       coalesce(nullif(h.datos->>'Lugar', ''), nullif(left(h.datos->>'Notas', 140), ''), 'En 30 min')
-    from hora h where h.hoja = 'agenda' and h.datos->>'Tipo' in ('visita', 'traslado')
+    from hora h where h.tabla = 'agenda' and h.datos->>'Tipo' in ('visita', 'traslado')
     union all
     select 'dia:' || d.dia || ':' || d.empieza,
       d.dia - 1 + time '21:00',

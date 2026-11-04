@@ -972,7 +972,7 @@ const DONDE={
   extras:[["Ngong Ping 360 y Gran Buda","昂坪360","Teleférico a la isla de Lantau. Mirad el tiempo: con niebla no se ve nada."],
    ["Ladies' Market","女人街","Mercado callejero en Mong Kok; aquí también se regatea."]]}
 };
-/* ---------- Maleta: [grupo, [[clave, texto]]]. Lo marcado y lo añadido se guarda en la pestaña Ajustes ---------- */
+/* ---------- Maleta: [grupo, [[clave, texto]]]. Lo marcado y lo añadido se guarda en Ajustes ---------- */
 const MALETA=[
  ["Documentos y dinero",[["pas","Pasaportes (con 6 meses de validez)"],["copias","Copias del pasaporte, en papel y en el móvil"],["tarjetas","Dos tarjetas de bancos distintos (Visa y Mastercard)"],
    ["efectivo","Algo de efectivo"],["poliza","Póliza del seguro"],["boli","Un bolígrafo (formularios en el aeropuerto)"]]],
@@ -1142,17 +1142,17 @@ const TABLA={Agenda:"agenda",Lugares:"lugares",Gastos:"gastos",Diario:"diario",A
 
 function aplicar(d,op){
   if(op.action==="update"){
-    const r=(d[op.sheet.toLowerCase()]||[]).find(x=>x._row===op.row);
+    const r=(d[op.tabla.toLowerCase()]||[]).find(x=>x._row===op.row);
     if(r) Object.assign(r,op.values);
   }else if(op.action==="check"){
     const r=d.checklist.find(x=>x._row===op.row); if(r) r.Hecho=op.done;
   }else if(op.action==="addTask"){
     if(!d.checklist.some(c=>c.Tarea===op.text)) d.checklist.push({Tarea:op.text,Hecho:false});
   }else if(op.action==="upsert"){
-    const L=d[TABLA[op.sheet]],r=L.find(x=>x.ID===op.id);
+    const L=d[TABLA[op.tabla]],r=L.find(x=>x.ID===op.id);
     if(r) Object.assign(r,op.values); else L.push({ID:op.id,...op.values});
   }else if(op.action==="remove"){
-    const k=TABLA[op.sheet]; d[k]=d[k].filter(x=>x.ID!==op.id);
+    const k=TABLA[op.tabla]; d[k]=d[k].filter(x=>x.ID!==op.id);
   }
 }
 function rebuild(){
@@ -1176,10 +1176,10 @@ function recibe(j){
 const ENVIANDO=new Set();
 function mutar(op,silencioso){
   const ult=[...QUEUE].reverse().find(o=>!ENVIANDO.has(o)&&o.action===op.action&&
-    (op.action==="upsert"?o.sheet===op.sheet&&o.id===op.id:op.action==="check"?o.row===op.row&&o.key===op.key:
-     op.action==="update"?o.sheet===op.sheet&&o.row===op.row&&o.key===op.key:false));
+    (op.action==="upsert"?o.tabla===op.tabla&&o.id===op.id:op.action==="check"?o.row===op.row&&o.key===op.key:
+     op.action==="update"?o.tabla===op.tabla&&o.row===op.row&&o.key===op.key:false));
   const i=ult?QUEUE.lastIndexOf(ult):-1;
-  if(ult&&!QUEUE.slice(i+1).some(o=>o.sheet===op.sheet&&o.action==="remove")){   // fundir solo si nada posterior lo invalida
+  if(ult&&!QUEUE.slice(i+1).some(o=>o.tabla===op.tabla&&o.action==="remove")){   // fundir solo si nada posterior lo invalida
     if(op.values) ult.values={...ult.values,...op.values}; else Object.assign(ult,op);
   }else QUEUE.push(op);
   guardaCola(); rebuild();
@@ -2141,8 +2141,8 @@ function ampliarMapa(on){
 }
 
 /* ---------- RESERVAS ---------- */
-const claveDoc=(hoja,r)=>{const k=`${hoja}:${r._k||""}:${r.Ciudad||r.Origen||""}`;            // dos hoteles en la misma ciudad: se distinguen por la entrada
-  return hoja==="Alojamiento"&&DATA.alojamiento.filter(h=>h._k===r._k).length>1?k+":"+toISO(r["Check-in"]):k};
+const claveDoc=(tabla,r)=>{const k=`${tabla}:${r._k||""}:${r.Ciudad||r.Origen||""}`;            // dos hoteles en la misma ciudad: se distinguen por la entrada
+  return tabla==="Alojamiento"&&DATA.alojamiento.filter(h=>h._k===r._k).length>1?k+":"+toISO(r["Check-in"]):k};
 function botonesDoc(k,ver="Ver billete",adj="Adjuntar billete"){
   return DOCS.has(k)?`<button class="btn sm" data-ver-doc="${esc(k)}"><i class="fa-regular fa-eye"></i>${ver}</button><button class="btn sm" data-quitar-doc="${esc(k)}" aria-label="Quitar"><i class="fa-solid fa-xmark"></i></button>`
     :`<label class="btn sm"><i class="fa-solid fa-paperclip"></i>${adj}<input type="file" accept="image/*,application/pdf" data-doc="${esc(k)}" hidden></label>`;
@@ -2200,11 +2200,11 @@ const CAMPOS={
     ["Localizador","Localizador","text",2],["Precio","Precio en euros","num"],["Estado","Estado","sel"],["Notas","Notas","text"]]
 };
 const camposDe=h=>CAMPOS[h];
-function formFila(sheet,row){
-  const r=DATA[sheet.toLowerCase()].find(x=>x._row===row); if(!r) return;
-  const tit=sheet==="Itinerario"?`Día ${r["Día"]}, ${r.Ciudad}`:sheet==="Alojamiento"?`Hotel en ${r.Ciudad}`:`${r.Origen} → ${r.Destino}`;
-  hoja(`<form data-form="fila" data-sheet="${sheet}" data-row="${row}"><h3>${esc(tit)}</h3>
-    ${camposDe(sheet).map(([k,lab,tipo],i)=>{
+function formFila(tabla,row){
+  const r=DATA[tabla.toLowerCase()].find(x=>x._row===row); if(!r) return;
+  const tit=tabla==="Itinerario"?`Día ${r["Día"]}, ${r.Ciudad}`:tabla==="Alojamiento"?`Hotel en ${r.Ciudad}`:`${r.Origen} → ${r.Destino}`;
+  hoja(`<form data-form="fila" data-tabla="${tabla}" data-row="${row}"><h3>${esc(tit)}</h3>
+    ${camposDe(tabla).map(([k,lab,tipo],i)=>{
       const v=tipo==="num"?(num(r[k])??""):(r[k]??"");
       const campo=tipo==="area"?`<textarea id="f${i}" rows="4">${esc(v)}</textarea>`
         :tipo==="sel"?`<select id="f${i}">${["","Pendiente","Reservado"].map(o=>`<option ${o===String(v)?"selected":""} value="${o}">${o||"Sin estado"}</option>`).join("")}</select>`
@@ -2505,11 +2505,11 @@ function renderAll(forzar){
   scrollTo(0,y);
 }
 
-function borrarConDeshacer(sheet,id,txt){
-  const r=DATA[TABLA[sheet]].find(x=>x.ID===id); if(!r) return;
+function borrarConDeshacer(tabla,id,txt){
+  const r=DATA[TABLA[tabla]].find(x=>x.ID===id); if(!r) return;
   const values={};Object.keys(r).forEach(k=>{if(k!=="ID"&&k[0]!=="_") values[k]=r[k]});
-  mutar({action:"remove",sheet,id});
-  aviso(txt,()=>{mutar({action:"upsert",sheet,id,values});aviso("Recuperado")});
+  mutar({action:"remove",tabla,id});
+  aviso(txt,()=>{mutar({action:"upsert",tabla,id,values});aviso("Recuperado")});
 }
 
 function pastilla(){                         // cambios sin enviar y estado de la conexión
@@ -2647,7 +2647,7 @@ async function sincronizarDocs(){
       try{
         await subirDoc(k,d);
         await bdOp("readwrite",s=>s.put({...d,subido:true},k));
-        mutar({action:"upsert",sheet:"Ajustes",id:"arch:"+k,values:{Valor:JSON.stringify({name:d.name,type:d.type})}},true);
+        mutar({action:"upsert",tabla:"Ajustes",id:"arch:"+k,values:{Valor:JSON.stringify({name:d.name,type:d.type})}},true);
       }catch(e){
         if(e.estado===413) await bdOp("readwrite",s=>s.put({...d,grande:true},k));   // demasiado grande: se queda solo en este móvil
         else throw e;
@@ -2716,7 +2716,7 @@ document.addEventListener("click",async e=>{
   if(b=q("[data-edit]")) return formFila(b.dataset.edit,+b.dataset.row);
   if(b=q("[data-lquitar]")){
     e.preventDefault();const [k,key]=b.dataset.lquitar.split("|");
-    mutar({action:"remove",sheet:"Ajustes",id:`lst:${k}:${key}`});if(marcado(k,key)) mutar({action:"remove",sheet:"Ajustes",id:`chk:${k}:${key}`});return;
+    mutar({action:"remove",tabla:"Ajustes",id:`lst:${k}:${key}`});if(marcado(k,key)) mutar({action:"remove",tabla:"Ajustes",id:`chk:${k}:${key}`});return;
   }
   if(b=q("[data-compartir-dia]")){const i=+b.dataset.compartirDia;compartirTexto(textoDia(i),"Plan del día "+(i+1));return}
   if(b=q("[data-modo-tema]")){LS.set("china-tema",b.dataset.modoTema);aplicarTema();rKit();return}
@@ -2732,7 +2732,7 @@ document.addEventListener("click",async e=>{
   if(b=q("[data-quitar-doc]")){                // se puede deshacer: la ✕ está al lado de «Ver» y es fácil tocarla sin querer
     const k=b.dataset.quitarDoc,d=await bdOp("readonly",s=>s.get(k)).catch(()=>null);
     await bdOp("readwrite",s=>s.delete(k)).catch(()=>{});
-    mutar({action:"remove",sheet:"Ajustes",id:"arch:"+k},true);
+    mutar({action:"remove",tabla:"Ajustes",id:"arch:"+k},true);
     cabDoc().then(headers=>fetch(rutaDoc(k),{method:"DELETE",headers})).catch(()=>{});   // si falla, queda un archivo privado que ya no se usa
     cargarDocs();
     if(d) aviso("Archivo quitado",async()=>{await bdOp("readwrite",s=>s.put({...d,subido:false},k)).catch(()=>{});cargarDocs();sincronizarDocs()});
@@ -2808,10 +2808,10 @@ document.addEventListener("change",async e=>{
 
   if(t.matches("[data-lchk]")){
     const [k,key]=t.dataset.lchk.split("|");
-    mutar({action:"upsert",sheet:"Ajustes",id:`chk:${k}:${key}`,values:{Valor:t.checked?"1":""}});return;
+    mutar({action:"upsert",tabla:"Ajustes",id:`chk:${k}:${key}`,values:{Valor:t.checked?"1":""}});return;
   }
   if(t.matches("[data-ent]")){
-    mutar({action:"upsert",sheet:"Ajustes",id:"ent:"+t.dataset.ent,values:{Valor:t.checked?"1":""}});return;
+    mutar({action:"upsert",tabla:"Ajustes",id:"ent:"+t.dataset.ent,values:{Valor:t.checked?"1":""}});return;
   }
   if(t.matches(".chk input")){
     const c=DATA.checklist.find(x=>x._row===+t.dataset.row); if(!c) return;
@@ -2856,56 +2856,56 @@ function guardarForm(f,auto){
   if(tipo==="diario"){
     const iso=f.dataset.iso||d.iso,txt=f.querySelector("textarea").value.trim(),ant=DATA.diario.find(x=>toISO(x.Fecha)===iso);
     if(auto&&txt===limpio(ant&&ant.Nota)) return ok();
-    mutar({action:"upsert",sheet:"Diario",id:"d"+iso.replace(/-/g,""),values:{Fecha:iso,Nota:txt}},auto);ok();if(!auto) aviso("Nota guardada");
+    mutar({action:"upsert",tabla:"Diario",id:"d"+iso.replace(/-/g,""),values:{Fecha:iso,Nota:txt}},auto);ok();if(!auto) aviso("Nota guardada");
   }else if(tipo==="agenda"){
     const id=f.dataset.id||"a"+Date.now().toString(36),q=f.dataset.iso||d.iso;
     if(auto&&(!$("aH").value||!$("aQ").value.trim())) return;
-    mutar({action:"upsert",sheet:"Agenda",id,values:{Fecha:q,Hora:$("aH").value,Fin:$("aF").value,"Qué":$("aQ").value.trim(),Lugar:$("aL").value.trim(),Tipo:$("aT").value,Notas:$("aN").value.trim()}},auto);
+    mutar({action:"upsert",tabla:"Agenda",id,values:{Fecha:q,Hora:$("aH").value,Fin:$("aF").value,"Qué":$("aQ").value.trim(),Lugar:$("aL").value.trim(),Tipo:$("aT").value,Notas:$("aN").value.trim()}},auto);
     if(auto) ok(); else{cerrarHoja();aviso(f.dataset.id?"Agenda actualizada":"Añadido a la agenda")}
   }else if(tipo==="fila"){
-    const sheet=f.dataset.sheet,r=DATA[sheet.toLowerCase()].find(x=>x._row===+f.dataset.row),values={}; if(!r) return;
-    camposDe(sheet).forEach(([k,,t],i)=>{const v=$("f"+i).value.trim();values[k]=t==="num"?(v===""?"":num(v)??""):v});
+    const tabla=f.dataset.tabla,r=DATA[tabla.toLowerCase()].find(x=>x._row===+f.dataset.row),values={}; if(!r) return;
+    camposDe(tabla).forEach(([k,,t],i)=>{const v=$("f"+i).value.trim();values[k]=t==="num"?(v===""?"":num(v)??""):v});
     const cambia=Object.keys(values).some(k=>String(values[k])!==String(r[k]??""));
-    if(cambia) mutar({action:"update",sheet,row:r._row,key:r._k,values},auto);
+    if(cambia) mutar({action:"update",tabla,row:r._row,key:r._k,values},auto);
     if(auto) ok(); else{cerrarHoja();if(cambia) aviso("Cambios guardados")}
   }else if(tipo==="gasto"){
     const n=num($("gI").value); if(!n||n<=0){aviso("Escribe un importe");return}
     const now=ahoraCN(),dia=DIAS.find(x=>x.iso===now.iso),concepto=$("gC").value.trim();
     $("gI").value="";$("gC").value="";
-    mutar({action:"upsert",sheet:"Gastos",id:"g"+Date.now().toString(36)+Math.random().toString(36).slice(2,5),
+    mutar({action:"upsert",tabla:"Gastos",id:"g"+Date.now().toString(36)+Math.random().toString(36).slice(2,5),
       values:{Fecha:now.iso,Ciudad:ciudadGPS()?CIUDADES[ciudadGPS()].n:dia?ciudad(dia.Ciudad).n:"Antes del viaje",Concepto:concepto,"Categoría":gCat,Importe:n,Moneda:gMon,EUR:Math.round(aEUR(n,gMon)*100)/100,"Pagó":gPag}});
     aviso("Gasto añadido");
   }else if(tipo==="tarea"){
     const t=$("addT").value.trim(); $("addT").value=""; if(t){mutar({action:"addTask",text:t});aviso("Tarea añadida")}
   }else if(tipo==="entrada"){
     const k=$("eC").value,nombre=$("eN").value.trim(); if(!nombre) return;
-    mutar({action:"upsert",sheet:"Lugares",id:"l"+Date.now().toString(36),values:{Ciudad:CIUDADES[k].n,Nombre:nombre,Chino:"","Dirección":"",Horario:"",
+    mutar({action:"upsert",tabla:"Lugares",id:"l"+Date.now().toString(36),values:{Ciudad:CIUDADES[k].n,Nombre:nombre,Chino:"","Dirección":"",Horario:"",
       Precio:$("eP").value.trim(),Reserva:$("eR").value.trim()||"Comprar antes de ir",Notas:"",Lat:"",Lon:""}});
     $("eN").value=$("eP").value=$("eR").value="";aviso("Entrada añadida");
   }else if(tipo==="lista"){
     const k=f.dataset.k,inp=$("lmT-"+k),t=inp.value.trim(); inp.value="";
-    if(t){mutar({action:"upsert",sheet:"Ajustes",id:`lst:${k}:${Date.now().toString(36)}`,values:{Valor:t}});aviso("Añadido")}
+    if(t){mutar({action:"upsert",tabla:"Ajustes",id:`lst:${k}:${Date.now().toString(36)}`,values:{Valor:t}});aviso("Añadido")}
   }else if(tipo==="presupuesto"){
     const v=num($("preI").value),val=v&&v>0?String(v):"";
     if(val===String(ajuste("presupuesto",""))) return ok();
-    mutar({action:"upsert",sheet:"Ajustes",id:"presupuesto",values:{Valor:val}},auto);ok();if(!auto) aviso(v?"Presupuesto guardado":"Presupuesto quitado");
+    mutar({action:"upsert",tabla:"Ajustes",id:"presupuesto",values:{Valor:val}},auto);ok();if(!auto) aviso(v?"Presupuesto guardado":"Presupuesto quitado");
   }else if(tipo==="editar-gasto"){
     const g=DATA.gastos.find(x=>x.ID===f.dataset.id),n=num($("egI").value),m=$("egM").value; if(!g) return;
     if(!n||n<=0){if(!auto) aviso("Escribe un importe");return}
     const ant=num(g.Importe),tasa=g.Moneda===m&&ant?(num(g.EUR)||0)/ant:null;   // misma moneda: se respeta el cambio del día en que se apuntó
-    mutar({action:"upsert",sheet:"Gastos",id:g.ID,values:{Importe:n,Moneda:m,EUR:Math.round((tasa!=null?n*tasa:aEUR(n,m))*100)/100,Concepto:$("egC").value.trim(),"Categoría":$("egK").value,"Pagó":$("egP").value}},auto);
+    mutar({action:"upsert",tabla:"Gastos",id:g.ID,values:{Importe:n,Moneda:m,EUR:Math.round((tasa!=null?n*tasa:aEUR(n,m))*100)/100,Concepto:$("egC").value.trim(),"Categoría":$("egK").value,"Pagó":$("egP").value}},auto);
     if(auto) ok(); else{cerrarHoja();aviso("Gasto actualizado")}
   }else if(tipo==="seguro"){
     const v=$("segT").value.trim(); if(auto&&v===ajuste("seguro","")) return ok();
-    mutar({action:"upsert",sheet:"Ajustes",id:"seguro",values:{Valor:v}},auto);ok();if(!auto) aviso("Datos guardados");
+    mutar({action:"upsert",tabla:"Ajustes",id:"seguro",values:{Valor:v}},auto);ok();if(!auto) aviso("Datos guardados");
   }else if(tipo==="personas"){
     const antes=personas(),nuevos=[$("pe1").value.trim(),$("pe2").value.trim()];   // se leen los dos antes de guardar: cada guardado repinta el formulario
     if(!nuevos[0]||!nuevos[1]||nuevos[0]===nuevos[1]){estadoAuto(f,"Poned dos nombres distintos");return}
     let hubo=false;
     nuevos.forEach((n,i)=>{
       if(n===antes[i]) return; hubo=true;
-      mutar({action:"upsert",sheet:"Ajustes",id:"p"+(i+1),values:{Valor:n}},true);
-      DATA.gastos.filter(g=>g["Pagó"]===antes[i]).forEach(g=>mutar({action:"upsert",sheet:"Gastos",id:g.ID,values:{"Pagó":n}},true));   // las cuentas siguen cuadrando
+      mutar({action:"upsert",tabla:"Ajustes",id:"p"+(i+1),values:{Valor:n}},true);
+      DATA.gastos.filter(g=>g["Pagó"]===antes[i]).forEach(g=>mutar({action:"upsert",tabla:"Gastos",id:g.ID,values:{"Pagó":n}},true));   // las cuentas siguen cuadrando
       if(LS.get("china-yo")===antes[i]) LS.set("china-yo",n);
       if(gPag===antes[i]) gPag=n;
     });
