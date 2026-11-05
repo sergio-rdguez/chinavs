@@ -13,7 +13,7 @@ const G=window.GUION||{};
 const AU=window.AUDIO||null;                 // voz grabada: {voz, ruta, d:{"parada/historia": segundos}}
 const P=RUTA.map(([id,nombre,zh,py,lat,lon,min,radio,am,ir,x],i)=>{
   const g=G[id]||{};x=x||{};                 // x: {h:"9:45", f:"10:30", exacto, bus} (hora prevista, sitio exacto, se llega en bus)
-  return {i,id,nombre,zh,py,lat,lon,min,radio,am,ir,h:x.h||"",f:x.f||"",exacto:!!x.exacto,bus:!!x.bus,resumen:g.resumen||"",mira:g.mira||[],pistas:(g.pistas||[]).map((p,k)=>({...p,pal:palabras(p.texto),seg:AU?AU.d[id+"/"+k]:null}))};
+  return {i,id,nombre,zh,py,lat,lon,min,radio,am,ir,h:x.h||"",f:x.f||"",exacto:!!x.exacto,bus:!!x.bus,xy:x.xy||null,et:x.et||"",corto:x.corto||"",resumen:g.resumen||"",mira:g.mira||[],pistas:(g.pistas||[]).map((p,k)=>({...p,pal:palabras(p.texto),seg:AU?AU.d[id+"/"+k]:null}))};
 });
 function palabras(t){return String(t||"").trim().split(/\s+/).filter(Boolean).length}
 
@@ -244,7 +244,30 @@ function llegar(i){
    MAPA (Leaflet + OpenStreetMap, que va en WGS-84 como el GPS)
    ============================================================ */
 let MAPA=null,PINES=[],YO=null,YOacc=null;
+/* ---------- Mapa esquemático (CFG.esquema): un dibujo en SVG como el plano de papel del parque, sin teselas.
+   Cada parada lleva x.xy:[x,y] en el dibujo, x.et (posición de la etiqueta: r, l, t, b) y x.corto (nombre en el mapa). ---------- */
+let ZOOM=1;
+function montarEsquema(){
+  const E2=CFG.esquema,pin=p=>{const [x,y]=p.xy,et=p.et||"r",d={r:[18,4,"start"],l:[-18,4,"end"],t:[0,-19,"middle"],b:[0,28,"middle"]}[et];
+    return `<g class="pinE" data-pin="${p.i}" transform="translate(${x} ${y})" role="button" tabindex="0" aria-label="${esc(p.nombre)}"><title>${esc(p.nombre)}</title>
+      <circle class="halo" r="21"/><circle class="bola" r="14"/><text class="pn" y="4.5">${p.i}</text>
+      <text class="pl" x="${d[0]}" y="${d[1]}" text-anchor="${d[2]}">${esc(p.corto||p.nombre)}</text></g>`};
+  $("mapa").closest(".mapaW").classList.add("esq");
+  $("mapa").innerHTML=`<svg class="esqS" viewBox="${E2.vb}" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="${esc(E2.titulo||"Mapa esquemático")}">${E2.fondo}
+    <g class="pinesE">${P.filter(p=>p.xy).map(pin).join("")}</g></svg>`;
+  ZOOM=E2.zoom||1;$("mapa").style.setProperty("--z",ZOOM);$("mapa").classList.toggle("ampl",ZOOM>1);
+  if(ZOOM>1) requestAnimationFrame(()=>{const p=P[E.p].xy?P[E.p]:P.find(x=>x.xy),vb=E2.vb.split(/\s+/).map(Number);zoomEsquema(0,[p.xy[0]/vb[2],p.xy[1]/vb[3]])});   // ampliado y centrado en la parada que toca
+  $("mapa").addEventListener("click",e=>{const g=e.target.closest("[data-pin]");if(g) abrir(+g.dataset.pin,true)});
+  $("mapa").addEventListener("keydown",e=>{const g=e.target.closest("[data-pin]");if(g&&(e.key==="Enter"||e.key===" ")){e.preventDefault();abrir(+g.dataset.pin,true)}});
+  pintarMapa();
+}
+function zoomEsquema(d,centro){
+  const m=$("mapa"),cx=(m.scrollLeft+m.clientWidth/2)/m.scrollWidth,cy=(m.scrollTop+m.clientHeight/2)/m.scrollHeight;
+  ZOOM=Math.max(1,Math.min(3,ZOOM+d));m.style.setProperty("--z",ZOOM);m.classList.toggle("ampl",ZOOM>1);
+  const [fx,fy]=centro||[cx,cy];m.scrollLeft=fx*m.scrollWidth-m.clientWidth/2;m.scrollTop=fy*m.scrollHeight-m.clientHeight/2;
+}
 function montarMapa(){
+  if(CFG.esquema) return montarEsquema();
   if(!window.L){$("mapa").innerHTML=`<p class="n" style="padding:16px">El mapa no ha cargado (sin conexión). La guía y el GPS funcionan igual.</p>`;return}
   const oscuro=document.documentElement.dataset.tema==="oscuro";
   MAPA=L.map("mapa",{zoomControl:false,attributionControl:false,maxZoom:19}).fitBounds(CFG.limites);
@@ -267,7 +290,11 @@ function icono(p){
   const c=p.i===E.p?"act":paradaOida(p.i)?"oido":"";
   return L.divIcon({className:"",html:`<span class="pinP ${c} ${LEC&&!p.exacto?"aprox":""}">${p.i}</span>`,iconSize:[26,26],iconAnchor:[13,13]});
 }
-function pintarMapa(){PINES.forEach((m,i)=>m&&m.setIcon(icono(P[i])))}
+function pintarMapa(){
+  if(CFG.esquema){document.querySelectorAll("#mapa [data-pin]").forEach(g=>{const i=+g.dataset.pin;
+    g.classList.toggle("act",i===E.p&&!!E.inicio);g.classList.toggle("oido",paradaOida(i));g.classList.toggle("aprox",LEC&&!P[i].exacto)});return}
+  PINES.forEach((m,i)=>m&&m.setIcon(icono(P[i])));
+}
 function pintarYo(){
   if(!MAPA||!POS) return;
   const ll=[POS.lat,POS.lon];
@@ -402,7 +429,7 @@ function pintarLectura(){
         ${p.pistas.length?`<div class="lectura">${p.pistas.map(x=>`<section><h4><span class="tipo t-${esc(x.tipo)}">${esc(x.tipo)}</span>${esc(x.t)}</h4>${x.texto.split(/\n+/).map(t=>`<p>${esc(t)}</p>`).join("")}</section>`).join("")}</div>`:""}
         <div class="btns">${p.pistas.length?`<button class="btn ${hecha?"":"pri"} sm" data-leida="${p.i}"><i class="fa-solid ${hecha?"fa-rotate-left":"fa-check"}"></i>${hecha?"Marcar sin leer":"Leída"}</button>`:""}
           ${p.lat||p.am?`<a class="btn azul sm" href="${esc(urlAmap(p))}" target="_blank" rel="noopener"><i class="fa-solid fa-diamond-turn-right"></i>Abrir en Amap</a>`:""}
-          ${p.lat?`<button class="btn sm" data-centrar="${p.i}"><i class="fa-solid fa-crosshairs"></i>En el mapa</button>`:""}</div>
+          ${p.lat||p.xy?`<button class="btn sm" data-centrar="${p.i}"><i class="fa-solid fa-crosshairs"></i>En el mapa</button>`:""}</div>
       </div></article>`}).join("");
 }
 function abrir(i,mover){
@@ -432,8 +459,8 @@ function pintarRepro(){
 function ajustesLectura(){
   $("hoja").innerHTML=`<h3>Avisos y mapa<button class="ico" data-act="cerrar" aria-label="Cerrar"><i class="fa-solid fa-xmark"></i></button></h3>
     <div class="fila"><span>Avisar al llegar cerca de cada parada</span><input type="checkbox" class="sw" id="sAuto" ${E.auto?"checked":""}></div>
-    <div><label>Sin conexión</label><p class="n" style="margin:4px 0 8px">Los textos ya funcionan sin internet. Descargad también el mapa de la zona con el wifi del hotel (unos pocos MB).</p>
-      <button class="btn azul sm" data-act="descargar">${LS.get(CFG.clave+"-mapa",0)?`<i class="fa-solid fa-circle-check"></i>Mapa guardado · repetir`:`<i class="fa-solid fa-download"></i>Descargar mapa`}</button></div>
+    ${CFG.esquema?`<div><label>Sin conexión</label><p class="n" style="margin:4px 0 0">La guía y el mapa van dibujados dentro de la página: funcionan sin internet en cuanto la hayáis abierto una vez con datos.</p></div>`:`<div><label>Sin conexión</label><p class="n" style="margin:4px 0 8px">Los textos ya funcionan sin internet. Descargad también el mapa de la zona con el wifi del hotel (unos pocos MB).</p>
+      <button class="btn azul sm" data-act="descargar">${LS.get(CFG.clave+"-mapa",0)?`<i class="fa-solid fa-circle-check"></i>Mapa guardado · repetir`:`<i class="fa-solid fa-download"></i>Descargar mapa`}</button></div>`}
     ${(CFG.consejos||[]).length?`<div><label>Consejos</label><ul class="mira" style="margin-top:6px">${CFG.consejos.map(c=>`<li><i class="fa-solid fa-star"></i><span>${esc(c)}</span></li>`).join("")}</ul></div>`:""}
     <div class="btns"><button class="btn sm" data-act="reiniciar"><i class="fa-solid fa-rotate"></i>Empezar de cero</button></div>`;
   $("dlg").showModal();
@@ -474,6 +501,9 @@ document.addEventListener("click",e=>{
     const s=ya?-1:P.findIndex((p,j)=>j>i&&p.pistas.length);
     if(s>=0){E.p=s;b.closest(".parada").classList.remove("abierta")}
     guardar();todo();if(s>=0) abrir(s,true);return}   // leída: se abre la siguiente
+  if((b=q("[data-centrar]"))&&CFG.esquema){const i=+b.dataset.centrar,g=document.querySelector(`#mapa [data-pin="${i}"]`);if(!g) return;
+    const [x,y]=P[i].xy,vb=CFG.esquema.vb.split(/\s+/).map(Number);if(ZOOM<2) zoomEsquema(2-ZOOM,[x/vb[2],y/vb[3]]);else zoomEsquema(0,[x/vb[2],y/vb[3]]);
+    $("mapa").scrollIntoView({behavior:"smooth",block:"center"});g.classList.remove("flash");void g.getBBox();g.classList.add("flash");return}
   if(b=q("[data-centrar]")){const p=P[+b.dataset.centrar];if(MAPA){seguir=false;$("bSeguir").classList.remove("on");MAPA.setView([p.lat,p.lon],18);
     PINES[p.i].openTooltip();$("mapa").scrollIntoView({behavior:"smooth",block:"center"})}return}
   if(!(b=q("[data-act]"))) return;
@@ -488,6 +518,8 @@ document.addEventListener("click",e=>{
   if(a==="frase-sig") saltarFrase(1);
   if(a==="vel"){const vs=[.9,1,1.1,1.2],j=vs.indexOf(E.vel);E.vel=vs[(j+1)%vs.length];guardar();AUD.playbackRate=E.vel;if(sonando&&!grabada()) hablar();pintarRepro()}
   if(a==="gps") ubicar();
+  if(a==="zoom-mas") zoomEsquema(.5);
+  if(a==="zoom-menos") zoomEsquema(-.5);
   if(a==="seguir"){seguir=true;b.classList.add("on");if(POS&&MAPA) MAPA.setView([POS.lat,POS.lon],18);else ubicar()}
   if(a==="encuadrar"&&MAPA){seguir=false;$("bSeguir").classList.remove("on");MAPA.fitBounds(CFG.limites)}
   if(a==="ajustes") ajustes();

@@ -199,3 +199,57 @@ body.solo-lectura .aviso{bottom:calc(24px + var(--sb))}
 .leyenda .lin.bus{border-top:3px dashed #2563EB}
 .leyenda .pinP{width:16px;height:16px;font-size:0;border-width:2px;box-shadow:none}
 .leyenda .pinP.aprox{outline-offset:1px;outline-width:1px}
+
+/* ---------- Mapa esquemático (CFG.esquema), al estilo del plano de papel del parque ---------- */
+.mapaW.esq #mapa{height:auto;max-height:78vh;overflow:auto;background:var(--surface);-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
+.mapaW.esq #mapa.ampl{height:72vh}
+.esqS{display:block;width:calc(100% * var(--z,1));height:auto;font-family:var(--f);user-select:none;-webkit-user-select:none}
+.esqS .papel{fill:var(--surface)}
+.esqS .zona{fill:color-mix(in srgb,var(--ok) 6%,transparent);stroke:color-mix(in srgb,var(--ok) 30%,transparent);stroke-dasharray:4 5}
+.esqS .rotulo{fill:#15803D;stroke:none}
+.esqS .rotulo-t{fill:#fff;font-weight:900;font-size:15px}
+.esqS .rotulo-z{fill:#fff;font-family:var(--fz);font-weight:700;font-size:12px;opacity:.9}
+.esqS .rio{fill:none;stroke:#7DD3FC;stroke-width:6;stroke-linecap:round;opacity:.8}
+.esqS .lago{fill:#BAE6FD;opacity:.7}
+.esqS .busA{fill:none;stroke:#DC2626;stroke-width:4;stroke-linecap:round;stroke-linejoin:round}
+.esqS .busB{fill:none;stroke:#1E3A8A;stroke-width:4;stroke-linecap:round;stroke-linejoin:round}
+.esqS .pie{fill:none;stroke:#16A34A;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+.esqS .pieR{fill:none;stroke:#16A34A;stroke-width:3;stroke-dasharray:1 6;stroke-linecap:round;opacity:.8}
+.esqS .ascensor{fill:none;stroke:#7C3AED;stroke-width:7;stroke-linecap:round}
+.esqS .cable{fill:none;stroke:#92400E;stroke-width:2.5;stroke-dasharray:7 5}
+.esqS .pto{fill:var(--ink)}
+.esqS .puntoH{fill:var(--surface);stroke:var(--ink);stroke-width:1.5}
+.esqS .et{fill:var(--text);font-size:13px;font-weight:600}
+.esqS .lblz{fill:var(--muted);font-family:var(--fz);font-size:12px}
+.esqS .lblS{fill:var(--muted);font-size:12px;font-style:italic}
+.esqS .lblR{fill:#B91C1C;font-size:13px;font-weight:800}
+.esqS .lblB{fill:#1E3A8A;font-size:13px;font-weight:800}
+.esqS .lblV{fill:#6D28D9;font-size:13px;font-weight:800}
+.esqS .lblC{fill:#92400E;font-size:13px;font-weight:800}
+.esqS .parada-bus circle{fill:#2563EB;stroke:#fff;stroke-width:2}
+.esqS .parada-bus text{fill:#fff;font-size:10px;font-weight:900}
+.esqS .norte{fill:var(--muted);font-size:11px;font-weight:800}
+.esqS .flechaN{fill:var(--muted)}
+.esqS .mc{fill:#FBBF24;font-weight:900;font-size:13px}
+.esqS .pinE{cursor:pointer}
+.esqS .pinE .halo{fill:transparent}
+.esqS .pinE .bola{fill:var(--red);stroke:#fff;stroke-width:2.5}
+.esqS .pinE.aprox .bola{stroke-dasharray:4 3}
+.esqS .pinE .pn{fill:#fff;font-size:13px;font-weight:900;text-anchor:middle}
+.esqS .pinE .pl{fill:var(--ink);font-size:15px;font-weight:800;paint-order:stroke;stroke:var(--surface);stroke-width:4px;stroke-linejoin:round}
+.esqS .pinE.oido .bola{fill:#94A3B8}
+.esqS .pinE.act .bola{fill:#B7791F}
+.esqS .pinE.act .halo{fill:color-mix(in srgb,#B7791F 25%,transparent)}
+.esqS .pinE.flash .halo{animation:flashP 1.4s 2}
+@keyframes flashP{50%{fill:color-mix(in srgb,#2563EB 45%,transparent)}}
+[data-tema="oscuro"] .esqS .rio{stroke:#0369A1}[data-tema="oscuro"] .esqS .lago{fill:#0C4A6E}
+[data-tema="oscuro"] .esqS .busB{stroke:#60A5FA}[data-tema="oscuro"] .esqS .lblB{fill:#93C5FD}
+[data-tema="oscuro"] .esqS .lblR{fill:#FCA5A5}[data-tema="oscuro"] .esqS .lblV{fill:#C4B5FD}[data-tema="oscuro"] .esqS .lblC{fill:#FCD34D}
+[data-tema="oscuro"] .esqS .cable{stroke:#F59E0B}
+.leyenda .lin.rojo{border-top:4px solid #DC2626}
+.leyenda .lin.azulO{border-top:4px solid #1E3A8A}
+.leyenda .lin.verde{border-top:3px solid #16A34A}
+.leyenda .lin.morado{border-top:5px solid #7C3AED}
+.leyenda .lin.cable{border-top:2.5px dashed #92400E}
+[data-tema="oscuro"] .leyenda .lin.azulO{border-top-color:#60A5FA}
+.mapaW.esq .mapaB{left:10px;right:auto}
