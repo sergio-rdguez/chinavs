@@ -253,3 +253,8 @@ body.solo-lectura .aviso{bottom:calc(24px + var(--sb))}
 .leyenda .lin.cable{border-top:2.5px dashed #92400E}
 [data-tema="oscuro"] .leyenda .lin.azulO{border-top-color:#60A5FA}
 .mapaW.esq .mapaB{left:10px;right:auto}
+.esqS .yoE{pointer-events:none;transition:transform .6s}
+.esqS .yoE .yoP{fill:#2563EB;stroke:#fff;stroke-width:3.5}
+.esqS .yoE .acc{fill:rgba(37,99,235,.18);animation:yoLate 2s infinite}
+.esqS .yoE.viejo .yoP{fill:#94A3B8}.esqS .yoE.viejo .acc{display:none}
+@keyframes yoLate{50%{opacity:.35}}

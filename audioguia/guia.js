@@ -254,12 +254,33 @@ function montarEsquema(){
       <text class="pl" x="${d[0]}" y="${d[1]}" text-anchor="${d[2]}">${esc(p.corto||p.nombre)}</text></g>`};
   $("mapa").closest(".mapaW").classList.add("esq");
   $("mapa").innerHTML=`<svg class="esqS" viewBox="${E2.vb}" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="${esc(E2.titulo||"Mapa esquemático")}">${E2.fondo}
-    <g class="pinesE">${P.filter(p=>p.xy).map(pin).join("")}</g></svg>`;
+    <g class="pinesE">${P.filter(p=>p.xy).map(pin).join("")}</g>
+    <g id="yoE" class="yoE" style="display:none"><title>Estáis aquí (aproximado)</title><circle class="acc" r="22"/><circle class="yoP" r="8"/></g></svg>`;
   ZOOM=E2.zoom||1;$("mapa").style.setProperty("--z",ZOOM);$("mapa").classList.toggle("ampl",ZOOM>1);
   if(ZOOM>1) requestAnimationFrame(()=>{const p=P[E.p].xy?P[E.p]:P.find(x=>x.xy),vb=E2.vb.split(/\s+/).map(Number);zoomEsquema(0,[p.xy[0]/vb[2],p.xy[1]/vb[3]])});   // ampliado y centrado en la parada que toca
   $("mapa").addEventListener("click",e=>{const g=e.target.closest("[data-pin]");if(g) abrir(+g.dataset.pin,true)});
   $("mapa").addEventListener("keydown",e=>{const g=e.target.closest("[data-pin]");if(g&&(e.key==="Enter"||e.key===" ")){e.preventDefault();abrir(+g.dataset.pin,true)}});
   pintarMapa();
+}
+/* Vuestra posición en el dibujo: como no está a escala, se interpola entre las paradas (y anclas) más cercanas,
+   pesando cada una por el inverso del cuadrado de la distancia. Cerca de una parada, el punto cae encima de ella. */
+function aEsquema(lat,lon){
+  const A=P.filter(p=>p.lat&&p.xy).map(p=>[p.lat,p.lon,p.xy[0],p.xy[1]]).concat(CFG.esquema.anclas||[])
+    .map(a=>({a,d:distM(lat,lon,a[0],a[1])})).sort((x,y)=>x.d-y.d);
+  if(!A.length||A[0].d>(CFG.esquema.fuera||4000)) return null;
+  if(A[0].d<25) return {x:A[0].a[2],y:A[0].a[3],d:A[0].d};
+  let sx=0,sy=0,sw=0;A.slice(0,3).forEach(({a,d})=>{const w=1/(d*d);sx+=a[2]*w;sy+=a[3]*w;sw+=w});
+  return {x:sx/sw,y:sy/sw,d:A[0].d};
+}
+let centrarYo=false;
+function pintarYoEsquema(){
+  const g=$("yoE");if(!g) return;
+  const q=POS&&aEsquema(POS.lat,POS.lon);
+  if(!q){g.style.display="none";if(centrarYo&&POS){centrarYo=false;aviso("Estáis fuera de la zona del mapa.")}return}
+  g.style.display="";g.setAttribute("transform",`translate(${q.x.toFixed(1)} ${q.y.toFixed(1)})`);
+  g.classList.toggle("viejo",Date.now()-POS.t>60000);
+  if(centrarYo){centrarYo=false;const vb=CFG.esquema.vb.split(/\s+/).map(Number);zoomEsquema(Math.max(0,2-ZOOM),[q.x/vb[2],q.y/vb[3]]);
+    $("mapa").scrollIntoView({behavior:"smooth",block:"center"})}
 }
 function zoomEsquema(d,centro){
   const m=$("mapa"),cx=(m.scrollLeft+m.clientWidth/2)/m.scrollWidth,cy=(m.scrollTop+m.clientHeight/2)/m.scrollHeight;
@@ -296,6 +317,7 @@ function pintarMapa(){
   PINES.forEach((m,i)=>m&&m.setIcon(icono(P[i])));
 }
 function pintarYo(){
+  if(CFG.esquema) return pintarYoEsquema();
   if(!MAPA||!POS) return;
   const ll=[POS.lat,POS.lon];
   if(!YO){YO=L.marker(ll,{icon:L.divIcon({className:"",html:`<div class="yo"></div>`,iconSize:[18,18],iconAnchor:[9,9]}),zIndexOffset:1000,interactive:false}).addTo(MAPA);
@@ -520,6 +542,7 @@ document.addEventListener("click",e=>{
   if(a==="gps") ubicar();
   if(a==="zoom-mas") zoomEsquema(.5);
   if(a==="zoom-menos") zoomEsquema(-.5);
+  if(a==="seguir"&&CFG.esquema){centrarYo=true;if(POS) pintarYoEsquema();else{aviso("Buscando vuestra posición…");ubicar()}return}
   if(a==="seguir"){seguir=true;b.classList.add("on");if(POS&&MAPA) MAPA.setView([POS.lat,POS.lon],18);else ubicar()}
   if(a==="encuadrar"&&MAPA){seguir=false;$("bSeguir").classList.remove("on");MAPA.fitBounds(CFG.limites)}
   if(a==="ajustes") ajustes();

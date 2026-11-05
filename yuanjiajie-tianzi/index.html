@@ -47,6 +47,7 @@
   <div class="mapaW">
     <div id="mapa" role="region" aria-label="Mapa del día en el parque"></div>
     <div class="mapaB">
+      <button data-act="seguir" id="bSeguir" aria-label="Dónde estoy"><i class="fa-solid fa-location-crosshairs"></i></button>
       <button data-act="zoom-mas" aria-label="Acercar el mapa"><i class="fa-solid fa-plus"></i></button>
       <button data-act="zoom-menos" aria-label="Alejar el mapa"><i class="fa-solid fa-minus"></i></button>
     </div>
@@ -61,7 +62,7 @@
   </div>
   <p class="lbl"><i class="fa-solid fa-book-open"></i>El día, parada a parada</p>
   <div id="paradas" style="display:grid;gap:10px"></div>
-  <p class="n" style="padding:0 4px">Mapa dibujado a partir del plano de papel del hotel (张家界景区手绘图): no está a escala. Tocad un número para ir a su parada. Horarios orientativos; precios y horas del ascensor y del teleférico, confirmadlos en las taquillas.</p>
+  <p class="n" style="padding:0 4px">Mapa dibujado a partir del plano de papel del hotel (张家界景区手绘图): no está a escala. Tocad un número para ir a su parada. El punto azul es vuestra posición, colocada a ojo entre las paradas más cercanas: orientativa. Horarios orientativos; precios y horas del ascensor y del teleférico, confirmadlos en las taquillas.</p>
 </main>
 
 <div class="repro" id="repro"></div>
@@ -128,7 +129,8 @@ const CFG={
  ciudad:"Zhangjiajie",czh:"张家界",fecha:"2026-11-05",
  titulo:"Yuanjiajie y la Montaña Tianzi",zh:"袁家界 · 天子山",
  texto:n=>`El día por arriba del parque: ascensor Bailong, los pilares de Avatar en Yuanjiajie, bus a Tianzi y bajada en teleférico. ${n} textos cortos para leer en cada parada, sin audio.`,
- esquema:{vb:"0 0 600 880",titulo:"Mapa dibujado del día: Yuanjiajie, Tianzi, ascensor y teleférico",fondo:FONDO},
+ esquema:{vb:"0 0 600 880",anclas:[[29.345,110.55,548,600]],   // anclas extra [lat, lon, x, y]: la entrada de Wulingyuan
+  titulo:"Mapa dibujado del día: Yuanjiajie, Tianzi, ascensor y teleférico",fondo:FONDO},
  consejos:[
   "Amap (高德地图) es el mapa que mejor funciona en China: buscad los nombres en chino que salen en cada parada.",
   "Los buses del parque no llevan número: llevan el destino en chino en el parabrisas (百龙天梯, 天子山, 武陵源) o la línea (A线, B线).",
