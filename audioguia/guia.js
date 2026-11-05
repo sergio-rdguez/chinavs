@@ -4,13 +4,16 @@
    su guion.js (window.GUION) antes que este archivo. Si además carga
    audio/index.js (window.AUDIO), cada historia suena con la voz grabada
    en vez de con la del iPhone.
+   Con CFG.lectura la guía es solo de leer: sin reproductor ni voz,
+   con los textos a la vista, la hora de cada parada y enlaces a Amap.
    ============================================================ */
 const RUTA=CFG.ruta;
+const LEC=!!CFG.lectura;
 const G=window.GUION||{};
 const AU=window.AUDIO||null;                 // voz grabada: {voz, ruta, d:{"parada/historia": segundos}}
-const P=RUTA.map(([id,nombre,zh,py,lat,lon,min,radio,am,ir],i)=>{
-  const g=G[id]||{};
-  return {i,id,nombre,zh,py,lat,lon,min,radio,am,ir,resumen:g.resumen||"",mira:g.mira||[],pistas:(g.pistas||[]).map((p,k)=>({...p,pal:palabras(p.texto),seg:AU?AU.d[id+"/"+k]:null}))};
+const P=RUTA.map(([id,nombre,zh,py,lat,lon,min,radio,am,ir,x],i)=>{
+  const g=G[id]||{};x=x||{};                 // x: {h:"9:45", f:"10:30", exacto, bus} (hora prevista, sitio exacto, se llega en bus)
+  return {i,id,nombre,zh,py,lat,lon,min,radio,am,ir,h:x.h||"",f:x.f||"",exacto:!!x.exacto,bus:!!x.bus,resumen:g.resumen||"",mira:g.mira||[],pistas:(g.pistas||[]).map((p,k)=>({...p,pal:palabras(p.texto),seg:AU?AU.d[id+"/"+k]:null}))};
 });
 function palabras(t){return String(t||"").trim().split(/\s+/).filter(Boolean).length}
 
@@ -32,6 +35,8 @@ let avisoT;
 function aviso(t){const a=$("aviso");a.textContent=t;a.classList.add("on");clearTimeout(avisoT);avisoT=setTimeout(()=>a.classList.remove("on"),2800)}
 const urlMapas=p=>`https://maps.apple.com/?q=${encodeURIComponent(p.am)}${p.lat?`&sll=${p.lat},${p.lon}`:""}`;
 const urlAPie=p=>`https://maps.apple.com/?daddr=${encodeURIComponent(p.am)}&dirflg=w`;
+const urlAmap=p=>`https://uri.amap.com/search?keyword=${encodeURIComponent(p.am)}${CFG.czh?"&city="+encodeURIComponent(CFG.czh):""}&callnative=1`;   // Amap (高德): el mapa que mejor va en China
+const aMin=h=>{const m=/^(\d{1,2}):(\d{2})$/.exec(h||"");return m?+m[1]*60+ +m[2]:null};
 
 /* ---------- Estado guardado ---------- */
 const E=Object.assign({oidas:{},inicio:null,reloj:null,auto:true,vel:1,voz:"",p:0,k:0},LS.get(CFG.clave+"-guia",{}));
@@ -39,7 +44,7 @@ const guardar=()=>LS.set(CFG.clave+"-guia",E);
 const oida=(i,k)=>!!E.oidas[P[i].id+"/"+k];
 const paradaOida=i=>P[i].pistas.length>0&&P[i].pistas.every((_,k)=>oida(i,k));
 const grabada=()=>!!AU&&E.voz==="grabada";
-const minPista=p=>(grabada()&&p.seg?p.seg/60:p.pal/150)/(E.vel||1);   // la voz del iPhone lee unas 150 palabras por minuto
+const minPista=p=>LEC?p.pal/200:(grabada()&&p.seg?p.seg/60:p.pal/150)/(E.vel||1);   // la voz del iPhone lee unas 150 palabras por minuto; leyendo, unas 200
 const minAudio=i=>P[i].pistas.reduce((s,p)=>s+minPista(p),0);
 
 /* ============================================================
@@ -221,6 +226,13 @@ function nuevaPos(c){
 }
 function llegar(i){
   llegadaI=i;
+  if(LEC){
+    if(!paradaOida(i)&&E.auto){E.p=i;guardar();
+      $("llegada").innerHTML=`<div class="llegada"><i class="fa-solid fa-location-dot"></i><div><small class="n">${P[i].exacto?"Habéis llegado a":"Estáis cerca de"}</small><b>${esc(P[i].nombre)}</b></div>
+        <button class="btn pri sm" data-ir-parada="${i}"><i class="fa-solid fa-book-open"></i>Leer</button><button class="btn sm" data-act="cerrar-llegada" aria-label="Cerrar"><i class="fa-solid fa-xmark"></i></button></div>`;
+      if(navigator.vibrate) navigator.vibrate(200);todo()}
+    return;
+  }
   if(sonando&&E.p===i) return;
   if(!paradaOida(i)&&E.auto&&desbloqueado&&!sonando){aviso(`Habéis llegado: ${P[i].nombre}`);play(i,0);return}
   if(!(sonando&&E.p===i)) $("llegada").innerHTML=`<div class="llegada"><i class="fa-solid fa-location-dot"></i><div><small class="n">Habéis llegado a</small><b>${esc(P[i].nombre)}</b></div>
@@ -236,18 +248,24 @@ function montarMapa(){
   if(!window.L){$("mapa").innerHTML=`<p class="n" style="padding:16px">El mapa no ha cargado (sin conexión). La guía y el GPS funcionan igual.</p>`;return}
   const oscuro=document.documentElement.dataset.tema==="oscuro";
   MAPA=L.map("mapa",{zoomControl:false,attributionControl:false,maxZoom:19}).fitBounds(CFG.limites);
+  if(CFG.capas) CFG.capas(L,MAPA,oscuro);   // dibujos propios de cada guía, debajo de la ruta
   L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:19,maxNativeZoom:19}).addTo(MAPA);
   if(CFG.foso) L.polygon(CFG.foso,{color:"#60A5FA",weight:5,opacity:.35,fill:false,interactive:false}).addTo(MAPA);
   (CFG.muros||[]).forEach(m=>L.polygon(m,{color:oscuro?"#F87171":"#B91C1C",weight:2,dashArray:"6 6",fill:false,interactive:false}).addTo(MAPA));
   if(CFG.muralla) L.polygon(CFG.muralla,{color:oscuro?"#F87171":"#B91C1C",weight:2,dashArray:"6 6",fillColor:"#DC2626",fillOpacity:.04,interactive:false}).addTo(MAPA);
-  L.polyline(P.filter(p=>p.lat).map(p=>[p.lat,p.lon]),{color:"#B7791F",weight:4,opacity:.75,dashArray:"2 8",lineCap:"round",interactive:false}).addTo(MAPA);
+  const conSitio=P.filter(p=>p.lat);
+  if(!conSitio.some(p=>p.bus)) L.polyline(conSitio.map(p=>[p.lat,p.lon]),{color:"#B7791F",weight:4,opacity:.75,dashArray:"2 8",lineCap:"round",interactive:false}).addTo(MAPA);
+  else conSitio.slice(1).forEach((p,j)=>{const a=conSitio[j],ll=[[a.lat,a.lon],[p.lat,p.lon]];   // los tramos en bus, aparte: no se hacen andando
+    if(p.bus) L.polyline(ll,{color:"#2563EB",weight:4,opacity:.8,dashArray:"10 8",lineCap:"round"}).addTo(MAPA)
+      .bindTooltip("En bus lanzadera, no andando",{sticky:true,className:"tt"});
+    else L.polyline(ll,{color:"#B7791F",weight:4,opacity:.75,dashArray:"2 8",lineCap:"round",interactive:false}).addTo(MAPA)});
   PINES=P.map(p=>p.lat?L.marker([p.lat,p.lon],{icon:icono(p),title:p.nombre}).addTo(MAPA)
-    .bindTooltip(esc(p.nombre),{direction:"top",offset:[0,-14],className:"tt"}).on("click",()=>abrir(p.i,true)):null);
+    .bindTooltip(esc(p.nombre)+(LEC&&!p.exacto?" · aprox.":""),{direction:"top",offset:[0,-14],className:"tt"}).on("click",()=>abrir(p.i,true)):null);
   MAPA.on("dragstart",()=>{seguir=false;$("bSeguir").classList.remove("on")});
 }
 function icono(p){
   const c=p.i===E.p?"act":paradaOida(p.i)?"oido":"";
-  return L.divIcon({className:"",html:`<span class="pinP ${c}">${p.i}</span>`,iconSize:[26,26],iconAnchor:[13,13]});
+  return L.divIcon({className:"",html:`<span class="pinP ${c} ${LEC&&!p.exacto?"aprox":""}">${p.i}</span>`,iconSize:[26,26],iconAnchor:[13,13]});
 }
 function pintarMapa(){PINES.forEach((m,i)=>m&&m.setIcon(icono(P[i])))}
 function pintarYo(){
@@ -262,7 +280,7 @@ function pintarYo(){
 /* ---------- Descargar el mapa para usarlo sin conexión ---------- */
 function teselas(){
   const out=[],t=(la,lo,z)=>{const n=2**z,x=Math.floor((lo+180)/360*n),r=la*Math.PI/180;return [x,Math.floor((1-Math.log(Math.tan(r)+1/Math.cos(r))/Math.PI)/2*n)]};
-  for(let z=14;z<=18;z++){const [x0,y1]=t(CFG.zona[0][0],CFG.zona[0][1],z),[x1,y0]=t(CFG.zona[1][0],CFG.zona[1][1],z);
+  for(let z=14;z<=(CFG.zmax||18);z++){const [x0,y1]=t(CFG.zona[0][0],CFG.zona[0][1],z),[x1,y0]=t(CFG.zona[1][0],CFG.zona[1][1],z);
     for(let x=x0;x<=x1;x++) for(let y=y0;y<=y1;y++) out.push(`https://tile.openstreetmap.org/${z}/${x}/${y}.png`)}
   return out;
 }
@@ -287,6 +305,17 @@ function plan(){                             // minuto previsto de llegada a cad
 function pintarPortada(){
   const tot=P.filter(p=>p.lat).reduce((s,p)=>s+p.min,0),audio=P.reduce((s,_,i)=>s+minAudio(i),0),np=P.reduce((s,p)=>s+p.pistas.length,0);
   const hechas=P.filter((_,i)=>paradaOida(i)).length;
+  if(LEC){
+    const hs=P.filter(p=>p.h),t0=aMin(hs[0]?.h),t1=aMin(hs[hs.length-1]?.f||hs[hs.length-1]?.h),vistas=P.filter(p=>p.pistas.length).length;
+    $("portada").innerHTML=`<p class="eb">Guía de lectura · ${esc(CFG.ciudad||"")}</p><h2>${esc(CFG.titulo)}<span>${esc(CFG.zh)}</span></h2>
+      <p>${esc(CFG.texto(np))}</p>
+      <div class="kpis"><div><b>${t0!=null&&t1!=null?fmtDur(t1-t0):fmtDur(tot)}</b><small>${t0!=null?`de ${esc(hs[0].h)} a ${esc(hs[hs.length-1].f||hs[hs.length-1].h)}`:"de visita"}</small></div>
+        <div><b>${fmtDur(audio)}</b><small>de lectura</small></div><div><b>${hechas}/${vistas}</b><small>paradas leídas</small></div></div>
+      <div class="btns">${E.inicio?`<button class="btn pri" data-act="seguir-visita"><i class="fa-solid fa-book-open"></i>Seguir: ${esc(P[E.p].nombre)}</button>`
+        :`<button class="btn pri" data-act="empezar"><i class="fa-solid fa-location-arrow"></i>Empezar la visita</button>`}
+        <button class="btn" data-act="ajustes"><i class="fa-solid fa-sliders"></i>Avisos y mapa</button></div>`;
+    return;
+  }
   $("portada").innerHTML=`<p class="eb">Audioguía · ${esc(CFG.ciudad||"Pekín")}</p><h2>${esc(CFG.titulo)}<span>${esc(CFG.zh)}</span></h2>
     <p>${esc(CFG.texto(np))}</p>
     <div class="kpis"><div><b>${fmtDur(tot)}</b><small>de visita</small></div><div><b>${fmtDur(audio)}</b><small>de audio</small></div><div><b>${hechas}/${P.length}</b><small>paradas oídas</small></div></div>
@@ -300,7 +329,8 @@ function pintarEstado(){
   const obj=P.find((p,i)=>p.lat&&i>=E.p&&!paradaOida(i))||P.find(p=>p.lat&&!paradaOida(p.i));
   if(obj){
     if(POS){const d=distM(POS.lat,POS.lon,obj.lat,obj.lon),g=rumbo(POS.lat,POS.lon,obj.lat,obj.lon);
-      sig=`<b>${esc(obj.nombre)}</b><span>${d<=obj.radio?"Estáis aquí":`<span class="flecha" style="transform:rotate(${Math.round(g)}deg)">↑</span> ${fmtM(d)} al ${cardinal(g)} · ${Math.max(1,Math.round(d/70))} min andando`}</span>`}
+      const bus=obj.bus&&d>obj.radio*2;
+      sig=`<b>${esc(obj.nombre)}</b><span>${d<=obj.radio?(LEC&&!obj.exacto?"Estáis cerca (punto aproximado)":"Estáis aquí"):`<span class="flecha" style="transform:rotate(${Math.round(g)}deg)">↑</span> ${fmtM(d)} al ${cardinal(g)}${LEC&&!obj.exacto?" (aprox.)":""} · ${bus?"en bus lanzadera, no andando":`${Math.max(1,Math.round(d/70))} min andando`}`}</span>`}
     else sig=`<b>${esc(obj.nombre)}</b><span>Activad el GPS para ver la distancia</span>`;
   }else sig=`<b>¡Visita completada!</b><span>Ya lo habéis oído todo</span>`;
   let pl=`<b>Sin empezar</b><span>Previsto: ${fmtDur(P.filter(p=>p.lat).reduce((s,p)=>s+p.min,0))}</span>`;
@@ -310,12 +340,28 @@ function pintarEstado(){
     const pasado=(Date.now()-t0)/60000,PL=plan(),i=Math.max(1,E.p),dif=Math.round(pasado-PL[i]);
     pl=`<b>${fmtDur(pasado)} desde las ${hora(t0)}</b><span>${Math.abs(dif)<=5?"Vais bien de tiempo":dif>0?`Unos ${fmtDur(dif)} por detrás del plan`:`Unos ${fmtDur(-dif)} por delante del plan`}</span>`;
   }
+  if(LEC) pl=tiempoReloj();
   $("estado").innerHTML=`<div class="est"><small><span class="punto ${POS&&Date.now()-POS.t<60000?"ok":""}"></span>GPS</small><b>${gps}</b>
       <span>${vigia!=null||POS?(E.auto?"Avisa al llegar a cada parada":"Aviso automático apagado"):`<button class="btn sm" data-act="gps" style="margin-top:4px"><i class="fa-solid fa-location-arrow"></i>Activar</button>`}</span></div>
     <div class="est"><small><i class="fa-regular fa-clock"></i>Tiempo</small>${pl}</div>
     <div class="est ancha"><small><i class="fa-solid fa-person-walking"></i>Siguiente parada</small>${sig}</div>`;
 }
+function tiempoReloj(){                       // guía de lectura: el plan va por la hora del día, no por los minutos desde que empezasteis
+  const ahora=new Date(),hoy=`${ahora.getFullYear()}-${String(ahora.getMonth()+1).padStart(2,"0")}-${String(ahora.getDate()).padStart(2,"0")}`;
+  const hs=P.filter(p=>p.h),ini=hs[0],fin=hs[hs.length-1];
+  if(!ini) return `<b>Sin horario</b><span></span>`;
+  if(CFG.fecha&&hoy!==CFG.fecha){const d=new Date(CFG.fecha+"T12:00");
+    return `<b>Plan del ${d.toLocaleDateString("es-ES",{day:"numeric",month:"short"})}</b><span>De ${esc(ini.h)} a ${esc(fin.f||fin.h)}</span>`}
+  const m=ahora.getHours()*60+ahora.getMinutes();
+  if(m<aMin(ini.h)) return `<b>Empieza a las ${esc(ini.h)}</b><span>${esc(ini.nombre)}</span>`;
+  if(m>=aMin(fin.f||fin.h)) return `<b>Plan terminado</b><span>Toca volver al hotel</span>`;
+  const toca=hs.find(p=>aMin(p.h)<=m&&m<aMin(p.f||p.h)),sig=hs.find(p=>aMin(p.h)>m);
+  const tarde=E.inicio&&P[E.p].f&&!paradaOida(E.p)&&m-aMin(P[E.p].f)>10?m-aMin(P[E.p].f):0;
+  if(toca) return `<b>Ahora: ${esc(toca.nombre)}</b><span>${tarde?`Vais unos ${fmtDur(tarde)} por detrás`:`Hasta las ${esc(toca.f||"")}`}${sig?` · luego ${esc(sig.nombre)}`:""}</span>`;
+  return `<b>A las ${esc(sig.h)}: ${esc(sig.nombre)}</b><span>Hueco en el plan</span>`;
+}
 function pintarParadas(){
+  if(LEC) return pintarLectura();
   const PL=plan(),abiertas=new Set([...document.querySelectorAll(".parada.abierta")].map(x=>+x.dataset.i));
   if(!document.querySelector(".parada")) abiertas.add(E.p);
   $("paradas").innerHTML=P.map(p=>{
@@ -339,12 +385,33 @@ function pintarParadas(){
         ${p.pistas.length?`<details class="texto"><summary><i class="fa-solid fa-align-left"></i> Leer el texto</summary>${p.pistas.map(x=>`<h4>${esc(x.t)}</h4>${x.texto.split(/\n+/).map(t=>`<p>${esc(t)}</p>`).join("")}`).join("")}</details>`:""}
       </div></article>`}).join("");
 }
+function pintarLectura(){
+  const abiertas=new Set([...document.querySelectorAll(".parada.abierta")].map(x=>+x.dataset.i));
+  if(!document.querySelector(".parada")) abiertas.add(E.p);
+  $("paradas").innerHTML=P.map(p=>{
+    const hecha=paradaOida(p.i),h=p.h?`${p.h}${p.f?"–"+p.f:""}`:"";
+    return `<article class="parada ${abiertas.has(p.i)?"abierta":""} ${hecha?"hecha":""} ${p.i===E.p&&E.inicio?"act":""}" id="p-${p.id}" data-i="${p.i}">
+      <button class="pc" data-abrir="${p.i}" aria-expanded="${abiertas.has(p.i)}"><span class="num"><span>${p.lat?p.i:`<i class="fa-solid ${p.bus||/bus/i.test(p.id)?"fa-bus":"fa-book-open"}"></i>`}</span></span>
+        <span class="tx">${h?`<span class="hora"><i class="fa-regular fa-clock"></i>${esc(h)}</span>`:""}<b>${esc(p.nombre)}</b><span class="sub"><span class="zh">${esc(p.zh)}</span> ${esc(p.py)}${p.pistas.length?` · ${fmtDur(Math.max(1,minAudio(p.i)))} de lectura`:""}</span></span>
+        <i class="fa-solid fa-chevron-down chev"></i></button>
+      <div class="pb">
+        ${p.resumen?`<p class="resumen">${esc(p.resumen)}</p>`:""}
+        <div class="ir ${p.bus?"bus":""}"><i class="fa-solid ${p.bus?"fa-bus":"fa-signs-post"}"></i><span>${esc(p.ir)}</span></div>
+        ${p.lat?`<p class="sitio ${p.exacto?"ok":""}"><i class="fa-solid ${p.exacto?"fa-location-dot":"fa-circle-dot"}"></i>${p.exacto?"Ubicación exacta en el mapa":"Ubicación aproximada: guiaos por los carteles y por Amap"}</p>`:""}
+        ${p.mira.length?`<div><p class="lbl" style="margin:0 0 8px"><i class="fa-solid fa-eye"></i>Fijaos en</p><ul class="mira">${p.mira.map(m=>`<li><i class="fa-solid fa-star"></i><span>${esc(m)}</span></li>`).join("")}</ul></div>`:""}
+        ${p.pistas.length?`<div class="lectura">${p.pistas.map(x=>`<section><h4><span class="tipo t-${esc(x.tipo)}">${esc(x.tipo)}</span>${esc(x.t)}</h4>${x.texto.split(/\n+/).map(t=>`<p>${esc(t)}</p>`).join("")}</section>`).join("")}</div>`:""}
+        <div class="btns">${p.pistas.length?`<button class="btn ${hecha?"":"pri"} sm" data-leida="${p.i}"><i class="fa-solid ${hecha?"fa-rotate-left":"fa-check"}"></i>${hecha?"Marcar sin leer":"Leída"}</button>`:""}
+          ${p.lat||p.am?`<a class="btn azul sm" href="${esc(urlAmap(p))}" target="_blank" rel="noopener"><i class="fa-solid fa-diamond-turn-right"></i>Abrir en Amap</a>`:""}
+          ${p.lat?`<button class="btn sm" data-centrar="${p.i}"><i class="fa-solid fa-crosshairs"></i>En el mapa</button>`:""}</div>
+      </div></article>`}).join("");
+}
 function abrir(i,mover){
   const el=document.querySelector(`.parada[data-i="${i}"]`);if(!el) return;
   el.classList.add("abierta");el.querySelector(".pc").setAttribute("aria-expanded","true");
   if(mover) el.scrollIntoView({behavior:"smooth",block:"start"});
 }
 function pintarRepro(){
+  if(LEC) return;
   const p=P[E.p],x=p&&p.pistas[E.k],tot=frases.length||1;
   $("repro").innerHTML=`<div class="repro-in">
     <button class="rinfo" data-ir-parada="${E.p}"><span class="num" style="width:30px;height:30px;font-size:12.5px">${E.p||'<i class="fa-solid fa-headphones"></i>'}</span>
@@ -362,7 +429,18 @@ function pintarRepro(){
   document.querySelectorAll(".pista").forEach(b=>{const on=sonando&&+b.dataset.play===E.p&&+b.dataset.k===E.k;
     b.classList.toggle("sonando",on);b.querySelector(".pl i").className="fa-solid "+(on?"fa-volume-high":oida(+b.dataset.play,+b.dataset.k)?"fa-check":"fa-play")});
 }
+function ajustesLectura(){
+  $("hoja").innerHTML=`<h3>Avisos y mapa<button class="ico" data-act="cerrar" aria-label="Cerrar"><i class="fa-solid fa-xmark"></i></button></h3>
+    <div class="fila"><span>Avisar al llegar cerca de cada parada</span><input type="checkbox" class="sw" id="sAuto" ${E.auto?"checked":""}></div>
+    <div><label>Sin conexión</label><p class="n" style="margin:4px 0 8px">Los textos ya funcionan sin internet. Descargad también el mapa de la zona con el wifi del hotel (unos pocos MB).</p>
+      <button class="btn azul sm" data-act="descargar">${LS.get(CFG.clave+"-mapa",0)?`<i class="fa-solid fa-circle-check"></i>Mapa guardado · repetir`:`<i class="fa-solid fa-download"></i>Descargar mapa`}</button></div>
+    ${(CFG.consejos||[]).length?`<div><label>Consejos</label><ul class="mira" style="margin-top:6px">${CFG.consejos.map(c=>`<li><i class="fa-solid fa-star"></i><span>${esc(c)}</span></li>`).join("")}</ul></div>`:""}
+    <div class="btns"><button class="btn sm" data-act="reiniciar"><i class="fa-solid fa-rotate"></i>Empezar de cero</button></div>`;
+  $("dlg").showModal();
+  $("sAuto").onchange=e=>{E.auto=e.target.checked;guardar();pintarEstado()};
+}
 function ajustes(){
+  if(LEC) return ajustesLectura();
   cargarVoces();
   $("hoja").innerHTML=`<h3>Ajustes<button class="ico" data-act="cerrar" aria-label="Cerrar"><i class="fa-solid fa-xmark"></i></button></h3>
     <div><label for="sVoz">Voz</label><select id="sVoz">${AU?`<option value="grabada" ${grabada()?"selected":""}>Voz grabada · ${esc(AU.voz)}</option>`:""}${VOCES.length?VOCES.map(v=>`<option value="${esc(v.voiceURI)}" ${v.voiceURI===E.voz?"selected":""}>${esc(v.name)} · ${esc(v.lang)}</option>`).join(""):`<option value="">Voz en español del sistema</option>`}</select>
@@ -391,11 +469,16 @@ document.addEventListener("click",e=>{
   if(grabada()&&q("[data-play],[data-act=play],[data-act=empezar],[data-act=seguir-visita],[data-act=probar]")) desbloquearAudio();
   if(b=q("[data-play]")){const i=+b.dataset.play;$("llegada").innerHTML="";play(i,b.dataset.k!=null?+b.dataset.k:0);todo();return}
   if(b=q("[data-abrir]")){const el=b.closest(".parada"),on=el.classList.toggle("abierta");b.setAttribute("aria-expanded",on);return}
-  if(b=q("[data-ir-parada]")){abrir(+b.dataset.irParada,true);return}
+  if(b=q("[data-ir-parada]")){abrir(+b.dataset.irParada,true);if(LEC) $("llegada").innerHTML="";return}
+  if(b=q("[data-leida]")){const i=+b.dataset.leida,ya=paradaOida(i);P[i].pistas.forEach((_,k)=>{if(ya) delete E.oidas[P[i].id+"/"+k];else E.oidas[P[i].id+"/"+k]=1});
+    const s=ya?-1:P.findIndex((p,j)=>j>i&&p.pistas.length);
+    if(s>=0){E.p=s;b.closest(".parada").classList.remove("abierta")}
+    guardar();todo();if(s>=0) abrir(s,true);return}   // leída: se abre la siguiente
   if(b=q("[data-centrar]")){const p=P[+b.dataset.centrar];if(MAPA){seguir=false;$("bSeguir").classList.remove("on");MAPA.setView([p.lat,p.lon],18);
     PINES[p.i].openTooltip();$("mapa").scrollIntoView({behavior:"smooth",block:"center"})}return}
   if(!(b=q("[data-act]"))) return;
   const a=b.dataset.act;
+  if(LEC&&(a==="empezar"||a==="seguir-visita")){E.inicio=E.inicio||Date.now();guardar();ubicar();todo();abrir(E.p,true);return}
   if(a==="empezar"){E.inicio=E.inicio||Date.now();guardar();ubicar();play(0,0);todo();return}
   if(a==="seguir-visita"){ubicar();play();todo();return}
   if(a==="play") alternar();
@@ -421,6 +504,7 @@ addEventListener("pagehide",()=>{if(S) S.cancel();AUD.pause()});
 
 /* ---------- Arranque ---------- */
 if(E.p>=P.length) E.p=0;
+if(LEC){document.body.classList.add("solo-lectura");$("repro").classList.add("oculto")}
 cargar(E.p,E.k);
 montarMapa();todo();
 if(LS.get(CFG.clave+"-geo",0)||PARAMS.get("pos")) ubicar();       // si ya disteis permiso, el GPS arranca solo

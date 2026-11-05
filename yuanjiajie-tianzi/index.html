@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#FFFFFF">
+<script>try{var t=localStorage.getItem("china-tema");if(t==="oscuro"||(t!=="claro"&&matchMedia("(prefers-color-scheme: dark)").matches)){document.documentElement.dataset.tema="oscuro";document.querySelector('meta[name="theme-color"]').content="#0F172A"}}catch(e){}</script>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Yuanjiajie">
+<meta name="format-detection" content="telephone=no">
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="apple-touch-icon" href="../icon-180.png">
+<link rel="icon" href="../icon-180.png">
+<title>Yuanjiajie y Tianzi · Guía</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<link rel="stylesheet" href="../audioguia/guia.css">
+<style>
+  /* El verde de Zhangjiajie en la app, en lugar del rojo de los palacios */
+  .portada{background:linear-gradient(160deg,rgba(6,78,59,.86),rgba(2,44,34,.93)),url(../img/zhangjiajie.jpg) center/cover}
+  .portada p,.kpis small{color:#D1FAE5}
+  .logo{background:#059669;box-shadow:0 4px 10px -2px rgba(5,150,105,.35)}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="top-in">
+    <a class="volver" href="../#viaje/zhangjiajie" aria-label="Volver a la app del viaje"><i class="fa-solid fa-arrow-left"></i></a>
+    <span class="logo" aria-hidden="true">林</span>
+    <div class="tit"><h1>Yuanjiajie y Tianzi</h1><p id="sub">Guía · 张家界国家森林公园 · jueves 5 nov</p></div>
+    <button class="ico" data-act="ajustes" aria-label="Avisos y mapa"><i class="fa-solid fa-sliders"></i></button>
+  </div>
+</header>
+
+<main>
+  <section class="portada" id="portada"></section>
+  <div id="llegada"></div>
+  <div class="avisos" role="note">
+    <p class="lbl" style="margin:0"><i class="fa-solid fa-triangle-exclamation"></i>Antes de mirar el mapa</p>
+    <ul class="mira">
+      <li><i class="fa-solid fa-bus"></i><span>El tramo entre Yuanjiajie y Tianzi se hace en <b>bus lanzadera</b> (30-40 min), no andando. En el mapa es la línea azul.</span></li>
+      <li><i class="fa-solid fa-location-dot"></i><span>Solo el <b>ascensor Bailong</b> está en su sitio exacto: el resto de puntos son aproximados.</span></li>
+      <li><i class="fa-solid fa-signs-post"></i><span>Dentro del parque, guiaos por los carteles y por la app <b>Amap (高德地图)</b>, que en China funciona mucho mejor que Google Maps.</span></li>
+    </ul>
+  </div>
+  <div class="estado" id="estado"></div>
+  <div class="mapaW">
+    <div id="mapa" role="region" aria-label="Mapa del día en el parque"></div>
+    <div class="mapaB">
+      <button data-act="seguir" id="bSeguir" aria-label="Seguir mi posición"><i class="fa-solid fa-location-crosshairs"></i></button>
+      <button data-act="encuadrar" aria-label="Ver toda la ruta"><i class="fa-solid fa-expand"></i></button>
+    </div>
+  </div>
+  <div class="leyenda" aria-hidden="true">
+    <span><span class="pinP"></span>Sitio exacto</span>
+    <span><span class="pinP aprox"></span>Aproximado</span>
+    <span><span class="lin"></span>A pie</span>
+    <span><span class="lin bus"></span>Bus lanzadera</span>
+  </div>
+  <p class="lbl"><i class="fa-solid fa-book-open"></i>El día, parada a parada</p>
+  <div id="paradas" style="display:grid;gap:10px"></div>
+  <p class="n" style="padding:0 4px">Mapa © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>. Las líneas unen las paradas en orden, no siguen los caminos reales. Horarios orientativos; precios y horas del ascensor y del teleférico, confirmadlos en las taquillas.</p>
+</main>
+
+<div class="repro" id="repro"></div>
+<dialog id="dlg"><div class="hoja" id="hoja"></div></dialog>
+<div class="aviso" id="aviso" role="status" aria-live="polite"></div>
+
+<script src="guion.js"></script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+/* ============================================================
+   RECORRIDO del jueves 5 de noviembre en el Parque Forestal de Zhangjiajie (Wulingyuan).
+   Guía de lectura: sin audio, con los textos a la vista y la hora prevista de cada parada.
+   Coordenadas en WGS-84. Solo el ascensor Bailong es exacto (Wikidata: 29°21′05″N 110°27′41″E);
+   el resto son aproximadas, y el radio de aviso es amplio por eso.
+   Las paradas sin coordenadas (antes de subir y el bus) no tienen pin ni aviso.
+   bus:true = a esa parada se llega en bus, no andando (tramo azul en el mapa).
+   [id, nombre, chino, pinyin, lat, lon, minutos, radio de aviso (m), búsqueda en Amap, cómo llegar, {h, f, exacto, bus}]
+   ============================================================ */
+const CFG={
+ clave:"zjj5",                              // prefijo de lo guardado en el móvil
+ lectura:true,
+ ciudad:"Zhangjiajie",czh:"张家界",fecha:"2026-11-05",
+ titulo:"Yuanjiajie y la Montaña Tianzi",zh:"袁家界 · 天子山",
+ texto:n=>`El día por arriba del parque: ascensor Bailong, los pilares de Avatar en Yuanjiajie, bus lanzadera a Tianzi y bajada en teleférico. ${n} textos cortos para leer en cada parada, sin audio.`,
+ limites:[[29.343,110.425],[29.398,110.468]],
+ zmax:16,                                   // los puntos son aproximados: no hace falta bajar el mapa al detalle de calle
+ consejos:[
+  "Amap (高德地图) es el mapa que mejor funciona en China: buscad los nombres en chino que salen en cada parada.",
+  "Los buses del parque no llevan número: llevan el destino en chino en el parabrisas (百龙天梯, 袁家界, 天子山, 武陵源).",
+  "Guardad la comida en la mochila: los macacos saben abrir bolsas.",
+  "Arriba hace varios grados menos que en Wulingyuan, y con niebla se nota: llevad una capa.",
+  "Los puntos aproximados avisan cuando estáis cerca, no al llegar: si no salta el aviso, tocad la parada."],
+ ruta:[
+ ["intro","Antes de subir","武陵源 · 百龙天梯","Wǔlíngyuán · Bǎilóng tiāntī",null,null,0,0,"武陵源门票站",
+  "Desde el hotel, a pie hasta la entrada de Wulingyuan (武陵源). Pasado el control, coged el bus del parque que pone 百龙天梯 (ascensor Bailong). Contad unos 45 min a 1 h desde el hotel hasta la cola del ascensor."],
+ ["bailong","Ascensor Bailong","百龙天梯","Bǎilóng tiāntī",29.3515,110.4615,45,120,"百龙天梯",
+  "El bus os deja en la estación de abajo del ascensor. Se paga aparte de la entrada del parque (unos 65 CNY por trayecto). Arriba, seguid los carteles hacia Yuanjiajie (袁家界).",
+  {h:"9:45",f:"10:30",exacto:true}],
+ ["mihuntai","Mihuntai","迷魂台","Míhúntái",29.3488,110.4535,45,250,"迷魂台",
+  "Desde la salida del ascensor, seguid a pie los carteles de Yuanjiajie hacia Mihuntai (迷魂台). Es el primer gran mirador del recorrido.",
+  {h:"10:30",f:"11:15"}],
+ ["aleluya","Montaña Aleluya","哈利路亚山 · 乾坤柱","Hālìlùyà shān · Qiánkūn zhù",29.3470,110.4512,30,250,"乾坤柱",
+  "Muy cerca de Mihuntai: seguid los carteles de «Avatar Hallelujah Mountain» o 乾坤柱. El pilar se ve desde los miradores del borde.",
+  {h:"11:15",f:"11:45"}],
+ ["puente","Primer Puente Bajo el Cielo","天下第一桥","Tiānxià dì yī qiáo",29.3560,110.4445,45,250,"天下第一桥",
+  "Seguid el camino por el borde de la meseta hacia el norte, con los carteles de «First Bridge Under Heaven» (天下第一桥). Las vistas del arco están antes de cruzarlo.",
+  {h:"11:45",f:"12:30"}],
+ ["comida","Comida junto al bus de Yuanjiajie","袁家界 停车场","Yuánjiājiè tíngchēchǎng",29.3585,110.4472,60,250,"袁家界停车场",
+  "Desde el puente, seguid los carteles hacia la parada de bus de Yuanjiajie (袁家界 停车场 / Bus Station). Los puestos de comida están alrededor.",
+  {h:"12:30",f:"13:30"}],
+ ["bus","Bus lanzadera a Tianzi","袁家界 → 天子山","Yuánjiājiè → Tiānzǐ shān",null,null,0,0,"天子山",
+  "En la misma parada, coged el bus que pone 天子山 (Tianzi) en el parabrisas. Son 30-40 min: en bus, no andando. Os deja cerca del Parque Helong.",
+  {h:"13:30",f:"14:15",bus:true}],
+ ["helong","Parque Helong","贺龙公园","Hè Lóng gōngyuán",29.3925,110.4380,45,250,"贺龙公园",
+  "Al bajar del bus en Tianzi, seguid los carteles del Parque Helong (贺龙公园). La estatua del mariscal está en la explanada principal.",
+  {h:"14:15",f:"15:00",bus:true}],
+ ["yubi","Pico del Pincel Imperial","御笔峰","Yùbǐ fēng",29.3946,110.4338,30,250,"御笔峰",
+  "Desde la estatua, seguid los carteles de «Imperial Writing Brush Peaks» (御笔峰) hasta su mirador, a pocos minutos.",
+  {h:"15:00",f:"15:30"}],
+ ["xihai","Bosque de piedra Xihai","西海石林","Xīhǎi shílín",29.3895,110.4300,45,300,"西海石林",
+  "Seguid los carteles de Xihai (西海) o de Dianjiangtai (点将台) hacia los miradores sobre la hondonada.",
+  {h:"15:30",f:"16:15"}],
+ ["teleferico","Teleférico de Tianzi","天子山索道","Tiānzǐ shān suǒdào",29.3905,110.4452,45,250,"天子山索道上站",
+  "Volved hacia el Parque Helong y seguid los carteles del teleférico (天子山索道 / Cable Car). No lo apuréis: en noviembre anochece hacia las 18:00.",
+  {h:"16:30",f:"17:15"}]
+ ],
+ zona:[[29.340,110.420],[29.400,110.472]]       // lo que se descarga para usar sin conexión
+};
+</script>
+<script src="../audioguia/guia.js"></script>
+</body>
+</html>

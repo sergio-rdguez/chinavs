@@ -1172,6 +1172,38 @@ const guardaCola=()=>LS.set("china-queue",QUEUE);
 function recibe(j){
   SERVER=j; LS.set("china-server",j); LS.set("china-ts",String(Date.now()));
 }
+/* Retoques de una sola vez sobre los datos: los lleva a Supabase el primer móvil con sesión que abre la app.
+   Solo tocan las filas que siguen como estaban en el plan; lo cambiado o añadido a mano se queda. */
+const RETOQUES=[["2026-11-05-zjj",d=>{          // Parque Forestal del 5 nov: ascensor a las 9:45, Yuanjiajie, bus a Tianzi y teleférico
+  const ops=[],dia=d.agenda.filter(a=>toISO(a.Fecha)==="2026-11-05");
+  if(dia.some(a=>/bus lanzadera/i.test(a["Qué"]||""))) return ops;               // ya está el plan nuevo
+  const antes=[["07:30","Entrada al parque"],["08:00","Subida en el ascensor Bailong"],["09:00","Yuanjiajie"],["13:00","Comida en el parque"],
+    ["14:00","Montaña Tianzi"],["16:30","Bajada en el teleférico de Tianzi y vuelta al hotel"],["19:00","Cena"]];
+  dia.filter(a=>antes.some(([h,q])=>horaMin(a.Hora)===horaMin(h)&&limpio(a["Qué"])===q)).forEach(a=>ops.push({action:"remove",tabla:"Agenda",id:a.ID}));
+  if(ops.length) [["08:45","09:45","Entrada al parque y bus al ascensor Bailong","Parque Forestal de Zhangjiajie","traslado","Entradas en Trip.com, válidas varios días; el primer día registran la huella o la cara. Dentro, el bus del parque que pone 百龙天梯 os deja en el ascensor. Contad 45 min a 1 h desde el hotel."],
+   ["09:45","10:30","Subida en el ascensor Bailong","Ascensor Bailong","visita","Ascensor exterior de 326 m pegado al acantilado. Se paga aparte de la entrada."],
+   ["10:30","12:30","Yuanjiajie: Mihuntai, Montaña Aleluya y Primer Puente Bajo el Cielo","Yuanjiajie","visita","Los pilares de Avatar, a pie por los miradores del borde. Guía con mapa y textos en el botón de arriba."],
+   ["12:30","13:30","Comida rápida junto a la parada de bus de Yuanjiajie","Yuanjiajie","comida","Puestos de fideos y comida rápida junto a los buses. Comida guardada en la mochila: hay macacos."],
+   ["13:30","14:15","Bus lanzadera hasta Tianzi Shan","Montaña Tianzi","traslado","30-40 min en el bus del parque, no andando: el que pone 天子山 en el parabrisas."],
+   ["14:15","16:15","Parque Helong, Pico del Pincel Imperial y bosque de piedra Xihai","Montaña Tianzi","visita","Miradores sobre el bosque de pilares. En el mapa de la guía solo el ascensor está exacto: guiaos por los carteles y por Amap."],
+   ["16:30","17:30","Bajada en el teleférico de Tianzi y vuelta al hotel","Montaña Tianzi","traslado","El teleférico se paga aparte. Abajo, bus del parque hacia la entrada de Wulingyuan (武陵源)."]]
+   .concat(ops.some(o=>/19:00/.test((dia.find(a=>a.ID===o.id)||{}).Hora||""))?[["19:00","20:30","Cena","","comida",""]]:[])   // la cena, solo si se ha quitado la vieja
+   .forEach(([Hora,Fin,Q,Lugar,Tipo,Notas],i)=>ops.push({action:"upsert",tabla:"Agenda",id:"a1105-z"+(i+1),values:{Fecha:"2026-11-05",Hora,Fin,"Qué":Q,Lugar,Tipo,Notas}}));
+  [["Ascensor Bailong","29.3515","110.4615","Ascensor exterior de 326 m que sube a Yuanjiajie."],
+   ["Yuanjiajie","29.352","110.450","Meseta de los pilares de Avatar: Mihuntai, Montaña Aleluya y Primer Puente Bajo el Cielo. Punto aproximado."],
+   ["Montaña Tianzi","29.3925","110.438","Parque Helong, Pico del Pincel Imperial y bosque de piedra Xihai. Desde Yuanjiajie, 30-40 min en el bus del parque. Punto aproximado."]]
+   .forEach(([n,Lat,Lon,Notas])=>{const l=d.lugares.find(x=>limpio(x.Nombre)===n);   // antes caían todos en la entrada de Wulingyuan
+     if(l&&limpio(l.Lat)==="29.345") ops.push({action:"upsert",tabla:"Lugares",id:l.ID,values:{Lat,Lon,...(limpio(l.Notas)?{}:{Notas})}})});
+  return ops;
+}]];
+function retocar(){
+  if(!SERVER||!(SERVER.agenda||[]).length) return;
+  const hechos=LS.json("china-retoques")||[],ops=[];
+  RETOQUES.forEach(([id,f])=>{if(!hechos.includes(id)){ops.push(...f(DATA));hechos.push(id)}});
+  LS.set("china-retoques",hechos);
+  if(!ops.length) return;
+  QUEUE.push(...ops);guardaCola();rebuild();setTimeout(enviar,0);
+}
 /* Los cambios van a una cola que se envía en orden. Si un cambio aún no ha salido, el siguiente sobre
    la misma fila se funde con él: así, sin conexión, la cola no crece con cada toque. */
 const ENVIANDO=new Set();
@@ -1281,7 +1313,7 @@ function sincronizar(manual){
     try{
       const j=await pedir("china_leer",null,20000);
       if(!j||j.error||!j.itinerario) throw new Error(j&&j.error||"Respuesta no válida");
-      if(versionDatos===v0&&!flushing){recibe(j);rebuild()}            // si mientras tanto se envió algo, la respuesta de ese envío es más nueva
+      if(versionDatos===v0&&!flushing){recibe(j);rebuild();retocar()}   // si mientras tanto se envió algo, la respuesta de ese envío es más nueva
       syncEstado=""; renderAll();
       if(manual) aviso("Datos actualizados");
       sincronizarDocs();
@@ -1832,16 +1864,17 @@ function fichaLugar(p){
       ${p.loc?`<dt>Localizador</dt><dd class="mono">${esc(p.loc)}</dd>`:""}</dl>
     ${p.horario||p.precio?`<p class="n">Horarios y precios orientativos: confirmadlos antes de ir.</p>`:""}</div>`;
 }
-const AUDIOGUIAS=[                           // sitios con audioguía propia: [nombre en el plan, carpeta, título, de qué va]
+const AUDIOGUIAS=[                           // sitios con guía propia: [nombre en el plan, carpeta, título, de qué va, ciudad (pekin si falta), icono, botón]
  [/ciudad prohibida|museo del palacio|gugong/i,"ciudad-prohibida/","Audioguía de la Ciudad Prohibida","Unas 3 horas a pie, de Tiananmen a Jingshan: mapa con vuestra posición y la historia de cada rincón."],
  [/templo del cielo|tiantan/i,"templo-del-cielo/","Audioguía del Templo del Cielo","Unas 2 horas, de la Puerta Este a la Oeste: el altar, el muro del eco y los rituales del emperador."],
  [/jinshanling|gran muralla/i,"jinshanling/","Audioguía de la Gran Muralla","Hace de guía: para el coche y para la caminata de Zhuanduokou a la Torre de los Cinco Ojos del Este, con salida por la Puerta Este."],
- [/guerreros de terracota|terracota|bingmayong/i,"guerreros-terracota/","Audioguía de los Guerreros de Terracota","Lo esencial en unos 16 minutos de audio, con voz grabada: el emperador, las tres fosas y la tumba que nadie ha abierto."]];
-const tarjetaAudioguia=(a,c)=>`<a class="card audioguia th" style="--c:${c}" href="${a[1]}"><span class="ag-i"><i class="fa-solid fa-headphones"></i></span>
+ [/guerreros de terracota|terracota|bingmayong/i,"guerreros-terracota/","Audioguía de los Guerreros de Terracota","Lo esencial en unos 16 minutos de audio, con voz grabada: el emperador, las tres fosas y la tumba que nadie ha abierto.","xian"],
+ [/yuanjiajie|tianzi|bailong/i,"yuanjiajie-tianzi/","Guía de Yuanjiajie y Tianzi","Sin audio: mapa del día y textos para leer en cada parada, del ascensor Bailong al teleférico de Tianzi.","zhangjiajie","fa-book-open","Guía"]];
+const tarjetaAudioguia=(a,c)=>`<a class="card audioguia th" style="--c:${c}" href="${a[1]}"><span class="ag-i"><i class="fa-solid ${a[5]||"fa-headphones"}"></i></span>
     <span><b>${a[2]}</b><span class="n">${a[3]}</span></span><i class="fa-solid fa-chevron-right" style="color:var(--faint)"></i></a>`;
 function botonAudioguia(nombre){
   const a=AUDIOGUIAS.find(([re])=>re.test(nombre||""));
-  return a?`<a class="btn pri" href="${a[1]}"><i class="fa-solid fa-headphones"></i>Audioguía</a>`:"";
+  return a?`<a class="btn pri" href="${a[1]}"><i class="fa-solid ${a[5]||"fa-headphones"}"></i>${a[6]||"Audioguía"}</a>`:"";
 }
 function botonesLugar(p,taxi){
   if(!p||p.sin||!(p.zh||p.dir||p.hotel)) return "";
@@ -2022,7 +2055,7 @@ function rCiudad(ck){
   let html=`<div class="pila th" style="--c:${c.c}">`+heroFoto(ck,{badge:`${rangoFechas(ds.map(x=>x.d))} · Parada ${ks.indexOf(ck)+1}`,titulo:c.n,
       sub:`${c.zh}${n?` · ${n} ${n===1?"noche":"noches"}`:""}${est?` · ${est}`:""}`,
       izq:`<button class="cristal" data-act="volver"><i class="fa-solid fa-arrow-left"></i>El viaje</button>`,der:pildoraClima(ck,ds.some(x=>x.d.iso===now.iso)?now.iso:primero)});
-  if(ck==="pekin") html+=AUDIOGUIAS.map(a=>tarjetaAudioguia(a,c.c)).join("");
+  html+=AUDIOGUIAS.filter(a=>(a[4]||"pekin")===ck).map(a=>tarjetaAudioguia(a,c.c)).join("");
   html+=`<div><p class="lbl"><i class="fa-solid fa-hotel"></i>Alojamiento y tiempo en ${esc(c.n)}</p><div class="dos-col">
       <div class="pila">${H.length?H.map(h=>tarjetaHotel(h,{estado:1})).join(""):`<div class="hcard"><p class="n">Aquí no dormís: es una parada de paso.</p></div>`}</div>
       ${tarjetaClima(ck)}</div></div>`;

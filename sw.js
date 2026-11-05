@@ -1,8 +1,8 @@
 /* Viaje a China: copia de la app para que abra sin conexión.
    Sirve primero lo guardado y se actualiza por detrás; la versión nueva aparece al abrir la app la vez siguiente. */
-const CACHE = "china-v15";
+const CACHE = "china-v16";
 const FOTOS = ["pekin", "xian", "shanghai", "zhangjiajie", "yangshuo", "shenzhen", "hongkong"].map(k => `./img/${k}.jpg`);
-const GUIAS = ["ciudad-prohibida", "templo-del-cielo", "jinshanling", "guerreros-terracota"];   // audioguías: cada una en su carpeta, con el motor común
+const GUIAS = ["ciudad-prohibida", "templo-del-cielo", "jinshanling", "guerreros-terracota", "yuanjiajie-tianzi"];   // guías: cada una en su carpeta, con el motor común
 const GUIA = ["./audioguia/guia.css", "./audioguia/guia.js", ...GUIAS.flatMap(g => [`./${g}/`, `./${g}/index.html`, `./${g}/guion.js`]), "./guerreros-terracota/audio/index.js"];
 const ARCHIVOS = ["./", "./index.html", "./manifest.webmanifest", "./icon-180.png", "./icon-512.png", ...FOTOS, ...GUIA];
 // Teselas del mapa de la audioguía: caché aparte que sobrevive a las versiones nuevas
